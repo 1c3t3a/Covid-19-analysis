@@ -30,6 +30,6 @@ jobs:
     
     - name: Run with papermill
       run: |
-        cd scr
+        cd /scr
         papermill CovidDataClass.ipynb out.ipynb
     
