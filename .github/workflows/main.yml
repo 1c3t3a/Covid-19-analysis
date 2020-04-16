@@ -28,7 +28,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
-    - name: run-notebook
-      uses: yaananth/run-notebook@v1
-
-    
+    - uses: yaananth/run-notebook@v1
+      env:
+        RUNNER: ${{ toJson(runner) }}
+        SECRETS: ${{ toJson(secrets) }}
+        GITHUB: ${{ toJson(github) }}
+      with:
+        notebook: "src/CovidDataClass.ipynb"
+        params: ""
+        isReport: False
+        poll: False
