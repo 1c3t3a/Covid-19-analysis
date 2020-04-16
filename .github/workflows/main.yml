@@ -35,6 +35,6 @@ jobs:
         GITHUB: ${{ toJson(github) }}
       with:
         notebook: "src/CovidDataClass.ipynb"
-        params: ""
+        params: ".github/workflows/params.json"
         isReport: False
         poll: False

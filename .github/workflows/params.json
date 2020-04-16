@@ -1,0 +1,15 @@
+{
+    "pathToJson":"data/db.json",
+    "data": { 
+        "dateRep": "15/04/2020",
+        "day": "15",
+        "month": "4",
+        "year": "2020",
+        "cases": "2486",
+        "deaths": "285",
+        "countriesAndTerritories": "Germany",
+        "geoId": "DE",
+        "countryterritoryCode": "DEU",
+        "popData2018": "82927922"
+      }
+}
