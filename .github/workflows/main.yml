@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Run jupyter notebook
 
 # Controls when the action will run. Triggers the workflow on push or pull request
@@ -28,7 +26,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
-    - name: Run with papermill
-      run: |
-        papermill src/CovidDataClass.ipynb out.ipynb
-    
+    - uses: yaananth/run-notebook@v1
+      env:
+        RUNNER: ${{ toJson(runner) }}
+        SECRETS: ${{ toJson(secrets) }}
+        GITHUB: ${{ toJson(github) }}
+      with:
+        notebook: "src/CovidDataClass.ipynb"
+        params: ".github/workflows/params.json"
+        isReport: False
+        poll: False
