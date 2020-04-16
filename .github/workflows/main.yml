@@ -26,11 +26,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install jupyterlab
-        pip install pandas
-        pip install matplolib
-        pip install ipywidgets
-        pip install papermill
+        pip install -r requirements.txt
     
     - name: Run with papermill
       run: papermill CovidDataClass.ipynb out.ipynb
