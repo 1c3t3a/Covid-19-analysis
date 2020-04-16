@@ -29,5 +29,7 @@ jobs:
         pip install -r requirements.txt
     
     - name: Run with papermill
-      #run: papermill src/CovidDataClass.ipynb out.ipynb
-      run: ls
+      run: |
+        cd scr
+        papermill CovidDataClass.ipynb out.ipynb
+    
