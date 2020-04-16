@@ -28,7 +28,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
-    - name: Run with papermill
-      run: |
-        papermill src/CovidDataClass.ipynb out.ipynb
+    - name: run-notebook
+      uses: yaananth/run-notebook@v1
+
     
