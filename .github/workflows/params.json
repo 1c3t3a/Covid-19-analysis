@@ -1,15 +1,5 @@
 {
     "pathToJson":"data/db.json",
-    "data": { 
-        "dateRep": "15/04/2020",
-        "day": "15",
-        "month": "4",
-        "year": "2020",
-        "cases": "2486",
-        "deaths": "285",
-        "countriesAndTerritories": "Germany",
-        "geoId": "DE",
-        "countryterritoryCode": "DEU",
-        "popData2018": "82927922"
-      }
+    "githubAction":true,
+    "dataAction":[[{"Country": "Germany", "GeoID": "DE", "Date": "06/04/2020", "Cases": 3677, "Deaths": 92, "CumultativeCases": 95391, "Quotient": 1.0400920252088013, "DoublingTime": 17.633207199278193, "CumultativeDeaths": 1434}]]
 }
