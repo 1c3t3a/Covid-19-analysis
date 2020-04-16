@@ -1,4 +1,5 @@
 {
     "pathToJson":"data/db.json",
-    "data": [[{"Country": "Germany", "GeoID": "DE", "Date": "31/12/2019", "Cases": 0, "Deaths": 0, "CumultativeCases": 0, "CumultativeDeaths": 0}]]
+    "githubAction":true,
+    "dataAction":[[{"Country": "Germany", "GeoID": "DE", "Date": "31/12/2019", "Cases": 0, "Deaths": 0, "CumultativeCases": 0, "CumultativeDeaths": 0}]]
 }
