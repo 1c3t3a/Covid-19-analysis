@@ -26,6 +26,8 @@ class PlotterBuilder:
         self.__yscale = 'linear'
         self.__xaxis_formatter = mdates.DateFormatter('%Y-%m-%d')
         self.__yfield = yfield
+        self.__xlabel = ""
+        self.__ylabel = ""
 
     def set_figsize(self, sizes):
         """
@@ -62,6 +64,14 @@ class PlotterBuilder:
         self.__xaxis_formatter = None
         return self
 
+    def set_axis_labels(self, xlabel="", ylabel=""):
+        """
+        Sets the axis labels.
+        """
+        self.__xlabel = xlabel
+        self.__ylabel = ylabel
+        return self
+
     def build(self):
         """
         Builds the configured plotting object.
@@ -74,7 +84,8 @@ class PlotterBuilder:
         ax.set_yscale(self.__yscale)
         if self.__xaxis_formatter:
             ax.xaxis.set_major_formatter(self.__xaxis_formatter)
-
+        ax.set(xlabel=self.__xlabel)
+        ax.set(ylabel=self.__ylabel)
         return [fig, ax]
 
     def plot_dataFrame(self, df, **options):

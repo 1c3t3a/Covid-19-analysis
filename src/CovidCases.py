@@ -134,7 +134,7 @@ class CovidCases:
             # print(subset[x])
         return subset
 
-    def get_country_data_by_geoID(self, geoID, lastNdays=0):
+    def get_country_data_by_geoID(self, geoID, lastNdays=0, sinceNcases=0):
         """
         return the list of cases by geoID
         """
@@ -149,6 +149,22 @@ class CovidCases:
         if lastNdays > 0:
             start_index = len(subset) - lastNdays
             subset = subset[start_index:]
+        if sinceNcases > 0:
+            # loop through the list
+            while len(subset) > 0:
+                # the cumultative ncases of x
+                numCum = int(subset[0]['CumultativeCases'])
+                if numCum < sinceNcases:
+                    # delete it
+                    subset.pop(0)
+                else:
+                    # we are done
+                    break
+            # the length of the list
+            n = len(subset)
+            # add the index col
+            for x in range(0, n - 1):
+                subset[x].update({'Index': int(x)})
         return subset
 
     def get_country_data_by_country_name(self, countryName, lastNdays=0):
