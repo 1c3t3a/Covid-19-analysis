@@ -24,7 +24,7 @@ class PlotterBuilder:
         self.__title = ""
         self.__grid = False
         self.__yscale = 'linear'
-        self.__xaxis_formatter = mdates.DateFormatter('%Y-%m-%d')
+        self.__xaxis_formatter = mdates.DateFormatter('%Y-%m-%d %H:%m:%s')
         self.__yfield = yfield
 
     def set_figsize(self, sizes):
