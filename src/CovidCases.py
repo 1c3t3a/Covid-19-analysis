@@ -51,10 +51,10 @@ class CovidCases:
         return {
             "Country": record["countriesAndTerritories"],
             "GeoID": record["geoId"],
-            "Population": record["popData2018"],
+            "Population": int(record["popData2018"]) if record["popData2018"] != "" else 1,
             "Date": record["dateRep"],
-            "Cases": record["cases"],
-            "Deaths": record["deaths"]
+            "Cases": int(record["cases"]),
+            "Deaths": int(record["deaths"])
         }
 
     def __init__(self, filename):

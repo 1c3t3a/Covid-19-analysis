@@ -33,25 +33,21 @@ def setup_routes(app):
     # setting up routes and implement methods
     @app.route('/api/data/<countries>/<wanted_attrib>', methods=['GET'])
     def get_data(countries, wanted_attrib):
-        # get path parameters for lastN days and sinceN days if given
+        # get path parameters for lastN days, sinceN days, log and bar graph if given
         last_n = int(request.args['lastN']) if request.args.__contains__('lastN') else -1
         since_n = int(request.args['sinceN']) if request.args.__contains__('sinceN') else -1
-
-        # get log parameter which is needed
-        try:
-            log = request.args['log'] == 'True'
-        except AttributeError:
-            log = False
+        log = request.args['log'] == 'True' if request.args.__contains__('log') else False
+        bar = request.args['bar'] == 'True' if request.args.__contains__('bar') else False
 
         # read the geoIds and plot the file
         geo_ids = re.split(r",\s*", countries)
-        file = generate_plot(geo_ids, wanted_attrib, last_n=last_n, log=log, since_n=since_n)
+        file = generate_plot(geo_ids, wanted_attrib, last_n=last_n, log=log, since_n=since_n, bar=bar)
 
         # return the created stream as png image
         return send_file(file, mimetype='image/PNG')
 
 
-def generate_plot(geo_ids, wanted_attrib, log=False, last_n=-1, since_n=-1):
+def generate_plot(geo_ids, wanted_attrib, log=False, last_n=-1, since_n=-1, bar=False):
     """
     Generates a plot for given GeoIds and returns it in form of a byteIO stream
     Parameters:
@@ -95,8 +91,11 @@ def generate_plot(geo_ids, wanted_attrib, log=False, last_n=-1, since_n=-1):
         builder.set_xaxis_index()
     # generate plot
     fig, ax = builder.build()
-    pldf.plot(ax=ax)
-    ax.grid()
+    if bar:
+        pldf.plot(ax=ax, kind='bar')
+    else:
+        pldf.plot(ax=ax)
+        ax.grid()
     # write image to io stream
     byte_io = io.BytesIO()
     plt.savefig(byte_io, dpi=fig.dpi)
