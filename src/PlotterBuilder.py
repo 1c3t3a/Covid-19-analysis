@@ -64,7 +64,10 @@ class PlotterBuilder:
         self.__xaxis_formatter = None
         return self
 
-    def set_axis_label(self, xlabel="", ylabel=""):
+    def set_axis_labels(self, xlabel="", ylabel=""):
+        """
+        Sets the axis labels.
+        """
         self.__xlabel = xlabel
         self.__ylabel = ylabel
         return self
