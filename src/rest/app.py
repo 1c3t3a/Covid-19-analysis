@@ -11,16 +11,16 @@ from src.CovidCases import CovidCases
 
 def setup_errorhandlers(app):
     """
-    Setup of errorhandlers for common HTTP errors.
+    Setup of error handlers for common HTTP errors.
     """
 
     @app.errorhandler(404)
-    def not_found(error):
+    def not_found(_):
         return make_response(jsonify({'error': 'Not found'}), 404)
 
     @app.errorhandler(400)
-    def bad_request(error):
-        return make_response(jsonify({'error': 'bad request'}))
+    def bad_request(_):
+        return make_response(jsonify({'error': 'bad request'}), 400)
 
 
 def setup_routes(app):
@@ -39,10 +39,9 @@ def setup_routes(app):
 
         # get log parameter which is needed
         try:
-            log = request.args['log']
+            log = request.args['log'] == 'True'
         except AttributeError:
             log = False
-            abort(400)
 
         # read the geoIds and plot the file
         geo_ids = re.split(r",\s*", countries)
@@ -62,6 +61,7 @@ def generate_plot(geo_ids, wanted_attrib, log=False, last_n=-1, since_n=-1):
         last_n: int -> plot the last n days, if not further specified all available data is plotted
         since_n: int -> plot since the nth case, if not further specified all available data is plotted
     """
+
     # load the cases
     covid_cases = CovidCases('../../data/db.json')
 
@@ -70,19 +70,18 @@ def generate_plot(geo_ids, wanted_attrib, log=False, last_n=-1, since_n=-1):
     dfdata = []
     try:
         for geoId in geo_ids:
-            if last_n != -1:
-                dfdata.append(pd.DataFrame(covid_cases.get_country_data_by_geoID(geoId, lastNdays=last_n)))
-            else:
-                dfdata.append(pd.DataFrame(covid_cases.get_country_data_by_geoID(geoId)))
+            dfdata.append(pd.DataFrame(
+                covid_cases.get_country_data_by_geoID(geoId, lastNdays=last_n, sinceNcases=since_n)))
     except IndexError:
-        abort(400)
-
+        return abort(400)
     # concat to one DataFrame and set date
     df = pd.concat(dfdata)
     df[['Date']] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
 
-    # create pivot table with all needed values
-    pldf = df.pivot_table(values=wanted_attrib, index='Date', columns='Country')
+    # create pivot table with all needed values, if the x-axis shows a timedelta with days since the nth case the index
+    # has to change
+    pldf = df.pivot_table(values=wanted_attrib, index='Date', columns='Country') if since_n == -1 \
+        else df.pivot_table(values=wanted_attrib, index=df.index, columns='Country')
 
     # use the PlotterBuilder to set up the plot
     builder = (PlotterBuilder(wanted_attrib)
@@ -90,12 +89,14 @@ def generate_plot(geo_ids, wanted_attrib, log=False, last_n=-1, since_n=-1):
                .set_grid())
     if log:
         builder.set_log()
-
+    if since_n != -1:
+        # if the plot has a timedelta on the x-axis, the label has to be reset
+        builder.set_axis_labels(xlabel="Days since case " + str(since_n))
+        builder.set_xaxis_index()
     # generate plot
     fig, ax = builder.build()
     pldf.plot(ax=ax)
     ax.grid()
-
     # write image to io stream
     byte_io = io.BytesIO()
     plt.savefig(byte_io, dpi=fig.dpi)
