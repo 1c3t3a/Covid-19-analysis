@@ -7,42 +7,39 @@ class CovidCases:
     The constructor takes a string containing the full filenname of a JSON
     database you can down load from the WHO website:
     https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
-
     The database will be loaded and kept as a private member. To retrieve the
     data for an indvidual country you can use the public methods
     GetCountryDataByGeoID or GetCountryDataByCountryName. Refer to the JSON
     file for a list of available GeoIDs and CountryNames. Both methods will
     return a list of the following fields as a JSON:
-    
+
     Date
     The date of the data Country The name of the country
-    
+
     GeoID
     The GeoID of the country such as FR for France or DE for Germany
-    
+
     Cases
     The number of cases on that day
-    
+
     CumultativeCases
     The accumulated number of cases since the 31.12.2019
-    
+
     Quotient
     The number of cases on the day devided by the number of cases of the
     previous day DoublingTime The number of days in which the number of cases
     will be doubled
-
     Deaths
     The number of deaths on the date
-    
+
     CumultativeDeaths
     The accumulated number of deaths since the 31.12.2019
-    
+
     PercentDeaths
     The number of deaths in % of the cases
-
     CasesPerMillionPopulation
-    The number of cumulative cases devide by the popolation of the countryy in million 
-    
+    The number of cumulative cases devide by the popolation of the countryy in million
+
     DeathsPerMillionPopulation
     The number of cumulative deaths devide by the popolation of the countr in million
     """
@@ -54,10 +51,10 @@ class CovidCases:
         return {
             "Country": record["countriesAndTerritories"],
             "GeoID": record["geoId"],
-            "Population": record["popData2018"],
+            "Population": int(record["popData2018"]) if record["popData2018"] != "" else 1,
             "Date": record["dateRep"],
-            "Cases": record["cases"],
-            "Deaths": record["deaths"]
+            "Cases": int(record["cases"]),
+            "Deaths": int(record["deaths"])
         }
 
     def __init__(self, filename):
@@ -72,7 +69,7 @@ class CovidCases:
         self.__db = list(map(lambda x: self.__get_common_attributes(x), self.__db))
         # dump the database
         # print(dumps(self.__db))
-    
+
     def __get_all_records(self, f):
         """
         get all records
@@ -94,17 +91,17 @@ class CovidCases:
         # loop through the list starting at index 1
         for x in range(1, n - 1):
             # the cumultative ncases of day n-1
-            dayNm1Cum = int(subset[x-1]['CumultativeCases'])
+            dayNm1Cum = int(subset[x - 1]['CumultativeCases'])
             # the cases of day n
             dayN = int(subset[x]['Cases'])
             # the cumultative cases of day n
             dayNCum = dayNm1Cum + dayN
-            subset[x].update({'CumultativeCases':  dayNCum})
+            subset[x].update({'CumultativeCases': dayNCum})
             # the quuotient of day(n) / day(n-1)
             if dayNm1Cum != 0:
-                subset[x].update({'Quotient':  dayNCum / dayNm1Cum})
+                subset[x].update({'Quotient': dayNCum / dayNm1Cum})
             else:
-                subset[x].update({'Quotient':  math.nan})
+                subset[x].update({'Quotient': math.nan})
             quotient = float(subset[x]['Quotient'])
             # the doubling time in days
             if quotient != 1.0 and quotient != math.nan:
@@ -112,12 +109,12 @@ class CovidCases:
             else:
                 subset[x].update({'DoublingTime': math.nan})
             # the cumultative deaths of day n-1
-            dayNm1CumDeaths = int(subset[x-1]['CumultativeDeaths'])
+            dayNm1CumDeaths = int(subset[x - 1]['CumultativeDeaths'])
             # the deatha of day n
             dayN = int(subset[x]['Deaths'])
             # the cumultative deaths of day n
             dayNCumDeaths = dayNm1CumDeaths + dayN
-            subset[x].update({'CumultativeDeaths':  dayNCumDeaths})
+            subset[x].update({'CumultativeDeaths': dayNCumDeaths})
             # the number of deaths in percent of the cases
             if dayNCum != 0:
                 subset[x].update({'PercentDeaths': dayNCumDeaths * 100 / dayNCum})
@@ -127,10 +124,10 @@ class CovidCases:
             population = int(subset[x]['Population']) / 1000000
             # cases per million
             casesPerMillion = dayNCum / population
-            subset[x].update({'CasesPerMillionPopulation':  casesPerMillion})
+            subset[x].update({'CasesPerMillionPopulation': casesPerMillion})
             # deaths per million
             deathsPerMillion = dayNCumDeaths / population
-            subset[x].update({'DeathsPerMillionPopulation':  deathsPerMillion})
+            subset[x].update({'DeathsPerMillionPopulation': deathsPerMillion})
             # print(subset[x])
         return subset
 

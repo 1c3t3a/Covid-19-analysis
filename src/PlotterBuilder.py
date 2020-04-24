@@ -102,4 +102,3 @@ class PlotterBuilder:
         fig, ax = self.build()
         pldf.plot(ax=ax, **options)
         ax.grid(self.__grid)
-
