@@ -1,0 +1,22 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CSWebClient.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Favourites" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;DE, FR, IT, ES, UK&lt;/string&gt;
+  &lt;string&gt;IT, ES, US, CN&lt;/string&gt;
+  &lt;string&gt;SE, NO, FI, DK&lt;/string&gt;
+  &lt;string&gt;CH, AT, KR, SL&lt;/string&gt;
+  &lt;string&gt;KR, JP, SG, TW, VN, PH, MY&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="Server" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.2.93</Value>
+    </Setting>
+    <Setting Name="Timeout" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">250</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
