@@ -13,7 +13,7 @@
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="Server" Type="System.String" Scope="User">
-      <Value Profile="(Default)">192.168.2.93</Value>
+      <Value Profile="(Default)">localhost</Value>
     </Setting>
     <Setting Name="Timeout" Type="System.UInt32" Scope="User">
       <Value Profile="(Default)">250</Value>

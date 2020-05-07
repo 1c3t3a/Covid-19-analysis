@@ -105,11 +105,12 @@ namespace CSWebClient
     /// <param name="strAttribut"> The attribut to get the data graph for</param>
     /// <param name="bLogarithmic"> A flag indicating linear or logarithmic y-axis</param>
     /// <param name="bBargraph"> A flag indicating wether to draw a line plot or bargraph</param>
+    /// <param name="strURL"> The URL being used</param>
     /// <returns></returns>
-    public System.Drawing.Bitmap GetDataChart(string strCountries, string strAttribut, bool bLogarithmic, bool bBargraph)
+    public System.Drawing.Bitmap GetDataChart(string strCountries, string strAttribut, bool bLogarithmic, bool bBargraph, out string strURL)
     {
       // build the URL
-      string strURL = "http";
+      strURL = "http";
       if (_UseHTTPS)
         strURL = strURL + "s";
       strCountries = strCountries.Replace(" ", "");
@@ -130,11 +131,12 @@ namespace CSWebClient
     /// <param name="bLogarithmic"> A flag indicating linear or logarithmic y-axis</param>
     /// <param name="bBargraph"> A flag indicating wether to draw a line plot or bargraph</param>
     /// <param name="nSince"> The number of cases</param>
+    /// <param name="strURL"> The URL being used</param>
     /// <returns></returns>
-    public System.Drawing.Bitmap GetDataChartSince(string strCountries, string strAttribut, bool bLogarithmic, bool bBargraph, int nSince)
+    public System.Drawing.Bitmap GetDataChartSince(string strCountries, string strAttribut, bool bLogarithmic, bool bBargraph, int nSince, out string strURL)
     {
       // build the URL
-      string strURL = "http";
+      strURL = "http";
       if (_UseHTTPS)
         strURL = strURL + "s";
       strCountries = strCountries.Replace(" ", "");
@@ -155,11 +157,12 @@ namespace CSWebClient
     /// <param name="bLogarithmic"> A flag indicating linear or logarithmic y-axis</param>
     /// <param name="bBargraph"> A flag indicating wether to draw a line plot or bargraph</param>
     /// <param name="nLast"> Number of last days</param>
+    /// <param name="strURL"> The URL being used</param>
     /// <returns></returns>
-    public System.Drawing.Bitmap GetDataChartLast(string strCountries, string strAttribut, bool bLogarithmic, bool bBargraph, int nLast)
+    public System.Drawing.Bitmap GetDataChartLast(string strCountries, string strAttribut, bool bLogarithmic, bool bBargraph, int nLast, out string strURL)
     {
       // build the URL
-      string strURL = "http";
+      strURL = "http";
       if (_UseHTTPS)
         strURL = strURL + "s";
       strCountries = strCountries.Replace(" ", "");
@@ -194,9 +197,9 @@ namespace CSWebClient
       {
         Console.WriteLine("Address: {0}", reply.Address.ToString());
         Console.WriteLine("RoundTrip time: {0}", reply.RoundtripTime);
-        Console.WriteLine("Time to live: {0}", reply.Options.Ttl);
-        Console.WriteLine("Don't fragment: {0}", reply.Options.DontFragment);
-        Console.WriteLine("Buffer size: {0}", reply.Buffer.Length);
+        //Console.WriteLine("Time to live: {0}", reply.Options.Ttl);
+        //Console.WriteLine("Don't fragment: {0}", reply.Options.DontFragment);
+        //Console.WriteLine("Buffer size: {0}", reply.Buffer.Length);
       }
       return reply;
     }

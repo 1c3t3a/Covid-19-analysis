@@ -142,13 +142,15 @@ namespace CSWebClient
     {
       try
       {
+        string strURL = "";
         // get the chart
         if (rbAll.Checked)
-          pbReply.Image = _cwc.GetDataChart(txtCountries.Text, _cwc.Attributes[cbAvailableAttributes.Text], rbLog.Checked, rbBarGraph.Checked);
+          pbReply.Image = _cwc.GetDataChart(txtCountries.Text, _cwc.Attributes[cbAvailableAttributes.Text], rbLog.Checked, rbBarGraph.Checked, out strURL);
         else if (rbLast.Checked)
-          pbReply.Image = _cwc.GetDataChartLast(txtCountries.Text, _cwc.Attributes[cbAvailableAttributes.Text], rbLog.Checked, rbBarGraph.Checked, (int)nudLast.Value);
+          pbReply.Image = _cwc.GetDataChartLast(txtCountries.Text, _cwc.Attributes[cbAvailableAttributes.Text], rbLog.Checked, rbBarGraph.Checked, (int)nudLast.Value, out strURL);
         else if (rbSince.Checked)
-          pbReply.Image = _cwc.GetDataChartSince(txtCountries.Text, _cwc.Attributes[cbAvailableAttributes.Text], rbLog.Checked, rbBarGraph.Checked, (int)nudSince.Value);
+          pbReply.Image = _cwc.GetDataChartSince(txtCountries.Text, _cwc.Attributes[cbAvailableAttributes.Text], rbLog.Checked, rbBarGraph.Checked, (int)nudSince.Value, out strURL);
+        tsslStatus.Text = "Connected to: " + strURL;
       }
       catch (Exception ex)
       {
