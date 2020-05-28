@@ -57,10 +57,10 @@ covidCases = CovidCases(pathToJson)
 text = "DE, FR, ES, UK, JP, IT, SG"
 data = []
 geoIDs = re.split(r",\s*", text)
-numCasesStart = 100
+numCasesStart = 500
 # collect the data for all country codes
 for geoID in geoIDs:
-    countryData = covidCases.get_country_data_by_geoID(geoID, sinceNcases=100)
+    countryData = covidCases.get_country_data_by_geoID(geoID, sinceNcases=numCasesStart)
     data.append(countryData)
 # get the data
 dfdata = [pd.DataFrame(country_data) for country_data in data]
@@ -69,17 +69,17 @@ df = pd.concat(dfdata)
 # ensure the type of the 'Date' field
 df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
 
-# plot cummulated cases
-(PlotterBuilder('CumultativeCases')
-     .set_title('Cummulated cases')
+# plot cumulated cases
+(PlotterBuilder('CumulativeCases')
+     .set_title('Cumulated cases')
      .set_xaxis_index()
      .set_grid()
      .set_axis_labels(xlabel="Days since case " + str(numCasesStart))
      .plot_dataFrame(df))
 
-# plot cummulated cases
-(PlotterBuilder('CumultativeCases')
-     .set_title('Logarithmic cummulated cases')
+# plot cumulated cases
+(PlotterBuilder('CumulativeCases')
+     .set_title('Logarithmic cumulated cases')
      .set_xaxis_index()
      .set_grid()
      .set_log()

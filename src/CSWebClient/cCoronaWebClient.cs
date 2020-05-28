@@ -68,9 +68,9 @@ namespace CSWebClient
       // a list of data description and data names
       Attributes = new Dictionary<string, string>();
       // fill the list
-      Attributes.Add("Cumulative cases", "CumultativeCases");
+      Attributes.Add("Cumulative cases", "CumulativeCases");
       Attributes.Add("Daily cases", "Cases");
-      Attributes.Add("Cumulative deaths", "CumultativeDeaths");
+      Attributes.Add("Cumulative deaths", "CumulativeDeaths");
       Attributes.Add("Daily Deaths", "Deaths");
       Attributes.Add("Percent deathly cases", "PercentDeaths");
       Attributes.Add("Doubling time [days]", "DoublingTime");
