@@ -24,7 +24,7 @@ class PlotterBuilder:
         self.__title = ""
         self.__grid = False
         self.__yscale = 'linear'
-        self.__xaxis_formatter = mdates.DateFormatter('%Y-%m-%d')
+        self.__xaxis_formatter = mdates.DateFormatter('%d/%m/%Y')
         self.__yfield = yfield
         self.__xlabel = ""
         self.__ylabel = ""

@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 import io
 import requests
 from datetime import date
-import os, sys
+import os
+import sys
 # append the src directory to the sys path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
@@ -81,7 +82,7 @@ def generate_plot(geo_ids, wanted_attrib, log=False, last_n=-1, since_n=-1, bar=
     Generates a plot for given GeoIds and returns it in form of a byteIO stream
     Parameters:
         geo_ids: [String] -> countries that should be plotted
-        wanted_attrib: String -> the field you want to plot, e.g. CumultativeCases
+        wanted_attrib: String -> the field you want to plot, e.g. CumulativeCases
         log: bool -> should the plot be logarithmic
         last_n: int -> plot the last n days, if not further specified all available data is plotted
         since_n: int -> plot since the nth case, if not further specified all available data is plotted
@@ -138,4 +139,4 @@ if __name__ == '__main__':
     app = Flask(__name__)
     setup_errorhandlers(app)
     setup_routes(app)
-    app.run(debug=False)
+    app.run(debug=True)

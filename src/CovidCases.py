@@ -22,7 +22,7 @@ class CovidCases:
     Cases
     The number of cases on that day
 
-    CumultativeCases
+    CumulativeCases
     The accumulated number of cases since the 31.12.2019
 
     Quotient
@@ -32,7 +32,7 @@ class CovidCases:
     Deaths
     The number of deaths on the date
 
-    CumultativeDeaths
+    CumulativeDeaths
     The accumulated number of deaths since the 31.12.2019
 
     PercentDeaths
@@ -65,7 +65,6 @@ class CovidCases:
         with open(filename) as f:
             self.__db = load(f)["records"]
         # map the subset
-        # __db = [GetFields (r) for r in db]
         self.__db = list(map(lambda x: self.__get_common_attributes(x), self.__db))
         # dump the database
         # print(dumps(self.__db))
@@ -80,23 +79,21 @@ class CovidCases:
         """
         add some specific attributs
         """
-        # the length of the list
-        n = len(subset)
         # add a col to the first element having the number of cases
-        subset[0].update({'CumultativeCases': int(subset[0]['Cases'])})
-        subset[0].update({'CumultativeDeaths': int(subset[0]['Deaths'])})
+        subset[0].update({'CumulativeCases': int(subset[0]['Cases'])})
+        subset[0].update({'CumulativeDeaths': int(subset[0]['Deaths'])})
         subset[0].update({'PercentDeaths': math.nan})
         subset[0].update({'CasesPerMillionPopulation': 0})
         subset[0].update({'DeathsPerMillionPopulation': 0})
         # loop through the list starting at index 1
-        for x in range(1, n - 1):
-            # the cumultative ncases of day n-1
-            dayNm1Cum = int(subset[x - 1]['CumultativeCases'])
+        for x in range(1, len(subset)):
+            # the cumulative cases of day n-1
+            dayNm1Cum = int(subset[x - 1]['CumulativeCases'])
             # the cases of day n
             dayN = int(subset[x]['Cases'])
-            # the cumultative cases of day n
+            # the cumulative cases of day n
             dayNCum = dayNm1Cum + dayN
-            subset[x].update({'CumultativeCases': dayNCum})
+            subset[x].update({'CumulativeCases': dayNCum})
             # the quuotient of day(n) / day(n-1)
             if dayNm1Cum != 0:
                 subset[x].update({'Quotient': dayNCum / dayNm1Cum})
@@ -108,13 +105,13 @@ class CovidCases:
                 subset[x].update({'DoublingTime': math.log(2) / math.log(quotient)})
             else:
                 subset[x].update({'DoublingTime': math.nan})
-            # the cumultative deaths of day n-1
-            dayNm1CumDeaths = int(subset[x - 1]['CumultativeDeaths'])
+            # the cumulative deaths of day n-1
+            dayNm1CumDeaths = int(subset[x - 1]['CumulativeDeaths'])
             # the deatha of day n
             dayN = int(subset[x]['Deaths'])
-            # the cumultative deaths of day n
+            # the cumulative deaths of day n
             dayNCumDeaths = dayNm1CumDeaths + dayN
-            subset[x].update({'CumultativeDeaths': dayNCumDeaths})
+            subset[x].update({'CumulativeDeaths': dayNCumDeaths})
             # the number of deaths in percent of the cases
             if dayNCum != 0:
                 subset[x].update({'PercentDeaths': dayNCumDeaths * 100 / dayNCum})
@@ -149,18 +146,16 @@ class CovidCases:
         if sinceNcases > 0:
             # loop through the list
             while len(subset) > 0:
-                # the cumultative ncases of x
-                numCum = int(subset[0]['CumultativeCases'])
+                # the cumulative ncases of x
+                numCum = int(subset[0]['CumulativeCases'])
                 if numCum < sinceNcases:
                     # delete it
                     subset.pop(0)
                 else:
                     # we are done
                     break
-            # the length of the list
-            n = len(subset)
             # add the index col
-            for x in range(0, n - 1):
+            for x in range(0, len(subset)):
                 subset[x].update({'Index': int(x)})
         return subset
 
