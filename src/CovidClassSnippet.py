@@ -11,8 +11,8 @@ import pandas as pd
 from pandas.io.json import json_normalize
 import re
 import matplotlib.ticker as ticker
-from CovidCases import CovidCases
-from PlotterBuilder import PlotterBuilder
+from .CovidCases import CovidCases
+from .PlotterBuilder import PlotterBuilder
 
 
 def get_JSON_filename():
