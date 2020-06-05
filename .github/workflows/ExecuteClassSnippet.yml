@@ -29,4 +29,3 @@ jobs:
     - name: Execute snippet
       run: |
         python CovidClassSnippet.py
-        pip install -r requirements.txt
