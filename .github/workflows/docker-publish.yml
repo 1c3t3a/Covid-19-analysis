@@ -3,7 +3,7 @@ name: Docker
 on: push
 
 env:
-  IMAGE_NAME: covid-api:v1.0
+  IMAGE_NAME: covid-api
 
 jobs:
   # Run tests.
