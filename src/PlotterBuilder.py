@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
+import matplotlib
 import matplotlib.dates as mdates
-
 
 class PlotterBuilder:
     """
@@ -28,6 +28,8 @@ class PlotterBuilder:
         self.__yfield = yfield
         self.__xlabel = ""
         self.__ylabel = ""
+        # change matplotlib backend to agg
+        matplotlib.use('agg')
 
     def set_figsize(self, sizes):
         """
