@@ -1,13 +1,9 @@
 name: Docker
 
-on:
-  push:
-    # Publish `v1.2.3` tags as releases.
-    tags:
-      - v1.0
+on: push
 
 env:
-  IMAGE_NAME: covid-api
+  IMAGE_NAME: covid-api:v1.0
 
 jobs:
   # Run tests.
