@@ -72,7 +72,7 @@ df = pd.concat(dfdata)
 df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
 
 # plot cumulated cases
-(PlotterBuilder('CumulativeCases', agg='Qt5Agg')
+(PlotterBuilder('CumulativeCases')
      .set_title('Cumulated cases')
      .set_xaxis_index()
      .set_grid()
@@ -80,7 +80,7 @@ df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
      .plot_dataFrame(df))
 
 # plot cumulated cases
-(PlotterBuilder('CumulativeCases', agg='Qt5Agg')
+(PlotterBuilder('CumulativeCases')
      .set_title('Logarithmic cumulated cases')
      .set_xaxis_index()
      .set_grid()
