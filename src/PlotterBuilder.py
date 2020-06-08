@@ -14,7 +14,7 @@ class PlotterBuilder:
     When plotting a DataFrame this class is always grouping by columns.
     """
 
-    def __init__(self, yfield):
+    def __init__(self, yfield, agg='agg'):
         """
         Creates an instance with mentioned default values.
         Parameter:
@@ -29,7 +29,7 @@ class PlotterBuilder:
         self.__xlabel = ""
         self.__ylabel = ""
         # change matplotlib backend to agg
-        matplotlib.use('agg')
+        matplotlib.use(agg)
 
     def set_figsize(self, sizes):
         """
