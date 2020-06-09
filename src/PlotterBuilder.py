@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 import matplotlib.dates as mdates
 
+
 class PlotterBuilder:
     """
     A class that let's you easily build the wanted plotting configuration. If not further specified you get some
@@ -14,7 +15,7 @@ class PlotterBuilder:
     When plotting a DataFrame this class is always grouping by columns.
     """
 
-    def __init__(self, yfield, agg='agg'):
+    def __init__(self, yfield):
         """
         Creates an instance with mentioned default values.
         Parameter:
@@ -28,8 +29,6 @@ class PlotterBuilder:
         self.__yfield = yfield
         self.__xlabel = ""
         self.__ylabel = ""
-        # change matplotlib backend to agg
-        matplotlib.use(agg)
 
     def set_figsize(self, sizes):
         """

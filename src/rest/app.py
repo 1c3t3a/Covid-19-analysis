@@ -3,17 +3,19 @@
 from flask import Flask, make_response, jsonify, abort, send_file, request
 import re
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
 import io
 import requests
 from datetime import date
 import os
 import sys
+
 # append the src directory to the sys path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-
 from PlotterBuilder import PlotterBuilder
 from CovidCases import CovidCases
+
 
 def get_JSON_filename():
     # todays date
@@ -39,11 +41,11 @@ def get_JSON_filename():
             raise FileNotFoundError('Error getting JSON file. Error code: ' + str(r.status_code))
     return targetFilename
 
+
 def setup_errorhandlers(app):
     """
     Setup of error handlers for common HTTP errors.
     """
-
     @app.errorhandler(404)
     def not_found(_):
         return make_response(jsonify({'error': 'Not found'}), 404)
@@ -59,7 +61,6 @@ def setup_routes(app):
     /api/data/<country codes comma separated>/<attribute to be plotted>
         ?log=(True or False)[&lastN=X if you want to plot lastNdays][&sinceN=X if you want to plot since the Nth case]
     """
-
     # setting up routes and implement methods
     @app.route('/api/data/<countries>/<wanted_attrib>', methods=['GET'])
     def get_data(countries, wanted_attrib):
@@ -87,7 +88,6 @@ def generate_plot(geo_ids, wanted_attrib, log=False, last_n=-1, since_n=-1, bar=
         last_n: int -> plot the last n days, if not further specified all available data is plotted
         since_n: int -> plot since the nth case, if not further specified all available data is plotted
     """
-
     # load the cases
     targetfile = get_JSON_filename()
     covid_cases = CovidCases(targetfile)
@@ -134,7 +134,10 @@ def generate_plot(geo_ids, wanted_attrib, log=False, last_n=-1, since_n=-1, bar=
 
     return byte_io
 
+
 if __name__ == '__main__':
+    # change matplotlib backend to agg (agg is not interactive and it can't be intaractive)
+    matplotlib.use('agg')
     # setup the Flask app
     app = Flask(__name__)
     setup_errorhandlers(app)

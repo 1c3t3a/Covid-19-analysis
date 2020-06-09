@@ -49,12 +49,12 @@ class CovidCases:
         get a subset of attributes
         """
         return {
-            "Country": record["countriesAndTerritories"],
-            "GeoID": record["geoId"],
-            "Population": int(record["popData2018"]) if record["popData2018"] != "" else 1,
-            "Date": record["dateRep"],
-            "Cases": int(record["cases"]),
-            "Deaths": int(record["deaths"])
+            'Country': record['countriesAndTerritories'],
+            'GeoID': record['geoId'],
+            'Population': int(record['popData2018']) if record['popData2018'] != '' else 1,
+            'Date': record['dateRep'],
+            'Cases': int(record['cases']),
+            'Deaths': int(record['deaths'])
         }
 
     def __init__(self, filename):
@@ -63,7 +63,7 @@ class CovidCases:
         """
         # open the file and read the 'records'
         with open(filename) as f:
-            self.__db = load(f)["records"]
+            self.__db = load(f)['records']
         # map the subset
         self.__db = list(map(lambda x: self.__get_common_attributes(x), self.__db))
         # dump the database
@@ -134,7 +134,7 @@ class CovidCases:
         """
         # specify the filter
         filters = []
-        filters.append(lambda r: r["GeoID"] == geoID)
+        filters.append(lambda r: r['GeoID'] == geoID)
         # apply the filter
         subset = list(filter(self.__get_all_records(filters), self.__db))
         # reverse the list (1st date on top of the list)
@@ -165,7 +165,7 @@ class CovidCases:
         """
         # specify the filter
         filters = []
-        filters.append(lambda r: r["countriesAndTerritories"] == countryName)
+        filters.append(lambda r: r['countriesAndTerritories'] == countryName)
         # apply the filter
         subset = list(filter(self.__get_all_records(filters), self.__db))
         # reverse the list (1st date on top of the list)
