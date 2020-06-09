@@ -28,4 +28,4 @@ jobs:
         
     - name: Execute snippet
       run: |
-        python CovidClassSnippet.py
+        python src/CovidClassSnippet.py
