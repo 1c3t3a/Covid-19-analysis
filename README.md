@@ -1,7 +1,7 @@
 # Covid-19-analysis
 ![](https://github.com/1c3t3a/Covid-19-analysis/workflows/Run%20jupyter%20notebook/badge.svg)<br>
 ![Docker](https://github.com/1c3t3a/Covid-19-analysis/workflows/Docker/badge.svg)<br>
-![Run class snippet](https://github.com/1c3t3a/Covid-19-analysis/workflows/Run%20class%20snippet/badge.svg)
+![Run class snippet](https://github.com/1c3t3a/Covid-19-analysis/workflows/Run%20class%20snippet/badge.svg)<br>. 
 Gets the WHO data about COVID-19 from the [European Center of Disease Control](https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide) and visualize them.<br>
 Additionally it will calculate some important numbers such as the doubling time and the reproduction number R0. To do so it offers a set of Python classes and functions including a Jupyter notebook to generate PDF reports. The functions are also available through a REST API and the repository offers a C# application in source code to call the REST API.<br><br>
 You basically neet to install the JupyterLab, MatPlotLib and Pandas libraries. To use some interactins in the notebook we are using ipywidgets as well.  
