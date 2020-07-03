@@ -51,7 +51,7 @@ class CovidCases:
         return {
             'Country': record['countriesAndTerritories'],
             'GeoID': record['geoId'],
-            'Population': int(record['popData2018']) if record['popData2018'] != '' else 1,
+            'Population': int(record['popData2019']) if record['popData2019'] != None else 1,
             'Date': record['dateRep'],
             'Cases': int(record['cases']),
             'Deaths': int(record['deaths'])
