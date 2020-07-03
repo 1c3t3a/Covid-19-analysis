@@ -34,8 +34,8 @@ def get_JSON_filename():
     else:
         # doownload the file from the ecdc server
         url = 'https://opendata.ecdc.europa.eu/covid19/casedistribution/json/'
-        r = requests.get(url)
-        if r.status_code == 200:
+        r = requests.get(url, timeout=0.5)
+        if r.status_code == requests.codes.ok:
             with open(targetFilename, 'wb') as f:
                 f.write(r.content)
         else:
