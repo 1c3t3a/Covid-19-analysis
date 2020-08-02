@@ -43,7 +43,7 @@ pip install -r requirements.txt
 To build the Docker image use the following command line:
 
 ```
-docker build -t flask:latest .
+docker build -t covid_api:latest .
 ```
 
 It will take a while to build but finally it will generate a Docker image that you can run using:
@@ -56,6 +56,8 @@ You may also want to try some more links such as:
 - http://localhost:8080/api/data/DE,UK,FR,IT,ES/Cases?lastN=30&bar=True
 - http://localhost:8080/api/data/JP,KR,SG/CumulativeCases?sinceN=100
 - http://localhost:8080/api/data/US,RU,BR,PE,MX/CumulativeCases?sinceN=100&log=True
+
+As this REST API is build on the [FastAPI framework](https://fastapi.tiangolo.com), the documentation is generated at <host>:8080/docs. You will find a documentation of certain parameters there as well as the possibility to test the API by submitting requests to it.
 
 To stop the Docker image use:
 
