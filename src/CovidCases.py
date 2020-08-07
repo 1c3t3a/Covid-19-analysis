@@ -1,15 +1,42 @@
+import pandas as pd
+import numpy as np
 import math
-from json import load, dumps
+import re
+import time
+import datetime
+import os
+import requests
+import re
+from datetime import date
+
+"""
+This is version2 of this file. These are the changes:
+
+- instead of the ECDC JSON file we are now using the CSV with the same data
+- instead of the JSON data structure we are now using a Pandas data frame
+  Both changes allow us to easier add new methods and analytics
+- the attribute 'Quotient' has been removed. the attribute was the number
+  of cases on the day devided by the number of cases of the
+  previous day
+- 'Continent' is a new field to analyse the distribution of cases over
+  continents
+- added a function to lowpass a attribute
+  The width of the lowpass is given by the number n. The name of the newly
+  created attribute is the given name with a tailing number n. E.g. 'Cases' 
+  with n = 7 will add to a newly added attribute named 'Cases7'.
+- added a function to save a dataframe to a CSV file
+- added a function to caculate an estimation for the reproduction rate R0
+"""
 
 
 class CovidCases:
     """
-    The constructor takes a string containing the full filenname of a JSON
+    The constructor takes a string containing the full filenname of a CSV
     database you can down load from the WHO website:
     https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
     The database will be loaded and kept as a private member. To retrieve the
     data for an indvidual country you can use the public methods
-    GetCountryDataByGeoID or GetCountryDataByCountryName. Refer to the JSON
+    GetCountryDataByGeoID or GetCountryDataByCountryName. Refer to the CSV
     file for a list of available GeoIDs and CountryNames. Both methods will
     return a list of the following fields as a JSON:
 
@@ -19,16 +46,18 @@ class CovidCases:
     GeoID
     The GeoID of the country such as FR for France or DE for Germany
 
+    Continent
+    the continet of the country
+
     Cases
     The number of cases on that day
 
     CumulativeCases
     The accumulated number of cases since the 31.12.2019
 
-    Quotient
-    The number of cases on the day devided by the number of cases of the
-    previous day DoublingTime The number of days in which the number of cases
-    will be doubled
+    DoublingTime
+    The number of days in which the number of cases will be doubled
+    
     Deaths
     The number of deaths on the date
 
@@ -37,6 +66,7 @@ class CovidCases:
 
     PercentDeaths
     The number of deaths in % of the cases
+    
     CasesPerMillionPopulation
     The number of cumulative cases devide by the popolation of the countryy in million
 
@@ -44,135 +74,291 @@ class CovidCases:
     The number of cumulative deaths devide by the popolation of the countr in million
     """
 
-    def __get_common_attributes(self, record):
-        """
-        get a subset of attributes
-        """
-        return {
-            'Country': record['countriesAndTerritories'],
-            'GeoID': record['geoId'],
-            'Population': int(record['popData2019']) if record['popData2019'] != None else 1,
-            'Date': record['dateRep'],
-            'Cases': int(record['cases']),
-            'Deaths': int(record['deaths'])
-        }
-
     def __init__(self, filename):
         """
         constructor
         """
-        # open the file and read the 'records'
-        with open(filename) as f:
-            self.__db = load(f)['records']
-        # map the subset
-        self.__db = list(map(lambda x: self.__get_common_attributes(x), self.__db))
-        # dump the database
-        # print(dumps(self.__db))
-
-    def __get_all_records(self, f):
+        # some benchmarking
+        start = time.time()
+        # open the file
+        self.__df = pd.read_csv(filename)
+        # remove columns that we don't need
+        self.__df = self.__df.drop(columns=['day', 
+                                            'month', 
+                                            'year', 
+                                            'countryterritoryCode', 
+                                            'Cumulative_number_for_14_days_of_COVID-19_cases_per_100000'])
+        # rename the columns to be more readable
+        self.__df.columns = ['Date',
+                             'Cases',
+                             'Deaths',
+                             'Country',
+                             'GeoID',
+                             'Population',
+                             'Continent']
+        # change the type of the 'date' field to a pandas date
+        self.__df['Date'] = pd.to_datetime(self.__df['Date'],
+                                           format='%d/%m/%Y')
+        # some benchmarking
+        end = time.time()
+        print('Panda loading the CSV: ' + str(end - start) + 's')
+        
+    @staticmethod
+    def download_CSV_file():
         """
-        get all records
+        automatically downloads the database file if it doesn't exists. need
+        to be called in a try-catch block as it may throw FileNotFoundError or
+        IOError errors
         """
-        return lambda y: all([x(y) for x in f])
-
-    def __add_extra_atributes(self, subset):
-        """
-        add some specific attributs
-        """
-        # add a col to the first element having the number of cases
-        subset[0].update({'CumulativeCases': int(subset[0]['Cases'])})
-        subset[0].update({'CumulativeDeaths': int(subset[0]['Deaths'])})
-        subset[0].update({'PercentDeaths': math.nan})
-        subset[0].update({'CasesPerMillionPopulation': 0})
-        subset[0].update({'DeathsPerMillionPopulation': 0})
-        # loop through the list starting at index 1
-        for x in range(1, len(subset)):
-            # the cumulative cases of day n-1
-            dayNm1Cum = int(subset[x - 1]['CumulativeCases'])
-            # the cases of day n
-            dayN = int(subset[x]['Cases'])
-            # the cumulative cases of day n
-            dayNCum = dayNm1Cum + dayN
-            subset[x].update({'CumulativeCases': dayNCum})
-            # the quuotient of day(n) / day(n-1)
-            if dayNm1Cum != 0:
-                subset[x].update({'Quotient': dayNCum / dayNm1Cum})
+        # todays date
+        today = date.today()
+        # the prefix of the CSV file is Y-m-d
+        preFix = today.strftime('%Y-%m-%d')
+        try:
+            get_ipython
+            # the absolut directory of this python file
+            absDirectory = os.path.dirname(os.path.abspath(os.path.abspath('')))
+            # the target filename
+            targetFilename = os.path.join(absDirectory, './data/' + preFix + '-db.csv')
+        except:
+            # the absolut directory of this python file
+            absDirectory = os.path.dirname(os.path.abspath(__file__))
+            # the target filename
+            targetFilename = os.path.join(absDirectory, '../data/' + preFix + '-db.csv')
+        # check if it exist already
+        if os.path.exists(targetFilename):
+            print('using existing file: ' + targetFilename)
+        else:
+            # doownload the file from the ecdc server
+            url = 'https://opendata.ecdc.europa.eu/covid19/casedistribution/csv/'
+            r = requests.get(url, timeout=1.0)
+            if r.status_code == requests.codes.ok:
+                with open(targetFilename, 'wb') as f:
+                    f.write(r.content)
             else:
-                subset[x].update({'Quotient': math.nan})
-            quotient = float(subset[x]['Quotient'])
-            # the doubling time in days
-            if quotient != 1.0 and quotient != math.nan:
-                subset[x].update({'DoublingTime': math.log(2) / math.log(quotient)})
-            else:
-                subset[x].update({'DoublingTime': math.nan})
-            # the cumulative deaths of day n-1
-            dayNm1CumDeaths = int(subset[x - 1]['CumulativeDeaths'])
-            # the deatha of day n
-            dayN = int(subset[x]['Deaths'])
-            # the cumulative deaths of day n
-            dayNCumDeaths = dayNm1CumDeaths + dayN
-            subset[x].update({'CumulativeDeaths': dayNCumDeaths})
-            # the number of deaths in percent of the cases
-            if dayNCum != 0:
-                subset[x].update({'PercentDeaths': dayNCumDeaths * 100 / dayNCum})
-            else:
-                subset[x].update({'PercentDeaths': math.nan})
-            # the population in million
-            population = int(subset[x]['Population']) / 1000000
-            # cases per million
-            casesPerMillion = dayNCum / population
-            subset[x].update({'CasesPerMillionPopulation': casesPerMillion})
-            # deaths per million
-            deathsPerMillion = dayNCumDeaths / population
-            subset[x].update({'DeathsPerMillionPopulation': deathsPerMillion})
-            # print(subset[x])
-        return subset
+                raise FileNotFoundError('Error getting CSV file. Error code: ' + str(r.status_code))
+        return targetFilename
 
-    def get_country_data_by_geoID(self, geoID, lastNdays=0, sinceNcases=0):
+    @staticmethod
+    def __compute_doubling_time(dfSingleCountry):
         """
-        return the list of cases by geoID
+        Computes the doubling time for everyday day with the formular:
+                ln(2) / ln(Conf[n] / Conf[n - 1])
+        returns it as a dataframe
         """
-        # specify the filter
-        filters = []
-        filters.append(lambda r: r['GeoID'] == geoID)
-        # apply the filter
-        subset = list(filter(self.__get_all_records(filters), self.__db))
-        # reverse the list (1st date on top of the list)
-        subset.reverse()
-        subset = self.__add_extra_atributes(subset)
-        if lastNdays > 0:
-            start_index = len(subset) - lastNdays
-            subset = subset[start_index:]
-        if sinceNcases > 0:
-            # loop through the list
-            while len(subset) > 0:
-                # the cumulative ncases of x
-                numCum = int(subset[0]['CumulativeCases'])
-                if numCum < sinceNcases:
-                    # delete it
-                    subset.pop(0)
+        result = []
+        quotient = []
+        for index, value in dfSingleCountry['CumulativeCases'].iteritems():
+            #  calculating the quotient conf[n] / conf[n-1]
+            if index > 0 and index - 1 != 0:
+                quotient.append(value / dfSingleCountry['CumulativeCases'][index - 1])
+            else:
+                quotient.append(math.nan)
+            # calculates the doubling time (can't be calculated when there's 
+            # no change from one day to the other)
+            if quotient[index] != 1 and quotient[index] != math.nan:
+                result.append(math.log(2) / math.log(quotient[index]))
+            else:
+                result.append(math.nan)
+        # return the dataframe
+        return pd.DataFrame(np.asarray(result))
+
+    def __add_additional_attributes(self, dfSingleCountry):
+        """
+        Adds additional attributes to a dataframe of a single country.   
+        """
+        # reset the index on the dataframe (if the argument is just a slice)
+        dfSingleCountry.reset_index(inplace=True, drop=True)
+        
+        # the cumlative cases
+        dfSingleCountry['CumulativeCases'] = dfSingleCountry['Cases'].cumsum()
+        # the cumlative cases
+        dfSingleCountry['CumulativeDeaths'] = dfSingleCountry['Deaths'].cumsum()
+        # the percentage of deaths of the cumulative cases
+        dfSingleCountry['PercentDeaths'] = pd.DataFrame({'PercentDeaths': dfSingleCountry['CumulativeDeaths'] * 100 / dfSingleCountry['CumulativeCases']})
+        # the percentage of cumulative cases of the 1 million population
+        dfSingleCountry['CasesPerMillionPopulation'] = pd.DataFrame({'CasesPerMillionPopulation': dfSingleCountry['CumulativeCases'].div(dfSingleCountry['Population'].iloc[0] / 1000000)})
+        # the percantage of cumulative deaths of 1 million population
+        dfSingleCountry['DeathsPerMillionPopulation'] = pd.DataFrame({'DeathsPerMillionPopulation': dfSingleCountry['CumulativeDeaths'].div(dfSingleCountry['Population'].iloc[0] / 1000000)})
+        # adds the extra attributes
+        dfSingleCountry['DoublingTime'] = self.__compute_doubling_time(dfSingleCountry)
+        # return the manipulated dataframe
+        return dfSingleCountry
+
+    def __apply_lowpass_filter(self, dfAttribute, n):
+        """
+        Returns a dataframe containing the lowpass filtered (with depth n) 
+        data of the given dataframe.
+        """
+        result = []
+        # iterate the attribute
+        for index, value in dfAttribute.iteritems():
+            # if the dataframe contains NaN, leave it untouched
+            if math.isnan(value):
+                result.append(math.nan)
+                continue
+            if index == 0:
+                result.append(value)
+            # for all rows below the nth row, calculate the lowpass filter up to this point
+            elif index < n:
+                result.append(sum(dfAttribute[0:index + 1]) / (index + 1))
+            else:
+                start = index - n + 1
+                result.append(sum(dfAttribute[start:start + n]) / n)
+        # return the calculated data as an array
+        return pd.DataFrame(np.asarray(result))
+
+    def add_lowpass_filter_for_attribute(self, df, attribute, n):
+        """
+        Adds a atribute to the df of each country that is the lowpass filtered
+        data of the given attribute. The width of the lowpass is given by then
+        number n. The name of the newly created attribute is the given name
+        with a tailing number n. E.g. 'Cases' with n = 7 will add to a newly
+        added attribute named 'Cases7'.
+        If the attribute already exists the function will return the given df.
+        """
+        # check if the attribute already exists
+        requestedAttribute = attribute + str(n)
+        for col in df.columns:
+            if col == requestedAttribute:
+                return df
+        # get all GeoIDs in the df
+        geoIDs = df['GeoID'].unique()
+        # our result data frame
+        dfs = []
+        for geoID in geoIDs:
+            # get the country dataframe
+            dfSingleCountry = df.loc[df['GeoID'] == geoID].copy()
+            # reset the index to start from index = 0
+            dfSingleCountry.reset_index(inplace=True, drop=True)
+            # add the lowpass filtered attribute
+            dfSingleCountry[requestedAttribute] = self.__apply_lowpass_filter(dfSingleCountry[attribute], 7)
+            # add the coiuntry to the result
+            dfs.append(dfSingleCountry)
+        return pd.concat(dfs)
+
+    def __apply_r0(self, dfCases):
+        """
+        Returns a dataframe containing an estimation for the reproduction
+        number R0 of the dataframe given. The given dataframe has to contain
+        'Cases'.
+        """
+        # add the r0 attribute
+        result = []
+        # we will create 2 blocks and sum the data of each block
+        blockSize = 4
+        # iterate the cases
+        for index, value in dfCases.iteritems():
+            if index < 2 * blockSize - 1:
+                result.append(math.nan)
+            else:
+                # the sum of block 0
+                start = index - (2 * blockSize - 1)
+                sum0 = sum(dfCases[start: start + blockSize])
+                # the sum of block 1
+                start = index - (blockSize - 1)
+                sum1 = sum(dfCases[start: start + blockSize])
+                # and R
+                if sum0 == 0:
+                    R = math.nan
                 else:
-                    # we are done
-                    break
-            # add the index col
-            for x in range(0, len(subset)):
-                subset[x].update({'Index': int(x)})
-        return subset
+                    R = sum1 / sum0
+                result.append(R)
+        # return the calculated data as an array
+        return pd.DataFrame(np.asarray(result))
 
-    def get_country_data_by_country_name(self, countryName, lastNdays=0):
+    def add_r0(self, df):
         """
-        return the list of cases by country name
+        Adds a atribute to the df of each country that is an estimation of the
+        reproduction number R0. Here the number is called 'R'. The returned
+        dataframe should finally lowpassed filtered with a kernel size of 1x7.
+        If the attribute already exists the function will return the given df.
         """
-        # specify the filter
-        filters = []
-        filters.append(lambda r: r['countriesAndTerritories'] == countryName)
-        # apply the filter
-        subset = list(filter(self.__get_all_records(filters), self.__db))
-        # reverse the list (1st date on top of the list)
-        subset.reverse()
-        # add additonal fields
-        subset = self.__add_extra_atributes(subset)
-        if lastNdays > 0:
-            start_index = len(subset) - lastNdays
-            subset = subset[start_index:]
-        return subset
+        # check if the attribute already exists
+        requestedAttribute = 'R'
+        for col in df.columns:
+            if col == requestedAttribute:
+                return df
+        # get all GeoIDs in the df
+        geoIDs = df['GeoID'].unique()
+        # our result data frame
+        dfs = []
+        for geoID in geoIDs:
+            # get the country dataframe
+            dfSingleCountry = df.loc[df['GeoID'] == geoID].copy()
+            # reset the index to start from index = 0
+            dfSingleCountry.reset_index(inplace=True, drop=True)
+            # add the lowpass filtered attribute
+            dfSingleCountry[requestedAttribute] = self.__apply_r0(dfSingleCountry['Cases'])
+            # add the coiuntry to the result
+            dfs.append(dfSingleCountry)
+        return pd.concat(dfs)
+
+    def save_df_to_csv(self, df, filename):
+        """
+        Saves a df to a CSV file
+        """
+        df.to_csv(filename)
+
+    def get_country_data_by_geoid_list(self, geoIDs, lastNdays=0, sinceNcases=0):
+        """
+        Return the dataframe by a list of geoIDs. Optional attributes are:
+        lastNdays: returns just the data of the last n days.
+        sinceNcases: returns just the data since the nth case.
+        """
+        # check if only one optional parameter is used
+        if lastNdays > 0 and sinceNcases > 0:
+            raise ValueError("Only one optional parameter allowed!")
+        # our result data frame
+        dfs = []
+        # get data for each country
+        for geoID in geoIDs:
+            # get the data for a country and add the additional rows
+            df = self.__df.loc[self.__df['GeoID'] == geoID].copy()
+            # reverse the data frame to the newest date in the bottom
+            df = df.reindex(index=df.index[::-1])
+            df.head()
+            df = self.__add_additional_attributes(df)
+            # if lastNdays is specified just return these last n days
+            if lastNdays > 0:
+                df = df.tail(lastNdays)
+            # if sinceNcases is specified calculate the start index
+            if sinceNcases > 0:
+                start = -1
+                for index, val in df['CumulativeCases'].iteritems():
+                    if val >= sinceNcases:
+                        start = index
+                        break
+                # an illegal input will cause an exception
+                if start == -1:
+                    raise ValueError("Number of cases wasn't that high!")
+                # copy the data
+                df = df.iloc[start:].copy()
+                # reset the index on the remaining data points so that they
+                # start at zero
+                df.reset_index(inplace=True, drop=True)
+            # append this dataframe to our result
+            dfs.append(df)
+        # return the concatenated dataframe
+        return pd.concat(dfs)
+
+    def get_country_data_by_geoid_string_list(self, geoIDstringList, lastNdays=0, sinceNcases=0):
+        """
+        Return the dataframe by a comma separated list of geoIDs. Optional
+        attributes are:
+        lastNdays: returns just the data of the last n days.
+        sinceNcases: returns just the data since the nth case.
+        """
+        # split the string
+        geoIDs = re.split(r',\s*', geoIDstringList.upper())
+        # return the concatenated dataframe
+        return self.get_country_data_by_geoid_list(geoIDs, lastNdays, sinceNcases)
+
+    def get_all_country_data(self, lastNdays=0, sinceNcases=0):
+        """
+        Return the dataframe of all countries. Optional attributes are:
+        lastNdays: returns just the data of the last n days.
+        sinceNcases: returns just the data since the nth case.
+        """
+        # return all countries, but first add the extra columns
+        return self.get_country_data_by_geoid_list(self.__df['Country'].unique(), lastNdays=lastNdays, sinceNcases=sinceNcases)
