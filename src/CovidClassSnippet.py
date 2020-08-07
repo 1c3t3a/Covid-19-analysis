@@ -4,8 +4,8 @@ import math
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import pandas as pd
-from .. CovidCases import CovidCases
-from .PlotterBuilder import PlotterBuilder
+from CovidCases import CovidCases
+from PlotterBuilder import PlotterBuilder
 
 
 # get the latests database file as a CSV
