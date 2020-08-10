@@ -9,123 +9,122 @@ from datetime import date
 import os
 import sys
 from starlette.responses import StreamingResponse
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from enum import Enum
 # append the src directory to the sys path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from PlotterBuilder import PlotterBuilder
 from CovidCases import CovidCases
-
 class Attributes(Enum):
-    Cases='Cases'
-    CumulativeCases='CumulativeCases'
-    CumulativeDeaths='CumulativeDeaths'
-    PercentDeaths='PercentDeaths'
-    DeathsPerMillionPopulation='DeathsPerMillionPopulation'
-    Quotient='Quotient'
-    CasesPerMillionPopulation='CasesPerMillionPopulation'
-
-def get_JSON_filename():
-    # todays date
-    today = date.today()
-    # the prefix of the JSON file is Y-m-d
-    preFix = today.strftime("%Y-%m-%d")
-    # the absolut directory of this python file
-    absDirectory = os.path.dirname(os.path.abspath(__file__))
-    # the target filename
-    targetFilename = os.path.join(absDirectory, "../../data/" + preFix + "-db.json")
-    print('target file: ', targetFilename)
-    # check if it exist already
-    if os.path.exists(targetFilename):
-        print('using existing file: ' + targetFilename)
-    else:
-        # doownload the file from the ecdc server
-        url = "https://opendata.ecdc.europa.eu/covid19/casedistribution/json/"
-        r = requests.get(url)
-        if r.status_code == 200:
-            with open(targetFilename, 'wb') as f:
-                f.write(r.content)
-        else:
-            raise FileNotFoundError('Error getting JSON file. Error code: ' + str(r.status_code))
-    return targetFilename
-
-def setup_routes(app):
     """
-    Setup of the route. The url has to be in the form:
-    /api/data/<country codes comma separated>/<attribute to be plotted>
-        ?log=(True or False)[&lastN=X if you want to plot lastNdays][&sinceN=X if you want to plot since the Nth case]
+    Enumeration of all available plotable attributes.
     """
+    Cases = 'Cases'
+    CumulativeCases = 'CumulativeCases'
+    CumulativeDeaths = 'CumulativeDeaths'
+    PercentDeaths = 'PercentDeaths'
+    DeathsPerMillionPopulation = 'DeathsPerMillionPopulation'
+    CasesPerMillionPopulation = 'CasesPerMillionPopulation'
+    R='R'
+    R7='R7'
+    Cases7='Cases7'
+    Deaths7='Deaths7'
 
-
-    def generate_plot(geo_ids, wanted_attrib, log=False, last_n=-1, since_n=-1, bar=False):
-        """
-        Generates a plot for given GeoIds and returns it in form of a byteIO stream
-        Parameters:
-            geo_ids: [String] -> countries that should be plotted
-            wanted_attrib: String -> the field you want to plot, e.g. CumulativeCases
-            log: bool -> should the plot be logarithmic
-            last_n: int -> plot the last n days, if not further specified all available data is plotted
-            since_n: int -> plot since the nth case, if not further specified all available data is plotted
-        """
+class Rest_API:
+    def __init__(self):
         # load the cases
-        targetfile = get_JSON_filename()
-        covid_cases = CovidCases(targetfile)
+        csv_file = CovidCases.download_CSV_file()
+        self.covid_cases = CovidCases(csv_file)
 
-        # try to collect the data for given geoIds, if a wrong geoId is passed, the operation will abort with a 400
-        # bad request error
-        dfdata = []
-        try:
-            for geoId in geo_ids:
-                dfdata.append(pd.DataFrame(
-                    covid_cases.get_country_data_by_geoID(geoId, lastNdays=last_n if last_n else -1, sinceNcases=since_n if since_n else -1)))
-        except IndexError:
-            return HTTPException(status_code=400, detail="Couldn't load data")
-        # concat to one DataFrame and set date
-        df = pd.concat(dfdata)
-        df[['Date']] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
+    def generate_plot(self, geo_ids, wanted_attrib, log=False, last_n=-1, since_n=-1, bar=False):
+            """
+            Generates a plot for given GeoIds and returns it in form of a byteIO stream
+            Parameters:
+                geo_ids: [String] -> countries that should be plotted
+                wanted_attrib: String -> the field you want to plot, e.g. CumulativeCases
+                log: bool -> should the plot be logarithmic
+                last_n: int -> plot the last n days, if not further specified all available data is plotted
+                since_n: int -> plot since the nth case, if not further specified all available data is plotted
+            """
 
-        # create pivot table with all needed values, if the x-axis shows a timedelta with days since the nth case the index
-        # has to change
-        pldf = df.pivot_table(values=wanted_attrib.name, index='Date', columns='Country') if since_n == -1 \
-            else df.pivot_table(values=wanted_attrib.name, index=df.index, columns='Country')
+            # try to collect the data for given geoIds, if a wrong geoId is passed, the operation will abort with a 400
+            # bad request error
+            try:
+                df = self.covid_cases.get_country_data_by_geoid_list(
+                    geo_ids, lastNdays=last_n, sinceNcases=since_n)
+            except IndexError:
+                raise HTTPException(
+                    status_code=400, detail="Couldn't load data")
 
-        # use the PlotterBuilder to set up the plot
-        builder = (PlotterBuilder(wanted_attrib)
-                .set_title(re.sub("([a-z])([A-Z])", "\g<1> \g<2>", wanted_attrib.name))
-                .set_grid())
-        if log:
-            builder.set_log()
-        if since_n != -1:
-            # if the plot has a timedelta on the x-axis, the label has to be reset
-            builder.set_axis_labels(xlabel="Days since case " + str(since_n))
-            builder.set_xaxis_index()
-        # generate plot
-        fig, ax = builder.build()
-        if bar:
-            pldf.plot(ax=ax, kind='bar')
-        else:
-            pldf.plot(ax=ax)
-            ax.grid()
-        # write image to io stream
-        byte_io = io.BytesIO()
-        plt.savefig(byte_io, dpi=fig.dpi)
-        byte_io.seek(0)
+            # if the wanted attribute is one that need to be calculated, calculate it
+            if wanted_attrib == Attributes.R or Attributes.R7:
+                df = self.covid_cases.add_r0(df)
+            if wanted_attrib == Attributes.R7:
+                df = self.covid_cases.add_lowpass_filter_for_attribute(df, 'R', 7)
+            if wanted_attrib == Attributes.Cases7:
+                df = self.covid_cases.add_lowpass_filter_for_attribute(df, 'Cases', 7)
+            if wanted_attrib == Attributes.Deaths7:
+                df = self.covid_cases.add_lowpass_filter_for_attribute(df, 'Deaths', 7)
+            
+            # concat to one DataFrame and set date
+            df[['Date']] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
+            # create pivot table with all needed values, if the x-axis shows a timedelta with days since the nth case the index
+            # has to change
+            pldf = df.pivot_table(values=wanted_attrib.name, index='Date', columns='Country') if since_n == -1 \
+                else df.pivot_table(values=wanted_attrib.name, index=df.index, columns='Country')
 
-        return byte_io
+            # use the PlotterBuilder to set up the plot
+            builder = (PlotterBuilder(wanted_attrib)
+                       .set_title(re.sub(r"([a-z])([A-Z])", r"\g<1> \g<2>", wanted_attrib.name))
+                       .set_grid())
+            if log:
+                builder.set_log()
+            if since_n != -1:
+                # if the plot has a timedelta on the x-axis, the label has to be reset
+                builder.set_axis_labels(
+                    xlabel="Days since case " + str(since_n))
+                builder.set_xaxis_index()
+            # generate plot
+            fig, ax = builder.build()
+            if bar:
+                pldf.plot(ax=ax, kind='bar')
+            else:
+                pldf.plot(ax=ax)
+                ax.grid()
+            # write image to io stream
+            byte_io = io.BytesIO()
+            plt.savefig(byte_io, dpi=fig.dpi)
+            byte_io.seek(0)
 
-    # setting up routes and implement methods
-    @app.get('/api/data/{countries}/{wanted_attrib}')
-    def get_data(countries: str, wanted_attrib: Attributes, sinceN: Optional[int] = None, lastN: Optional[int] = None, log: Optional[bool] = None, bar: Optional[bool] = None):
+            return byte_io
 
-        # read the geoIds and plot the file
-        geo_ids = re.split(r",\s*", countries)
-        file = generate_plot(geo_ids, wanted_attrib, last_n=lastN, log=log, since_n=sinceN, bar=bar)
+    def setup_routes(self, app: FastAPI):
+        """
+        Setup of the route. The url has to be in the form:
+        /api/data/<country codes comma separated>/<attribute to be plotted>
+            ?log=(True or False)[&lastN=X if you want to plot lastNdays][&sinceN=X if you want to plot since the Nth case]
+        """
 
-        # return the created stream as png image
-        return StreamingResponse(file, media_type="image/png")
+        # setting up routes and implement methods
+        @app.get('/api/data/{countries}/{wanted_attrib}')
+        def get_data(countries: str, wanted_attrib: Attributes, sinceN: Optional[int] = None, lastN: Optional[int] = None, log: Optional[bool] = None, bar: Optional[bool] = None):
+            """
+            Returns a png image of the plotted Attribute (see Attributes) for a list of Countries(comma seperated). The URL needs to be in the following form:
+            **/api/data/<country codes comma separated>/<attribute to be plotted>
+            ?log=(True or False)[&lastN=X if you want to plot lastNdays][&sinceN=X if you want to plot since the Nth case]**
+            SinceN and lastN plots the data starting from the given case or just the lastN days. Log is a boolean value that converts the y-scale to the logarithmic unit.
+            """
+            # read the geoIds and plot the file
+            geo_ids = re.split(r",\s*", countries.upper())
+            file = self.generate_plot(geo_ids, wanted_attrib,
+                                 last_n=lastN if lastN != None else -1, log=log, since_n=sinceN if sinceN != None else -1, bar=bar)
+
+            # return the created stream as png image
+            return StreamingResponse(file, media_type="image/png")
 
 
-app = FastAPI()
+
 # change matplotlib backend to agg (agg is not interactive and it can't be intaractive)
 matplotlib.use('agg')
-setup_routes(app)
+app = FastAPI()
+Rest_API().setup_routes(app)
