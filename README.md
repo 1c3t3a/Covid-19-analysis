@@ -49,7 +49,7 @@ docker build -t covid_api:latest .
 It will take a while to build but finally it will generate a Docker image that you can run using:
 
 ```
-docker run -d -p 8080:5000 --name covidREST flask 
+docker run -d -p 8080:5000 --name covidREST covid_api:latest 
 ```
 This will start a Docker container that is running the REST API and that is listing to port 8080. The container name is *covidREST*. Port 8080 on the host is mapped to port 5000 inside the container. Start a browser and go to the following web site http://localhost:8080/api/data/DE,UK,FR,IT,ES/CumulativeCases
 You may also want to try some more links such as:
