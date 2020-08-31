@@ -31,10 +31,6 @@ class Attributes(Enum):
     Deaths7='Deaths7'
 
 class Rest_API:
-    def __init__(self):
-        # load the cases
-        csv_file = CovidCases.download_CSV_file()
-        self.covid_cases = CovidCases(csv_file)
 
     def generate_plot(self, geo_ids, wanted_attrib, log=False, last_n=-1, since_n=-1, bar=False):
             """
@@ -46,7 +42,10 @@ class Rest_API:
                 last_n: int -> plot the last n days, if not further specified all available data is plotted
                 since_n: int -> plot since the nth case, if not further specified all available data is plotted
             """
-
+            # load the cases
+            csv_file = CovidCases.download_CSV_file()
+            self.covid_cases = CovidCases(csv_file)
+            
             # try to collect the data for given geoIds, if a wrong geoId is passed, the operation will abort with a 400
             # bad request error
             try:
