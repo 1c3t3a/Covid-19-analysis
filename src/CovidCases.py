@@ -10,6 +10,15 @@ import re
 from datetime import date
 
 """
+This are the changes in version 3  
+  
+- renamed 'Cases' to 'DailyCases'
+- renamed 'Deaths' to 'DailyDeaths'
+- renamed 'CumulativeCases' to 'Cases'
+- renames 'CumulativeDeaths' to 'Deaths'
+- added method to get a list of available GeoIDs/CountyNames (get_available_GeoID_list)
+- added method to get the accumulated 7 day incidence (add_incidence_7day_per_100Kpopulation)
+
 This is version2 of this file. These are the changes:
 
 - instead of the ECDC JSON file we are now using the CSV with the same data
@@ -49,24 +58,27 @@ class CovidCases:
     Continent
     the continet of the country
 
-    Cases
-    The number of cases on that day
+    DailyCases
+    The number of new cases on a given day
 
-    CumulativeCases
+    Incidence7DayPer100Kpopulation
+    The accumulated 7 day incidence. That is the sum of daily cases of the last 7 days divided by the popolation in 100000
+
+    Cases
     The accumulated number of cases since the 31.12.2019
 
     DoublingTime
     The number of days in which the number of cases will be doubled
-    
-    Deaths
-    The number of deaths on the date
 
-    CumulativeDeaths
+    DailyDeaths
+    The number of new deaths on the given date
+
+    Deaths
     The accumulated number of deaths since the 31.12.2019
 
     PercentDeaths
     The number of deaths in % of the cases
-    
+
     CasesPerMillionPopulation
     The number of cumulative cases devide by the popolation of the countryy in million
 
@@ -90,8 +102,8 @@ class CovidCases:
                                             'Cumulative_number_for_14_days_of_COVID-19_cases_per_100000'])
         # rename the columns to be more readable
         self.__df.columns = ['Date',
-                             'Cases',
-                             'Deaths',
+                             'DailyCases',
+                             'DailyDeaths',
                              'Country',
                              'GeoID',
                              'Population',
@@ -102,7 +114,7 @@ class CovidCases:
         # some benchmarking
         end = time.time()
         print('Panda loading the CSV: ' + str(end - start) + 's')
-        
+
     @staticmethod
     def download_CSV_file():
         """
@@ -115,6 +127,7 @@ class CovidCases:
         # the prefix of the CSV file is Y-m-d
         preFix = today.strftime('%Y-%m-%d')
         try:
+            # check if it is running in jupyter
             get_ipython
             # the absolut directory of this python file
             absDirectory = os.path.dirname(os.path.abspath(os.path.abspath('')))
@@ -148,10 +161,10 @@ class CovidCases:
         """
         result = []
         quotient = []
-        for index, value in dfSingleCountry['CumulativeCases'].iteritems():
+        for index, value in dfSingleCountry['Cases'].iteritems():
             #  calculating the quotient conf[n] / conf[n-1]
             if index > 0 and index - 1 != 0:
-                quotient.append(value / dfSingleCountry['CumulativeCases'][index - 1])
+                quotient.append(value / dfSingleCountry['Cases'][index - 1])
             else:
                 quotient.append(math.nan)
             # calculates the doubling time (can't be calculated when there's 
@@ -169,17 +182,17 @@ class CovidCases:
         """
         # reset the index on the dataframe (if the argument is just a slice)
         dfSingleCountry.reset_index(inplace=True, drop=True)
-        
+
         # the cumlative cases
-        dfSingleCountry['CumulativeCases'] = dfSingleCountry['Cases'].cumsum()
+        dfSingleCountry['Cases'] = dfSingleCountry['DailyCases'].cumsum()
         # the cumlative cases
-        dfSingleCountry['CumulativeDeaths'] = dfSingleCountry['Deaths'].cumsum()
+        dfSingleCountry['Deaths'] = dfSingleCountry['DailyDeaths'].cumsum()
         # the percentage of deaths of the cumulative cases
-        dfSingleCountry['PercentDeaths'] = pd.DataFrame({'PercentDeaths': dfSingleCountry['CumulativeDeaths'] * 100 / dfSingleCountry['CumulativeCases']})
+        dfSingleCountry['PercentDeaths'] = pd.DataFrame({'PercentDeaths': dfSingleCountry['Deaths'] * 100 / dfSingleCountry['Cases']})
         # the percentage of cumulative cases of the 1 million population
-        dfSingleCountry['CasesPerMillionPopulation'] = pd.DataFrame({'CasesPerMillionPopulation': dfSingleCountry['CumulativeCases'].div(dfSingleCountry['Population'].iloc[0] / 1000000)})
+        dfSingleCountry['CasesPerMillionPopulation'] = pd.DataFrame({'CasesPerMillionPopulation': dfSingleCountry['Cases'].div(dfSingleCountry['Population'].iloc[0] / 1000000)})
         # the percantage of cumulative deaths of 1 million population
-        dfSingleCountry['DeathsPerMillionPopulation'] = pd.DataFrame({'DeathsPerMillionPopulation': dfSingleCountry['CumulativeDeaths'].div(dfSingleCountry['Population'].iloc[0] / 1000000)})
+        dfSingleCountry['DeathsPerMillionPopulation'] = pd.DataFrame({'DeathsPerMillionPopulation': dfSingleCountry['Deaths'].div(dfSingleCountry['Population'].iloc[0] / 1000000)})
         # adds the extra attributes
         dfSingleCountry['DoublingTime'] = self.__compute_doubling_time(dfSingleCountry)
         # return the manipulated dataframe
@@ -187,7 +200,7 @@ class CovidCases:
 
     def __apply_lowpass_filter(self, dfAttribute, n):
         """
-        Returns a dataframe containing the lowpass filtered (with depth n) 
+        Returns a dataframe containing the lowpass filtered (with depth n)
         data of the given dataframe.
         """
         result = []
@@ -213,7 +226,7 @@ class CovidCases:
         Adds a atribute to the df of each country that is the lowpass filtered
         data of the given attribute. The width of the lowpass is given by then
         number n. The name of the newly created attribute is the given name
-        with a tailing number n. E.g. 'Cases' with n = 7 will add to a newly
+        with a tailing number n. E.g. 'DailyCases' with n = 7 will add to a newly
         added attribute named 'Cases7'.
         If the attribute already exists the function will return the given df.
         """
@@ -241,7 +254,7 @@ class CovidCases:
         """
         Returns a dataframe containing an estimation for the reproduction
         number R0 of the dataframe given. The given dataframe has to contain
-        'Cases'.
+        'DailyCases'.
         """
         # add the r0 attribute
         result = []
@@ -289,7 +302,53 @@ class CovidCases:
             # reset the index to start from index = 0
             dfSingleCountry.reset_index(inplace=True, drop=True)
             # add the lowpass filtered attribute
-            dfSingleCountry[requestedAttribute] = self.__apply_r0(dfSingleCountry['Cases'])
+            dfSingleCountry[requestedAttribute] = self.__apply_r0(dfSingleCountry['DailyCases'])
+            # add the coiuntry to the result
+            dfs.append(dfSingleCountry)
+        return pd.concat(dfs)
+
+    def __apply_incidence_7day_per_100Kpopulation(self, dfAttribute, dfPopulation):
+        """
+        Returns a dataframe containing the accumulated 7 day incidence
+        of the given dataframe containing only< one country.
+        """
+        result = []
+        # iterate the attribute
+        for index, value in dfAttribute.iteritems():
+            # for all rows below the nth row, calculate the lowpass filter up to this point
+            if index < 7:
+                daysSum7 = sum(dfAttribute[0:index + 1]) * 7 / (index + 1)
+                result.append(daysSum7  / (dfPopulation[index] / 100000))
+            else:
+                start = index - 7 + 1
+                daysSum7 = sum(dfAttribute[start:start + 7])
+                result.append(daysSum7 / (dfPopulation[index] / 100000))
+        # return the calculated data as an array
+        return pd.DataFrame(np.asarray(result))
+
+    def add_incidence_7day_per_100Kpopulation(self, df):
+        """
+        Adds a atribute to the df of each country that is representing the
+        accumulated 7-day incidence. That is the summ of the daily cases of 
+        the last 7 days divded by the population in 100000 people.
+        If the attribute already exists the function will return the given df.
+        """
+        # check if the attribute exists
+        requestedAttribute = 'Incidence7DayPer100Kpopulation'
+        for col in df.columns:
+            if col == requestedAttribute:
+                return df
+        # get all GeoIDs in the df
+        geoIDs = df['GeoID'].unique()
+        # our result data frame
+        dfs = []
+        for geoID in geoIDs:
+            # get the country dataframe
+            dfSingleCountry = df.loc[df['GeoID'] == geoID].copy()
+            # reset the index to start from index = 0
+            dfSingleCountry.reset_index(inplace=True, drop=True)
+            # add the lowpass filtered attribute
+            dfSingleCountry[requestedAttribute] = self.__apply_incidence_7day_per_100Kpopulation(dfSingleCountry['DailyCases'], dfSingleCountry['Population'])
             # add the coiuntry to the result
             dfs.append(dfSingleCountry)
         return pd.concat(dfs)
@@ -325,7 +384,7 @@ class CovidCases:
             # if sinceNcases is specified calculate the start index
             if sinceNcases > 0:
                 start = -1
-                for index, val in df['CumulativeCases'].iteritems():
+                for index, val in df['Cases'].iteritems():
                     if val >= sinceNcases:
                         start = index
                         break
@@ -361,4 +420,18 @@ class CovidCases:
         sinceNcases: returns just the data since the nth case.
         """
         # return all countries, but first add the extra columns
-        return self.get_country_data_by_geoid_list(self.__df['Country'].unique(), lastNdays=lastNdays, sinceNcases=sinceNcases)
+        return self.get_country_data_by_geoid_list(self.__df['GeoID'].unique(), lastNdays=lastNdays, sinceNcases=sinceNcases)
+
+    def get_available_GeoID_list(self):
+        """
+        Returns a dataframe having just two columns for the GeoID and Country name.  
+        """
+        # the list of GeoIDs in the dataframe
+        geoIDs = self.__df['GeoID'].unique()
+        # the list of country names in the dataframe
+        countries = self.__df['Country'].unique()
+        # merge them together
+        list_of_tuples = list(zip(geoIDs, countries))
+        # create a datafarme out of the list
+        dfResult = pd.DataFrame(list_of_tuples, columns=['GeoID', 'Country'])
+        return dfResult
