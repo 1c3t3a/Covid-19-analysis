@@ -22,35 +22,29 @@ namespace CSWebClient
     private CoronaWebClient _cwc;
     private void fMain_Load(object sender, EventArgs e)
     {
-      try
-      {
-        // create the class
-        _cwc = new CoronaWebClient(Properties.Settings.Default.Server, Properties.Settings.Default.Timeout);
-        // show status
-        tsslStatus.Text = "Connected to: " + Properties.Settings.Default.Server;
-      }
-      catch (Exception ex)
-      {
-        // display hint
-        MessageBox.Show("Error connecting to server " + Properties.Settings.Default.Server + 
-                        "! Please check your server address in the config file.", 
-                        "Error", 
-                        MessageBoxButtons.OK, 
-                        MessageBoxIcon.Error);
-        // disable button
-        btnGetData.Enabled = false;
-        // and exit
-        System.Environment.Exit(-1);
-      }
-      // add the country list to the listbox
-      foreach (KeyValuePair<string, string> entry in _cwc.Countries)
-      {
-        // fill combobox
-        cbAvailableCountries.Items.Add(entry.Value + ": " + entry.Key);
-      }
-      // select the first one
-      cbAvailableCountries.SelectedIndex = 0;
-
+      // create the ToolTip and associate with the Form container.
+      ToolTip tt = new ToolTip();
+      // set up the delays for the ToolTip.
+      tt.AutoPopDelay = 5000;
+      tt.InitialDelay = 1000;
+      tt.ReshowDelay = 500;
+      // force the ToolTip text to be displayed whether or not the form is active.
+      tt.ShowAlways = true;
+      // set up the ToolTip text for the Button and Checkbox.
+      tt.SetToolTip(this.btnAddToFavourites, "Add to favourites");
+      tt.SetToolTip(this.btnRemoveFromFavourites, "Remove from favourites");
+      tt.SetToolTip(this.btnGetData, "Get the data plot");
+      tt.SetToolTip(this.txtCountries, "Provide a comma separated listed of GeoIDs such as 'DE,UK,IT'");
+      tt.SetToolTip(this.rbAll, "Get data for all dates");
+      tt.SetToolTip(this.rbSince, "Get data for the time since n cumulative cases have been exceeded");
+      tt.SetToolTip(this.rbLast, "Get data for the last n days");
+      tt.SetToolTip(this.rbLinePlot, "Show a line plot");
+      tt.SetToolTip(this.rbBarGraph, "Show a bar graph");
+      tt.SetToolTip(this.rbLinear, "Show a linear y-axis");
+      tt.SetToolTip(this.rbLog, "Show a logarithmic y-axis");
+      tt.SetToolTip(this.chkUseLocalhost, "Use the local server that needs to be started");
+      // establish connection
+      chkUseLocalhost_CheckedChanged(this, new EventArgs());
       // add the data attrinutes
       foreach (KeyValuePair<string, string> entry in _cwc.Attributes)
       {
@@ -89,6 +83,36 @@ namespace CSWebClient
       // save the favourites
       Properties.Settings.Default.Favourites = favourites;
       Properties.Settings.Default.Save();
+    }
+
+    private string _server { get; set; }
+    private void chkUseLocalhost_CheckedChanged(object sender, EventArgs e)
+    {
+      // use the local host or the public host
+      if (chkUseLocalhost.Checked == true)
+        _server = "localhost";
+      else
+        _server = Properties.Settings.Default.Server;
+      try
+      {
+        // create the class
+        _cwc = new CoronaWebClient(_server, Properties.Settings.Default.Timeout);
+        // show status
+        tsslStatus.Text = "Connected to: " + _server;
+      }
+      catch (Exception ex)
+      {
+        // display hint
+        MessageBox.Show("Error connecting to server " + _server +
+                        "! Please check your server address in the config file or start your local server.",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+        // disable button
+        btnGetData.Enabled = false;
+        // and exit
+        System.Environment.Exit(-1);
+      }
     }
 
     /// <summary>
@@ -157,6 +181,24 @@ namespace CSWebClient
         // something went wrong
         MessageBox.Show("Error getting chart! Please check your parameters.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
+      // enable/disable the save button
+      if (pbReply.Image != null)
+        btnSaveImage.Enabled = true;
+      else
+        btnSaveImage.Enabled = false;
+    }
+
+    private void btnShowList_Click(object sender, EventArgs e)
+    {
+      // create the dialog and show it
+      fCountryList dlg = new fCountryList();
+      dlg.ShowDialog();
+    }
+
+    private void btnSaveImage_Click(object sender, EventArgs e)
+    {
+      if (saveFileDialog.ShowDialog() == DialogResult.OK)
+        pbReply.Image.Save(saveFileDialog.FileName);
     }
   }
 }

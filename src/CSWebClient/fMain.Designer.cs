@@ -28,16 +28,8 @@
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(fMain));
       this.pbReply = new System.Windows.Forms.PictureBox();
-      this.cbAvailableCountries = new System.Windows.Forms.ComboBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.txtCountries = new System.Windows.Forms.TextBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.cbFavourites = new System.Windows.Forms.ComboBox();
-      this.btnAddToFavourites = new System.Windows.Forms.Button();
-      this.btnRemoveFromFavourites = new System.Windows.Forms.Button();
-      this.panel1 = new System.Windows.Forms.Panel();
       this.panel2 = new System.Windows.Forms.Panel();
       this.panel5 = new System.Windows.Forms.Panel();
       this.rbLog = new System.Windows.Forms.RadioButton();
@@ -56,8 +48,18 @@
       this.btnGetData = new System.Windows.Forms.Button();
       this.statusStrip1 = new System.Windows.Forms.StatusStrip();
       this.tsslStatus = new System.Windows.Forms.ToolStripStatusLabel();
+      this.cbFavourites = new System.Windows.Forms.ComboBox();
+      this.txtCountries = new System.Windows.Forms.TextBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.label2 = new System.Windows.Forms.Label();
+      this.btnAddToFavourites = new System.Windows.Forms.Button();
+      this.btnRemoveFromFavourites = new System.Windows.Forms.Button();
+      this.panel1 = new System.Windows.Forms.Panel();
+      this.chkUseLocalhost = new System.Windows.Forms.CheckBox();
+      this.btnShowList = new System.Windows.Forms.Button();
+      this.btnSaveImage = new System.Windows.Forms.Button();
+      this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
       ((System.ComponentModel.ISupportInitialize)(this.pbReply)).BeginInit();
-      this.panel1.SuspendLayout();
       this.panel2.SuspendLayout();
       this.panel5.SuspendLayout();
       this.panel4.SuspendLayout();
@@ -65,6 +67,7 @@
       ((System.ComponentModel.ISupportInitialize)(this.nudLast)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.nudSince)).BeginInit();
       this.statusStrip1.SuspendLayout();
+      this.panel1.SuspendLayout();
       this.SuspendLayout();
       // 
       // pbReply
@@ -75,96 +78,10 @@
       this.pbReply.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.pbReply.Location = new System.Drawing.Point(309, 12);
       this.pbReply.Name = "pbReply";
-      this.pbReply.Size = new System.Drawing.Size(576, 409);
+      this.pbReply.Size = new System.Drawing.Size(576, 457);
       this.pbReply.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pbReply.TabIndex = 0;
       this.pbReply.TabStop = false;
-      // 
-      // cbAvailableCountries
-      // 
-      this.cbAvailableCountries.FormattingEnabled = true;
-      this.cbAvailableCountries.Location = new System.Drawing.Point(111, 10);
-      this.cbAvailableCountries.Name = "cbAvailableCountries";
-      this.cbAvailableCountries.Size = new System.Drawing.Size(141, 21);
-      this.cbAvailableCountries.TabIndex = 1;
-      // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(3, 13);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(99, 13);
-      this.label1.TabIndex = 2;
-      this.label1.Text = "Available countries:";
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(3, 68);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(98, 13);
-      this.label2.TabIndex = 3;
-      this.label2.Text = "Selected countries:";
-      // 
-      // txtCountries
-      // 
-      this.txtCountries.Location = new System.Drawing.Point(111, 65);
-      this.txtCountries.Name = "txtCountries";
-      this.txtCountries.Size = new System.Drawing.Size(141, 20);
-      this.txtCountries.TabIndex = 4;
-      // 
-      // label3
-      // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(3, 41);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(100, 13);
-      this.label3.TabIndex = 6;
-      this.label3.Text = "Favourite countries:";
-      // 
-      // cbFavourites
-      // 
-      this.cbFavourites.FormattingEnabled = true;
-      this.cbFavourites.Location = new System.Drawing.Point(111, 37);
-      this.cbFavourites.Name = "cbFavourites";
-      this.cbFavourites.Size = new System.Drawing.Size(141, 21);
-      this.cbFavourites.TabIndex = 5;
-      this.cbFavourites.SelectedIndexChanged += new System.EventHandler(this.cbFavourites_SelectedIndexChanged);
-      // 
-      // btnAddToFavourites
-      // 
-      this.btnAddToFavourites.Location = new System.Drawing.Point(260, 64);
-      this.btnAddToFavourites.Name = "btnAddToFavourites";
-      this.btnAddToFavourites.Size = new System.Drawing.Size(24, 21);
-      this.btnAddToFavourites.TabIndex = 7;
-      this.btnAddToFavourites.Text = "+";
-      this.btnAddToFavourites.UseVisualStyleBackColor = true;
-      this.btnAddToFavourites.Click += new System.EventHandler(this.btnAddToFavourites_Click);
-      // 
-      // btnRemoveFromFavourites
-      // 
-      this.btnRemoveFromFavourites.Location = new System.Drawing.Point(260, 37);
-      this.btnRemoveFromFavourites.Name = "btnRemoveFromFavourites";
-      this.btnRemoveFromFavourites.Size = new System.Drawing.Size(24, 21);
-      this.btnRemoveFromFavourites.TabIndex = 8;
-      this.btnRemoveFromFavourites.Text = "-";
-      this.btnRemoveFromFavourites.UseVisualStyleBackColor = true;
-      this.btnRemoveFromFavourites.Click += new System.EventHandler(this.btnRemoveFromFavourites_Click);
-      // 
-      // panel1
-      // 
-      this.panel1.Controls.Add(this.label1);
-      this.panel1.Controls.Add(this.btnRemoveFromFavourites);
-      this.panel1.Controls.Add(this.cbAvailableCountries);
-      this.panel1.Controls.Add(this.btnAddToFavourites);
-      this.panel1.Controls.Add(this.label2);
-      this.panel1.Controls.Add(this.label3);
-      this.panel1.Controls.Add(this.txtCountries);
-      this.panel1.Controls.Add(this.cbFavourites);
-      this.panel1.Location = new System.Drawing.Point(12, 12);
-      this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(290, 92);
-      this.panel1.TabIndex = 9;
       // 
       // panel2
       // 
@@ -173,7 +90,7 @@
       this.panel2.Controls.Add(this.panel3);
       this.panel2.Controls.Add(this.label4);
       this.panel2.Controls.Add(this.cbAvailableAttributes);
-      this.panel2.Location = new System.Drawing.Point(12, 110);
+      this.panel2.Location = new System.Drawing.Point(13, 120);
       this.panel2.Name = "panel2";
       this.panel2.Size = new System.Drawing.Size(290, 131);
       this.panel2.TabIndex = 10;
@@ -358,9 +275,9 @@
       // btnGetData
       // 
       this.btnGetData.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.btnGetData.Location = new System.Drawing.Point(12, 247);
+      this.btnGetData.Location = new System.Drawing.Point(13, 266);
       this.btnGetData.Name = "btnGetData";
-      this.btnGetData.Size = new System.Drawing.Size(290, 77);
+      this.btnGetData.Size = new System.Drawing.Size(285, 77);
       this.btnGetData.TabIndex = 11;
       this.btnGetData.Text = "Get data";
       this.btnGetData.UseVisualStyleBackColor = true;
@@ -370,7 +287,7 @@
       // 
       this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsslStatus});
-      this.statusStrip1.Location = new System.Drawing.Point(0, 423);
+      this.statusStrip1.Location = new System.Drawing.Point(0, 471);
       this.statusStrip1.Name = "statusStrip1";
       this.statusStrip1.Size = new System.Drawing.Size(897, 22);
       this.statusStrip1.TabIndex = 12;
@@ -382,24 +299,134 @@
       this.tsslStatus.Size = new System.Drawing.Size(108, 17);
       this.tsslStatus.Text = "Not connected yet.";
       // 
+      // cbFavourites
+      // 
+      this.cbFavourites.FormattingEnabled = true;
+      this.cbFavourites.Location = new System.Drawing.Point(6, 21);
+      this.cbFavourites.Name = "cbFavourites";
+      this.cbFavourites.Size = new System.Drawing.Size(246, 21);
+      this.cbFavourites.TabIndex = 5;
+      this.cbFavourites.SelectedIndexChanged += new System.EventHandler(this.cbFavourites_SelectedIndexChanged);
+      // 
+      // txtCountries
+      // 
+      this.txtCountries.Location = new System.Drawing.Point(6, 69);
+      this.txtCountries.Name = "txtCountries";
+      this.txtCountries.Size = new System.Drawing.Size(246, 20);
+      this.txtCountries.TabIndex = 4;
+      // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(3, 5);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(100, 13);
+      this.label3.TabIndex = 6;
+      this.label3.Text = "Favourite countries:";
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(3, 53);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(98, 13);
+      this.label2.TabIndex = 3;
+      this.label2.Text = "Selected countries:";
+      // 
+      // btnAddToFavourites
+      // 
+      this.btnAddToFavourites.Location = new System.Drawing.Point(261, 69);
+      this.btnAddToFavourites.Name = "btnAddToFavourites";
+      this.btnAddToFavourites.Size = new System.Drawing.Size(24, 21);
+      this.btnAddToFavourites.TabIndex = 7;
+      this.btnAddToFavourites.Text = "+";
+      this.btnAddToFavourites.UseVisualStyleBackColor = true;
+      this.btnAddToFavourites.Click += new System.EventHandler(this.btnAddToFavourites_Click);
+      // 
+      // btnRemoveFromFavourites
+      // 
+      this.btnRemoveFromFavourites.Location = new System.Drawing.Point(261, 20);
+      this.btnRemoveFromFavourites.Name = "btnRemoveFromFavourites";
+      this.btnRemoveFromFavourites.Size = new System.Drawing.Size(24, 21);
+      this.btnRemoveFromFavourites.TabIndex = 8;
+      this.btnRemoveFromFavourites.Text = "-";
+      this.btnRemoveFromFavourites.UseVisualStyleBackColor = true;
+      this.btnRemoveFromFavourites.Click += new System.EventHandler(this.btnRemoveFromFavourites_Click);
+      // 
+      // panel1
+      // 
+      this.panel1.Controls.Add(this.btnRemoveFromFavourites);
+      this.panel1.Controls.Add(this.btnAddToFavourites);
+      this.panel1.Controls.Add(this.label2);
+      this.panel1.Controls.Add(this.label3);
+      this.panel1.Controls.Add(this.txtCountries);
+      this.panel1.Controls.Add(this.cbFavourites);
+      this.panel1.Location = new System.Drawing.Point(13, 12);
+      this.panel1.Name = "panel1";
+      this.panel1.Size = new System.Drawing.Size(290, 102);
+      this.panel1.TabIndex = 9;
+      // 
+      // chkUseLocalhost
+      // 
+      this.chkUseLocalhost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.chkUseLocalhost.AutoSize = true;
+      this.chkUseLocalhost.Location = new System.Drawing.Point(13, 451);
+      this.chkUseLocalhost.Name = "chkUseLocalhost";
+      this.chkUseLocalhost.Size = new System.Drawing.Size(90, 17);
+      this.chkUseLocalhost.TabIndex = 13;
+      this.chkUseLocalhost.Text = "Use localhost";
+      this.chkUseLocalhost.UseVisualStyleBackColor = true;
+      this.chkUseLocalhost.CheckedChanged += new System.EventHandler(this.chkUseLocalhost_CheckedChanged);
+      // 
+      // btnShowList
+      // 
+      this.btnShowList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btnShowList.Location = new System.Drawing.Point(158, 423);
+      this.btnShowList.Name = "btnShowList";
+      this.btnShowList.Size = new System.Drawing.Size(140, 22);
+      this.btnShowList.TabIndex = 14;
+      this.btnShowList.Text = "Show GeoID list";
+      this.btnShowList.UseVisualStyleBackColor = true;
+      this.btnShowList.Click += new System.EventHandler(this.btnShowList_Click);
+      // 
+      // btnSaveImage
+      // 
+      this.btnSaveImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btnSaveImage.Enabled = false;
+      this.btnSaveImage.Location = new System.Drawing.Point(13, 423);
+      this.btnSaveImage.Name = "btnSaveImage";
+      this.btnSaveImage.Size = new System.Drawing.Size(140, 22);
+      this.btnSaveImage.TabIndex = 15;
+      this.btnSaveImage.Text = "Save the plot";
+      this.btnSaveImage.UseVisualStyleBackColor = true;
+      this.btnSaveImage.Click += new System.EventHandler(this.btnSaveImage_Click);
+      // 
+      // saveFileDialog
+      // 
+      this.saveFileDialog.DefaultExt = "*.png";
+      this.saveFileDialog.Filter = "PNG images|*.png";
+      this.saveFileDialog.Title = "Save image";
+      // 
       // fMain
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(897, 445);
+      this.ClientSize = new System.Drawing.Size(897, 493);
+      this.Controls.Add(this.btnSaveImage);
+      this.Controls.Add(this.btnShowList);
+      this.Controls.Add(this.chkUseLocalhost);
       this.Controls.Add(this.statusStrip1);
       this.Controls.Add(this.btnGetData);
       this.Controls.Add(this.panel2);
       this.Controls.Add(this.panel1);
       this.Controls.Add(this.pbReply);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MinimumSize = new System.Drawing.Size(767, 387);
       this.Name = "fMain";
-      this.Text = "Form1";
+      this.Text = "Covid-19 Data Visualisation";
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.fMain_FormClosing);
       this.Load += new System.EventHandler(this.fMain_Load);
       ((System.ComponentModel.ISupportInitialize)(this.pbReply)).EndInit();
-      this.panel1.ResumeLayout(false);
-      this.panel1.PerformLayout();
       this.panel2.ResumeLayout(false);
       this.panel2.PerformLayout();
       this.panel5.ResumeLayout(false);
@@ -412,6 +439,8 @@
       ((System.ComponentModel.ISupportInitialize)(this.nudSince)).EndInit();
       this.statusStrip1.ResumeLayout(false);
       this.statusStrip1.PerformLayout();
+      this.panel1.ResumeLayout(false);
+      this.panel1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -420,15 +449,6 @@
         #endregion
 
         private System.Windows.Forms.PictureBox pbReply;
-        private System.Windows.Forms.ComboBox cbAvailableCountries;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtCountries;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox cbFavourites;
-        private System.Windows.Forms.Button btnAddToFavourites;
-        private System.Windows.Forms.Button btnRemoveFromFavourites;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox cbAvailableAttributes;
@@ -447,6 +467,17 @@
         private System.Windows.Forms.RadioButton rbLinear;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel tsslStatus;
+        private System.Windows.Forms.ComboBox cbFavourites;
+        private System.Windows.Forms.TextBox txtCountries;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnAddToFavourites;
+        private System.Windows.Forms.Button btnRemoveFromFavourites;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.CheckBox chkUseLocalhost;
+        private System.Windows.Forms.Button btnShowList;
+        private System.Windows.Forms.Button btnSaveImage;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog;
     }
 }
 
