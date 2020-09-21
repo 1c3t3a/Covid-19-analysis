@@ -1,5 +1,5 @@
 {
     "pathToCSV":"data/db.csv",
     "githubAction":true,
-    "dataAction":[[{"Country": "Germany", "GeoID": "DE", "Date": "06/04/2020", "DailyCases": 3677, "Deaths": 92, "Cases": 95391, "Continent": "Europe", "DoublingTime": 17.633207199278193, "CumulativeDeaths": 1434, "PercentDeaths": 2.5, "CasesPerMillionPopulation":3.4, "DeathsPerMillionPopulation": 1.7, "R7": 1.0, "R": 1.0}]]
+    "dataAction":[[{"Country": "Germany", "GeoID": "DE", "Date": "06/04/2020", "DailyCases": 3677, "Deaths": 92, "DailyDeaths": 192, "Cases": 95391, "Continent": "Europe", "DoublingTime": 17.633207199278193, "CumulativeDeaths": 1434, "PercentDeaths": 2.5, "CasesPerMillionPopulation":3.4, "DeathsPerMillionPopulation": 1.7, "R7": 1.0, "R": 1.0}]]
 }
