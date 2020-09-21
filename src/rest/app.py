@@ -21,13 +21,14 @@ class Attributes(Enum):
     """
     Enumeration of all available plotable attributes.
     """
+    DailyCases = 'DailyCases'
+    DailyCases7 = 'DailyCases7'
+    Incidence7DayPer100Kpopulation = 'Incidence7DayPer100Kpopulation'
     Cases = 'Cases'
-    Cases7 = 'Cases7'
-    CumulativeCases = 'CumulativeCases'
     CasesPerMillionPopulation = 'CasesPerMillionPopulation'
+    DailyDeaths = 'DailyDeaths'
+    DailyDeaths7 = 'DailyDeaths7'
     Deaths = 'Deaths'
-    Deaths7 = 'Deaths7'
-    CumulativeDeaths = 'CumulativeDeaths'
     PercentDeaths = 'PercentDeaths'
     DeathsPerMillionPopulation = 'DeathsPerMillionPopulation'
     DoublingTime = 'DoublingTime'
@@ -35,6 +36,24 @@ class Attributes(Enum):
     R = 'R'
     R7 = 'R7'
 
+class AttributeTitles(Enum):
+    """
+    Enumeration of the documentation of all available plotable attributes.
+    """
+    DailyCases = 'Daily confirmed cases'
+    DailyCases7 = 'Daily confirmed cases: 7-day rolling average'
+    Incidence7DayPer100Kpopulation = '7-day incidence per 100.000 population'
+    Cases = 'Accumulated cases'
+    CasesPerMillionPopulation = 'Accumulated cases per million population'
+    DailyDeaths = 'Daily deaths'
+    DailyDeaths7 = 'Daily deaths: 7-day rolling average'
+    Deaths = 'Accumulated deaths'
+    PercentDeaths = 'Percent deaths of the accumulated cases'
+    DeathsPerMillionPopulation = 'Deaths per million population'
+    DoublingTime = 'Doubling time'
+    DoublingTime7 = 'Doubling time: 7-day rolling average'
+    R = 'Reproduction rate'
+    R7 = 'Reproduction rate: 7-day rolling average'
 
 class Rest_API:
 
@@ -43,7 +62,7 @@ class Rest_API:
         Generates a plot for given GeoIds and returns it in form of a byteIO stream
         Parameters:
             geo_ids: [String] -> countries that should be plotted
-            wanted_attrib: String -> the field you want to plot, e.g. CumulativeCases
+            wanted_attrib: String -> the field you want to plot, e.g. Cases
             log: bool -> should the plot be logarithmic
             last_n: int -> plot the last n days, if not further specified all available data is plotted
             since_n: int -> plot since the nth case, if not further specified all available data is plotted
@@ -66,15 +85,18 @@ class Rest_API:
             df = self.covid_cases.add_r0(df)
         if wanted_attrib == Attributes.R7:
             df = self.covid_cases.add_lowpass_filter_for_attribute(df, 'R', 7)
-        if wanted_attrib == Attributes.Cases7:
+        if wanted_attrib == Attributes.DailyCases7:
             df = self.covid_cases.add_lowpass_filter_for_attribute(
-                df, 'Cases', 7)
-        if wanted_attrib == Attributes.Deaths7:
+                df, 'DailyCases', 7)
+        if wanted_attrib == Attributes.DailyDeaths7:
             df = self.covid_cases.add_lowpass_filter_for_attribute(
-                df, 'Deaths', 7)
+                df, 'DailyDeaths', 7)
         if wanted_attrib == Attributes.DoublingTime7:
             df = self.covid_cases.add_lowpass_filter_for_attribute(
                 df, 'DoublingTime', 7)
+        if wanted_attrib == Attributes.Incidence7DayPer100Kpopulation:
+            df = self.covid_cases.add_incidence_7day_per_100Kpopulation(
+                df)
 
         # concat to one DataFrame and set date
         df[['Date']] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
@@ -83,9 +105,11 @@ class Rest_API:
         pldf = df.pivot_table(values=wanted_attrib.name, index='Date', columns='Country') if since_n == -1 \
             else df.pivot_table(values=wanted_attrib.name, index=df.index, columns='Country')
 
+
         # use the PlotterBuilder to set up the plot
         builder = (PlotterBuilder(wanted_attrib)
-                   .set_title(re.sub(r"([a-z])([A-Z])", r"\g<1> \g<2>", wanted_attrib.name))
+                   #.set_title(re.sub(r"([a-z])([A-Z])", r"\g<1> \g<2>", wanted_attrib.name))
+                   .set_title(AttributeTitles[wanted_attrib.value].value)
                    .set_grid())
         if log:
             builder.set_log()
