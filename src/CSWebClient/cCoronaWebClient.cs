@@ -18,15 +18,6 @@ namespace CSWebClient
     public bool _UseHTTPS { get; set; }
 
     /// <summary>
-    /// A Key-Value pair list with CountryName and GeoID
-    /// </summary>
-    public Dictionary<string, string> Countries
-    {
-      get;
-      private set;
-    }
-
-    /// <summary>
     /// A Key-Value pair list with chart information and their names on the server
     /// </summary>
     public Dictionary<string, string> Attributes
@@ -43,8 +34,12 @@ namespace CSWebClient
     /// <summary>
     /// The path on the server
     /// </summary>
-    private string _urlPath = ":5000/api/data/";
-    
+    private string _urlPath = "/api/data/";
+    /// <summary>
+    /// You may want to ping the server before trying to get data
+    /// </summary>
+    private bool _ping = false;
+
     /// <summary>
     /// Constructor takeing the server and the timeout
     /// </summary>
@@ -52,30 +47,33 @@ namespace CSWebClient
     /// <param name="nTimeout"> Timeout for the connection in ms</param>
     public CoronaWebClient(string strDomain, uint nTimeout)
     {
-      // check if the server is online
-      PingReply reply = PingServer(strDomain, (int)nTimeout);
-      if (reply.Status != IPStatus.Success)
-        throw new ArgumentException("Server at " + strDomain + " not available!");
+      if (_ping)
+      {
+        // check if the server is online
+        PingReply reply = PingServer(strDomain, (int)nTimeout);
+        if (reply.Status != IPStatus.Success)
+          throw new ArgumentException("Server at " + strDomain + " not available!");
+      }
       // keep the domain
       _server = strDomain;
-      // a list of countries and their geoID
-      Countries = new Dictionary<string, string>();
-      /// TODO: get the list from the server
-      Countries.Add("Germany", "DE");
-      Countries.Add("France", "FR");
-      Countries.Add("Italy", "IT");
-
+      // check if it is the localhost to add the port
+      if (_server == "localhost")
+        _server = _server + ":8000";
       // a list of data description and data names
       Attributes = new Dictionary<string, string>();
       // fill the list
-      Attributes.Add("Cumulative cases", "CumulativeCases");
-      Attributes.Add("Daily cases", "Cases");
-      Attributes.Add("Cumulative deaths", "CumulativeDeaths");
-      Attributes.Add("Daily Deaths", "Deaths");
+      Attributes.Add("Daily cases", "DailyCases");
+      Attributes.Add("Daily cases, 7 day average", "DailyCases7");
+      Attributes.Add("7-day incidence", "Incidence7DayPer100Kpopulation");
+      Attributes.Add("Cumulative cases", "Cases");
+      Attributes.Add("Cumulative deaths", "Deaths");
+      Attributes.Add("Daily Deaths", "DailyDeaths");
+      Attributes.Add("Daily Deaths, 7 day average", "DailyDeaths7");
       Attributes.Add("Percent deathly cases", "PercentDeaths");
       Attributes.Add("Doubling time [days]", "DoublingTime");
       Attributes.Add("Cumulative cases per million population", "CasesPerMillionPopulation");
-      Attributes.Add("Deaths per million population", "DeathsPerMillionPopulation");
+      Attributes.Add("Cumulative deaths per million population", "DeathsPerMillionPopulation");
+      Attributes.Add("Reproduction rate R", "R7");
     }
 
     /// <summary>

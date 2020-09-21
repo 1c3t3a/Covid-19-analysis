@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSWebClient", "CSWebClient.csproj", "{D6589F3E-3E09-4DAE-87B4-4B5AEACC3699}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "CSWebClientSetup", "..\CSWebClientSetup\CSWebClientSetup.vdproj", "{9A62C93D-7940-4CA8-8193-82427AB71432}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,8 @@ Global
 		{D6589F3E-3E09-4DAE-87B4-4B5AEACC3699}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6589F3E-3E09-4DAE-87B4-4B5AEACC3699}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6589F3E-3E09-4DAE-87B4-4B5AEACC3699}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A62C93D-7940-4CA8-8193-82427AB71432}.Debug|Any CPU.ActiveCfg = Debug
+		{9A62C93D-7940-4CA8-8193-82427AB71432}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
