@@ -1,5 +1,4 @@
 # Covid-19-analysis
-![](https://github.com/1c3t3a/Covid-19-analysis/workflows/Run%20jupyter%20notebook/badge.svg)<br>
 ![Docker](https://github.com/1c3t3a/Covid-19-analysis/workflows/Docker/badge.svg)<br>
 ![Run class snippet](https://github.com/1c3t3a/Covid-19-analysis/workflows/Run%20class%20snippet/badge.svg)<br><br> 
 
