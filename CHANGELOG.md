@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Conversion SVG to PNG so that the maps can be added to the REST API smoothly
 
 ## [Unreleased]
+-
+
+## [4.0.0] - 2020-10-23
+
+### Added
 
 - introduced a change log
 - added functions to get the country codes for the continents
@@ -17,10 +22,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added a class to visualize data in a heatmap
 - added a favicon
 - added map generation to Junyper Notebook
-- removed the class sources from the Jupyter Notebook
+
+### Changed
+
 - The C# webclient can now save the generated graphs
 - changed the documentation method to make use of the *Python Docstring Generator*
 - modified *requirements.txt*
+
+### Removed
+
+- removed the class sources from the Jupyter Notebook
 
 ## [3.0.0] - 2020-09-21
 
