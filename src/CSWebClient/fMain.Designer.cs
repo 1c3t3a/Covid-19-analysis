@@ -29,7 +29,6 @@
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(fMain));
-      this.pbReply = new System.Windows.Forms.PictureBox();
       this.panel2 = new System.Windows.Forms.Panel();
       this.panel5 = new System.Windows.Forms.Panel();
       this.rbLog = new System.Windows.Forms.RadioButton();
@@ -59,7 +58,9 @@
       this.btnShowList = new System.Windows.Forms.Button();
       this.btnSaveImage = new System.Windows.Forms.Button();
       this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-      ((System.ComponentModel.ISupportInitialize)(this.pbReply)).BeginInit();
+      this.btnGitHub = new System.Windows.Forms.Button();
+      this.btnHelpAttributes = new System.Windows.Forms.Button();
+      this.pbReply = new System.Windows.Forms.PictureBox();
       this.panel2.SuspendLayout();
       this.panel5.SuspendLayout();
       this.panel4.SuspendLayout();
@@ -68,23 +69,12 @@
       ((System.ComponentModel.ISupportInitialize)(this.nudSince)).BeginInit();
       this.statusStrip1.SuspendLayout();
       this.panel1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pbReply)).BeginInit();
       this.SuspendLayout();
-      // 
-      // pbReply
-      // 
-      this.pbReply.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.pbReply.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.pbReply.Location = new System.Drawing.Point(309, 12);
-      this.pbReply.Name = "pbReply";
-      this.pbReply.Size = new System.Drawing.Size(576, 457);
-      this.pbReply.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-      this.pbReply.TabIndex = 0;
-      this.pbReply.TabStop = false;
       // 
       // panel2
       // 
+      this.panel2.Controls.Add(this.btnHelpAttributes);
       this.panel2.Controls.Add(this.panel5);
       this.panel2.Controls.Add(this.panel4);
       this.panel2.Controls.Add(this.panel3);
@@ -92,7 +82,7 @@
       this.panel2.Controls.Add(this.cbAvailableAttributes);
       this.panel2.Location = new System.Drawing.Point(13, 120);
       this.panel2.Name = "panel2";
-      this.panel2.Size = new System.Drawing.Size(290, 131);
+      this.panel2.Size = new System.Drawing.Size(319, 131);
       this.panel2.TabIndex = 10;
       // 
       // panel5
@@ -110,7 +100,7 @@
       this.rbLog.Location = new System.Drawing.Point(13, 23);
       this.rbLog.Name = "rbLog";
       this.rbLog.Size = new System.Drawing.Size(108, 17);
-      this.rbLog.TabIndex = 6;
+      this.rbLog.TabIndex = 1;
       this.rbLog.Text = "Logarithmic y-axis";
       this.rbLog.UseVisualStyleBackColor = true;
       // 
@@ -121,7 +111,7 @@
       this.rbLinear.Location = new System.Drawing.Point(13, 3);
       this.rbLinear.Name = "rbLinear";
       this.rbLinear.Size = new System.Drawing.Size(83, 17);
-      this.rbLinear.TabIndex = 5;
+      this.rbLinear.TabIndex = 0;
       this.rbLinear.TabStop = true;
       this.rbLinear.Text = "Linear y-axis";
       this.rbLinear.UseVisualStyleBackColor = true;
@@ -141,7 +131,7 @@
       this.rbBarGraph.Location = new System.Drawing.Point(13, 23);
       this.rbBarGraph.Name = "rbBarGraph";
       this.rbBarGraph.Size = new System.Drawing.Size(71, 17);
-      this.rbBarGraph.TabIndex = 6;
+      this.rbBarGraph.TabIndex = 1;
       this.rbBarGraph.Text = "Bar graph";
       this.rbBarGraph.UseVisualStyleBackColor = true;
       // 
@@ -152,7 +142,7 @@
       this.rbLinePlot.Location = new System.Drawing.Point(13, 3);
       this.rbLinePlot.Name = "rbLinePlot";
       this.rbLinePlot.Size = new System.Drawing.Size(65, 17);
-      this.rbLinePlot.TabIndex = 5;
+      this.rbLinePlot.TabIndex = 0;
       this.rbLinePlot.TabStop = true;
       this.rbLinePlot.Text = "Line plot";
       this.rbLinePlot.UseVisualStyleBackColor = true;
@@ -216,7 +206,7 @@
             0});
       this.nudSince.Name = "nudSince";
       this.nudSince.Size = new System.Drawing.Size(47, 20);
-      this.nudSince.TabIndex = 3;
+      this.nudSince.TabIndex = 2;
       this.nudSince.Value = new decimal(new int[] {
             100,
             0,
@@ -229,7 +219,7 @@
       this.rbLast.Location = new System.Drawing.Point(6, 49);
       this.rbLast.Name = "rbLast";
       this.rbLast.Size = new System.Drawing.Size(82, 17);
-      this.rbLast.TabIndex = 2;
+      this.rbLast.TabIndex = 3;
       this.rbLast.Text = "Last n days:";
       this.rbLast.UseVisualStyleBackColor = true;
       // 
@@ -270,7 +260,7 @@
       this.cbAvailableAttributes.Location = new System.Drawing.Point(86, 10);
       this.cbAvailableAttributes.Name = "cbAvailableAttributes";
       this.cbAvailableAttributes.Size = new System.Drawing.Size(199, 21);
-      this.cbAvailableAttributes.TabIndex = 3;
+      this.cbAvailableAttributes.TabIndex = 0;
       // 
       // btnGetData
       // 
@@ -278,7 +268,7 @@
       this.btnGetData.Location = new System.Drawing.Point(13, 266);
       this.btnGetData.Name = "btnGetData";
       this.btnGetData.Size = new System.Drawing.Size(285, 77);
-      this.btnGetData.TabIndex = 11;
+      this.btnGetData.TabIndex = 0;
       this.btnGetData.Text = "Get data";
       this.btnGetData.UseVisualStyleBackColor = true;
       this.btnGetData.Click += new System.EventHandler(this.btnGetData_Click);
@@ -304,16 +294,16 @@
       this.cbFavourites.FormattingEnabled = true;
       this.cbFavourites.Location = new System.Drawing.Point(6, 21);
       this.cbFavourites.Name = "cbFavourites";
-      this.cbFavourites.Size = new System.Drawing.Size(246, 21);
-      this.cbFavourites.TabIndex = 5;
+      this.cbFavourites.Size = new System.Drawing.Size(279, 21);
+      this.cbFavourites.TabIndex = 0;
       this.cbFavourites.SelectedIndexChanged += new System.EventHandler(this.cbFavourites_SelectedIndexChanged);
       // 
       // txtCountries
       // 
       this.txtCountries.Location = new System.Drawing.Point(6, 69);
       this.txtCountries.Name = "txtCountries";
-      this.txtCountries.Size = new System.Drawing.Size(246, 20);
-      this.txtCountries.TabIndex = 4;
+      this.txtCountries.Size = new System.Drawing.Size(279, 20);
+      this.txtCountries.TabIndex = 1;
       // 
       // label3
       // 
@@ -335,20 +325,20 @@
       // 
       // btnAddToFavourites
       // 
-      this.btnAddToFavourites.Location = new System.Drawing.Point(261, 69);
+      this.btnAddToFavourites.Location = new System.Drawing.Point(291, 64);
       this.btnAddToFavourites.Name = "btnAddToFavourites";
-      this.btnAddToFavourites.Size = new System.Drawing.Size(24, 21);
-      this.btnAddToFavourites.TabIndex = 7;
+      this.btnAddToFavourites.Size = new System.Drawing.Size(28, 28);
+      this.btnAddToFavourites.TabIndex = 3;
       this.btnAddToFavourites.Text = "+";
       this.btnAddToFavourites.UseVisualStyleBackColor = true;
       this.btnAddToFavourites.Click += new System.EventHandler(this.btnAddToFavourites_Click);
       // 
       // btnRemoveFromFavourites
       // 
-      this.btnRemoveFromFavourites.Location = new System.Drawing.Point(261, 20);
+      this.btnRemoveFromFavourites.Location = new System.Drawing.Point(291, 16);
       this.btnRemoveFromFavourites.Name = "btnRemoveFromFavourites";
-      this.btnRemoveFromFavourites.Size = new System.Drawing.Size(24, 21);
-      this.btnRemoveFromFavourites.TabIndex = 8;
+      this.btnRemoveFromFavourites.Size = new System.Drawing.Size(28, 28);
+      this.btnRemoveFromFavourites.TabIndex = 2;
       this.btnRemoveFromFavourites.Text = "-";
       this.btnRemoveFromFavourites.UseVisualStyleBackColor = true;
       this.btnRemoveFromFavourites.Click += new System.EventHandler(this.btnRemoveFromFavourites_Click);
@@ -363,7 +353,7 @@
       this.panel1.Controls.Add(this.cbFavourites);
       this.panel1.Location = new System.Drawing.Point(13, 12);
       this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(290, 102);
+      this.panel1.Size = new System.Drawing.Size(319, 102);
       this.panel1.TabIndex = 9;
       // 
       // chkUseLocalhost
@@ -373,7 +363,7 @@
       this.chkUseLocalhost.Location = new System.Drawing.Point(13, 451);
       this.chkUseLocalhost.Name = "chkUseLocalhost";
       this.chkUseLocalhost.Size = new System.Drawing.Size(90, 17);
-      this.chkUseLocalhost.TabIndex = 13;
+      this.chkUseLocalhost.TabIndex = 4;
       this.chkUseLocalhost.Text = "Use localhost";
       this.chkUseLocalhost.UseVisualStyleBackColor = true;
       this.chkUseLocalhost.CheckedChanged += new System.EventHandler(this.chkUseLocalhost_CheckedChanged);
@@ -384,7 +374,7 @@
       this.btnShowList.Location = new System.Drawing.Point(158, 423);
       this.btnShowList.Name = "btnShowList";
       this.btnShowList.Size = new System.Drawing.Size(140, 22);
-      this.btnShowList.TabIndex = 14;
+      this.btnShowList.TabIndex = 3;
       this.btnShowList.Text = "Show GeoID list";
       this.btnShowList.UseVisualStyleBackColor = true;
       this.btnShowList.Click += new System.EventHandler(this.btnShowList_Click);
@@ -396,7 +386,7 @@
       this.btnSaveImage.Location = new System.Drawing.Point(13, 423);
       this.btnSaveImage.Name = "btnSaveImage";
       this.btnSaveImage.Size = new System.Drawing.Size(140, 22);
-      this.btnSaveImage.TabIndex = 15;
+      this.btnSaveImage.TabIndex = 2;
       this.btnSaveImage.Text = "Save the plot";
       this.btnSaveImage.UseVisualStyleBackColor = true;
       this.btnSaveImage.Click += new System.EventHandler(this.btnSaveImage_Click);
@@ -407,11 +397,45 @@
       this.saveFileDialog.Filter = "PNG images|*.png";
       this.saveFileDialog.Title = "Save image";
       // 
+      // btnGitHub
+      // 
+      this.btnGitHub.Image = global::CSWebClient.Properties.Resources.imgGitHub20x20;
+      this.btnGitHub.Location = new System.Drawing.Point(304, 315);
+      this.btnGitHub.Name = "btnGitHub";
+      this.btnGitHub.Size = new System.Drawing.Size(28, 28);
+      this.btnGitHub.TabIndex = 1;
+      this.btnGitHub.UseVisualStyleBackColor = true;
+      this.btnGitHub.Click += new System.EventHandler(this.btnGitHub_Click);
+      // 
+      // btnHelpAttributes
+      // 
+      this.btnHelpAttributes.Image = global::CSWebClient.Properties.Resources.imgHelp20x20;
+      this.btnHelpAttributes.Location = new System.Drawing.Point(291, 5);
+      this.btnHelpAttributes.Name = "btnHelpAttributes";
+      this.btnHelpAttributes.Size = new System.Drawing.Size(28, 28);
+      this.btnHelpAttributes.TabIndex = 1;
+      this.btnHelpAttributes.UseVisualStyleBackColor = true;
+      this.btnHelpAttributes.Click += new System.EventHandler(this.btnHelpAttributes_Click);
+      // 
+      // pbReply
+      // 
+      this.pbReply.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.pbReply.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+      this.pbReply.Location = new System.Drawing.Point(338, 12);
+      this.pbReply.Name = "pbReply";
+      this.pbReply.Size = new System.Drawing.Size(547, 457);
+      this.pbReply.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+      this.pbReply.TabIndex = 0;
+      this.pbReply.TabStop = false;
+      // 
       // fMain
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(897, 493);
+      this.Controls.Add(this.btnGitHub);
       this.Controls.Add(this.btnSaveImage);
       this.Controls.Add(this.btnShowList);
       this.Controls.Add(this.chkUseLocalhost);
@@ -426,7 +450,6 @@
       this.Text = "Covid-19 Data Visualisation";
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.fMain_FormClosing);
       this.Load += new System.EventHandler(this.fMain_Load);
-      ((System.ComponentModel.ISupportInitialize)(this.pbReply)).EndInit();
       this.panel2.ResumeLayout(false);
       this.panel2.PerformLayout();
       this.panel5.ResumeLayout(false);
@@ -441,6 +464,7 @@
       this.statusStrip1.PerformLayout();
       this.panel1.ResumeLayout(false);
       this.panel1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pbReply)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -478,6 +502,8 @@
         private System.Windows.Forms.Button btnShowList;
         private System.Windows.Forms.Button btnSaveImage;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
+        private System.Windows.Forms.Button btnHelpAttributes;
+        private System.Windows.Forms.Button btnGitHub;
     }
 }
 

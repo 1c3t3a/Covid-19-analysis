@@ -161,6 +161,7 @@ x64/
 [Bb]in/
 [Oo]bj/
 .vs/
+.vscode/
 # Visual C++ cache files
 ipch/
 *.aps
