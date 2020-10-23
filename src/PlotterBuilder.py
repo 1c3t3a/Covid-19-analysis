@@ -89,7 +89,7 @@ class PlotterBuilder:
         ax.set(ylabel=self.__ylabel)
         return [fig, ax]
 
-    def plot_dataFrame(self, df, **options):
+    def plot_dataFrame(self, df, ylim_min=None, ylim_max=None, **options):
         """
         Plots the DataFrame. If you want to plot an index on the x-axis you have to set it within the DataFrame object.
         If not the column date is used.
@@ -102,4 +102,5 @@ class PlotterBuilder:
             pldf = df.pivot_table(values=self.__yfield, index='Date', columns='Country')
         fig, ax = self.build()
         pldf.plot(ax=ax, **options)
+        ax.set_ylim(ymin=ylim_min, ymax=ylim_max)
         ax.grid(self.__grid)

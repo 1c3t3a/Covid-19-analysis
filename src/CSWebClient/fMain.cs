@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace CSWebClient
 {
@@ -199,6 +200,22 @@ namespace CSWebClient
     {
       if (saveFileDialog.ShowDialog() == DialogResult.OK)
         pbReply.Image.Save(saveFileDialog.FileName);
+    }
+
+    private void btnHelpAttributes_Click(object sender, EventArgs e)
+    {
+      // create and start a new process
+      Process procBrowser = new Process();
+      procBrowser.StartInfo.FileName = "http://mb.cmbt.de/covid-19-analysis/the-covidcases-class/";
+      procBrowser.Start();
+    }
+
+    private void btnGitHub_Click(object sender, EventArgs e)
+    {
+      // create and start a new process
+      Process procBrowser = new Process();
+      procBrowser.StartInfo.FileName = "https://github.com/1c3t3a/Covid-19-analysis";
+      procBrowser.Start();
     }
   }
 }
