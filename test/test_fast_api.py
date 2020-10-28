@@ -1,11 +1,6 @@
 from fastapi.testclient import TestClient
 import json
 from re import search
-# import sys to change the path to the src dir to import the files to be tested
-import sys, os
-myPath = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, myPath + '/../')
-
 from src.rest.app import app
 
 client = TestClient(app)
