@@ -2,7 +2,7 @@ ipywidgets==7.5.1
 json5==0.9.5
 matplotlib==3.3.2
 notebook==6.1.4
-numpy==1.19.2
+numpy==1.19.4
 regex==2020.10.28
 pandas==1.1.4
 requests==2.24.0
