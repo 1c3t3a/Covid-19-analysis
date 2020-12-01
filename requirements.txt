@@ -7,7 +7,7 @@ regex==2020.10.28
 pandas==1.1.4
 requests==2.25.0
 fastapi==0.62.0
-uvicorn==0.12.2
+uvicorn==0.12.3
 pygal==2.4.0
 pygal_maps_world==1.0.2
 pytest==6.1.2
