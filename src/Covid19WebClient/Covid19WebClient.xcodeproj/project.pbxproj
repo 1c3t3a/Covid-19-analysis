@@ -1,0 +1,583 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0E8E8E28256D43ED00F75DEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E8E8E27256D43ED00F75DEF /* AppDelegate.swift */; };
+		0E8E8E2A256D43ED00F75DEF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E8E8E29256D43ED00F75DEF /* ViewController.swift */; };
+		0E8E8E2C256D43EE00F75DEF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0E8E8E2B256D43EE00F75DEF /* Assets.xcassets */; };
+		0E8E8E2F256D43EE00F75DEF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0E8E8E2D256D43EE00F75DEF /* Main.storyboard */; };
+		0E8E8E3B256D43EE00F75DEF /* Covid19WebClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E8E8E3A256D43EE00F75DEF /* Covid19WebClientTests.swift */; };
+		0E8E8E46256D43EE00F75DEF /* Covid19WebClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E8E8E45256D43EE00F75DEF /* Covid19WebClientUITests.swift */; };
+		0E8E8E57256D44A700F75DEF /* CoronaWebClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E8E8E56256D44A700F75DEF /* CoronaWebClient.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0E8E8E37256D43EE00F75DEF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0E8E8E1C256D43ED00F75DEF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0E8E8E23256D43ED00F75DEF;
+			remoteInfo = Covid19WebClient;
+		};
+		0E8E8E42256D43EE00F75DEF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0E8E8E1C256D43ED00F75DEF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0E8E8E23256D43ED00F75DEF;
+			remoteInfo = Covid19WebClient;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0E8E8E24256D43ED00F75DEF /* Covid19WebClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Covid19WebClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0E8E8E27256D43ED00F75DEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		0E8E8E29256D43ED00F75DEF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		0E8E8E2B256D43EE00F75DEF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0E8E8E2E256D43EE00F75DEF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		0E8E8E30256D43EE00F75DEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0E8E8E31256D43EE00F75DEF /* Covid19WebClient.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Covid19WebClient.entitlements; sourceTree = "<group>"; };
+		0E8E8E36256D43EE00F75DEF /* Covid19WebClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Covid19WebClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0E8E8E3A256D43EE00F75DEF /* Covid19WebClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Covid19WebClientTests.swift; sourceTree = "<group>"; };
+		0E8E8E3C256D43EE00F75DEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0E8E8E41256D43EE00F75DEF /* Covid19WebClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Covid19WebClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0E8E8E45256D43EE00F75DEF /* Covid19WebClientUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Covid19WebClientUITests.swift; sourceTree = "<group>"; };
+		0E8E8E47256D43EE00F75DEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0E8E8E56256D44A700F75DEF /* CoronaWebClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoronaWebClient.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0E8E8E21256D43ED00F75DEF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0E8E8E33256D43EE00F75DEF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0E8E8E3E256D43EE00F75DEF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0E8E8E1B256D43ED00F75DEF = {
+			isa = PBXGroup;
+			children = (
+				0E8E8E26256D43ED00F75DEF /* Covid19WebClient */,
+				0E8E8E39256D43EE00F75DEF /* Covid19WebClientTests */,
+				0E8E8E44256D43EE00F75DEF /* Covid19WebClientUITests */,
+				0E8E8E25256D43ED00F75DEF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0E8E8E25256D43ED00F75DEF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0E8E8E24256D43ED00F75DEF /* Covid19WebClient.app */,
+				0E8E8E36256D43EE00F75DEF /* Covid19WebClientTests.xctest */,
+				0E8E8E41256D43EE00F75DEF /* Covid19WebClientUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0E8E8E26256D43ED00F75DEF /* Covid19WebClient */ = {
+			isa = PBXGroup;
+			children = (
+				0E8E8E27256D43ED00F75DEF /* AppDelegate.swift */,
+				0E8E8E29256D43ED00F75DEF /* ViewController.swift */,
+				0E8E8E2B256D43EE00F75DEF /* Assets.xcassets */,
+				0E8E8E2D256D43EE00F75DEF /* Main.storyboard */,
+				0E8E8E30256D43EE00F75DEF /* Info.plist */,
+				0E8E8E31256D43EE00F75DEF /* Covid19WebClient.entitlements */,
+				0E8E8E56256D44A700F75DEF /* CoronaWebClient.swift */,
+			);
+			path = Covid19WebClient;
+			sourceTree = "<group>";
+		};
+		0E8E8E39256D43EE00F75DEF /* Covid19WebClientTests */ = {
+			isa = PBXGroup;
+			children = (
+				0E8E8E3A256D43EE00F75DEF /* Covid19WebClientTests.swift */,
+				0E8E8E3C256D43EE00F75DEF /* Info.plist */,
+			);
+			path = Covid19WebClientTests;
+			sourceTree = "<group>";
+		};
+		0E8E8E44256D43EE00F75DEF /* Covid19WebClientUITests */ = {
+			isa = PBXGroup;
+			children = (
+				0E8E8E45256D43EE00F75DEF /* Covid19WebClientUITests.swift */,
+				0E8E8E47256D43EE00F75DEF /* Info.plist */,
+			);
+			path = Covid19WebClientUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0E8E8E23256D43ED00F75DEF /* Covid19WebClient */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0E8E8E4A256D43EE00F75DEF /* Build configuration list for PBXNativeTarget "Covid19WebClient" */;
+			buildPhases = (
+				0E8E8E20256D43ED00F75DEF /* Sources */,
+				0E8E8E21256D43ED00F75DEF /* Frameworks */,
+				0E8E8E22256D43ED00F75DEF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Covid19WebClient;
+			productName = Covid19WebClient;
+			productReference = 0E8E8E24256D43ED00F75DEF /* Covid19WebClient.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0E8E8E35256D43EE00F75DEF /* Covid19WebClientTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0E8E8E4D256D43EE00F75DEF /* Build configuration list for PBXNativeTarget "Covid19WebClientTests" */;
+			buildPhases = (
+				0E8E8E32256D43EE00F75DEF /* Sources */,
+				0E8E8E33256D43EE00F75DEF /* Frameworks */,
+				0E8E8E34256D43EE00F75DEF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0E8E8E38256D43EE00F75DEF /* PBXTargetDependency */,
+			);
+			name = Covid19WebClientTests;
+			productName = Covid19WebClientTests;
+			productReference = 0E8E8E36256D43EE00F75DEF /* Covid19WebClientTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		0E8E8E40256D43EE00F75DEF /* Covid19WebClientUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0E8E8E50256D43EE00F75DEF /* Build configuration list for PBXNativeTarget "Covid19WebClientUITests" */;
+			buildPhases = (
+				0E8E8E3D256D43EE00F75DEF /* Sources */,
+				0E8E8E3E256D43EE00F75DEF /* Frameworks */,
+				0E8E8E3F256D43EE00F75DEF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0E8E8E43256D43EE00F75DEF /* PBXTargetDependency */,
+			);
+			name = Covid19WebClientUITests;
+			productName = Covid19WebClientUITests;
+			productReference = 0E8E8E41256D43EE00F75DEF /* Covid19WebClientUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0E8E8E1C256D43ED00F75DEF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1220;
+				LastUpgradeCheck = 1220;
+				TargetAttributes = {
+					0E8E8E23256D43ED00F75DEF = {
+						CreatedOnToolsVersion = 12.2;
+					};
+					0E8E8E35256D43EE00F75DEF = {
+						CreatedOnToolsVersion = 12.2;
+						TestTargetID = 0E8E8E23256D43ED00F75DEF;
+					};
+					0E8E8E40256D43EE00F75DEF = {
+						CreatedOnToolsVersion = 12.2;
+						TestTargetID = 0E8E8E23256D43ED00F75DEF;
+					};
+				};
+			};
+			buildConfigurationList = 0E8E8E1F256D43ED00F75DEF /* Build configuration list for PBXProject "Covid19WebClient" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0E8E8E1B256D43ED00F75DEF;
+			productRefGroup = 0E8E8E25256D43ED00F75DEF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0E8E8E23256D43ED00F75DEF /* Covid19WebClient */,
+				0E8E8E35256D43EE00F75DEF /* Covid19WebClientTests */,
+				0E8E8E40256D43EE00F75DEF /* Covid19WebClientUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0E8E8E22256D43ED00F75DEF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0E8E8E2C256D43EE00F75DEF /* Assets.xcassets in Resources */,
+				0E8E8E2F256D43EE00F75DEF /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0E8E8E34256D43EE00F75DEF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0E8E8E3F256D43EE00F75DEF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0E8E8E20256D43ED00F75DEF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0E8E8E57256D44A700F75DEF /* CoronaWebClient.swift in Sources */,
+				0E8E8E2A256D43ED00F75DEF /* ViewController.swift in Sources */,
+				0E8E8E28256D43ED00F75DEF /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0E8E8E32256D43EE00F75DEF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0E8E8E3B256D43EE00F75DEF /* Covid19WebClientTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0E8E8E3D256D43EE00F75DEF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0E8E8E46256D43EE00F75DEF /* Covid19WebClientUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0E8E8E38256D43EE00F75DEF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0E8E8E23256D43ED00F75DEF /* Covid19WebClient */;
+			targetProxy = 0E8E8E37256D43EE00F75DEF /* PBXContainerItemProxy */;
+		};
+		0E8E8E43256D43EE00F75DEF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0E8E8E23256D43ED00F75DEF /* Covid19WebClient */;
+			targetProxy = 0E8E8E42256D43EE00F75DEF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		0E8E8E2D256D43EE00F75DEF /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0E8E8E2E256D43EE00F75DEF /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		0E8E8E48256D43EE00F75DEF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		0E8E8E49256D43EE00F75DEF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		0E8E8E4B256D43EE00F75DEF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Covid19WebClient/Covid19WebClient.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Covid19WebClient/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = MKe.Covid19WebClient;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		0E8E8E4C256D43EE00F75DEF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Covid19WebClient/Covid19WebClient.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Covid19WebClient/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = MKe.Covid19WebClient;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		0E8E8E4E256D43EE00F75DEF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Covid19WebClientTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_BUNDLE_IDENTIFIER = MKe.Covid19WebClientTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Covid19WebClient.app/Contents/MacOS/Covid19WebClient";
+			};
+			name = Debug;
+		};
+		0E8E8E4F256D43EE00F75DEF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Covid19WebClientTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_BUNDLE_IDENTIFIER = MKe.Covid19WebClientTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Covid19WebClient.app/Contents/MacOS/Covid19WebClient";
+			};
+			name = Release;
+		};
+		0E8E8E51256D43EE00F75DEF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Covid19WebClientUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = MKe.Covid19WebClientUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = Covid19WebClient;
+			};
+			name = Debug;
+		};
+		0E8E8E52256D43EE00F75DEF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Covid19WebClientUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = MKe.Covid19WebClientUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = Covid19WebClient;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0E8E8E1F256D43ED00F75DEF /* Build configuration list for PBXProject "Covid19WebClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0E8E8E48256D43EE00F75DEF /* Debug */,
+				0E8E8E49256D43EE00F75DEF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0E8E8E4A256D43EE00F75DEF /* Build configuration list for PBXNativeTarget "Covid19WebClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0E8E8E4B256D43EE00F75DEF /* Debug */,
+				0E8E8E4C256D43EE00F75DEF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0E8E8E4D256D43EE00F75DEF /* Build configuration list for PBXNativeTarget "Covid19WebClientTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0E8E8E4E256D43EE00F75DEF /* Debug */,
+				0E8E8E4F256D43EE00F75DEF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0E8E8E50256D43EE00F75DEF /* Build configuration list for PBXNativeTarget "Covid19WebClientUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0E8E8E51256D43EE00F75DEF /* Debug */,
+				0E8E8E52256D43EE00F75DEF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0E8E8E1C256D43ED00F75DEF /* Project object */;
+}

@@ -6,10 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [ToDo]
+
 - adding support for different datasources. Could be done by an enumeration passed in to the load datatabase function
 - Conversion SVG to PNG so that the maps can be added to the REST API smoothly
 
 ## [Unreleased]
+
+-
+
+## [4.1.0] - 2020-11-30
+
+### Added
+
+- a MacOS web client is now also available
+
+### Changed
+
+- some minor typos
+
+### Removed
+
 -
 
 ## [4.0.0] - 2020-10-23
@@ -25,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The C# webclient can now save the generated graphs
+- The C# web client can now save the generated graphs
 - changed the documentation method to make use of the *Python Docstring Generator*
 - modified *requirements.txt*
 
@@ -60,7 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   created attribute is the given name with a tailing number n. E.g. 'Cases' 
   with n = 7 will add to a newly added attribute named 'Cases7'.
 - added a function to save a dataframe to a CSV file
-- added a function to caculate an estimation for the reproduction rate R0
+- added a function to calculate an estimation for the reproduction rate R0
 
 ### Changed
 
@@ -68,7 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - instead of the JSON data structure we are now using a Pandas data frame
   Both changes allow us to easier add new methods and analytics
 - the attribute 'Quotient' has been removed. the attribute was the number
-  of cases on the day devided by the number of cases of the
+  of cases on the day divided by the number of cases of the
   previous day
 - 'Continent' is a new field to analyse the distribution of cases over
   continents
@@ -84,7 +100,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added a REST API
 - Added a C# client making use of the REST API
 - The database file is now loaded automatically if it doesn't exist for the current day
-- Applying some PEP8 sytle guides
+- Applying some PEP8 style guides
 - Add function to get the data for the last N days
 
 ### Changed
