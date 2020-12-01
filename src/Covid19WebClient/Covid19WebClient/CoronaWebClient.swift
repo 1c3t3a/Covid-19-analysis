@@ -38,6 +38,7 @@ class CoronaWebClient {
   /// </summary>
   private var _server: String = "";
   
+  /// <summary>_
   /// The path on the server
   /// </summary>
   private let _urlPath:String = "/api/data/";
@@ -123,14 +124,17 @@ class CoronaWebClient {
     // remove spaces from the GeoID string list
     let strCountriesNoSpaces = strCountries.replacingOccurrences(of: " ", with: "")
     // add these GeoID list to the url
-    strURL = strURL + "://" + _server + _urlPath + strCountriesNoSpaces + "/" + strAttribut + "?"
+    strURL = strURL + "://" + _server + _urlPath + strCountriesNoSpaces + "/" + strAttribut
     // add the log flag
     if (bLogarithmic) {
       strURL = strURL + "&log=True"
     }
     // add the bargraph flag
-    if (bBargraph) {
+    else if (bBargraph) {
       strURL = strURL + "&bar=True"
+    }
+    else {
+      strURL = strURL + "?"
     }
     // finally get the image and the url that has been used from the server
     return (GetChartFromURL(strURL: strURL), strURL)
