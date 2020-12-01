@@ -1,5 +1,6 @@
 # Covid-19-analysis
 ![Docker](https://github.com/1c3t3a/Covid-19-analysis/workflows/Docker/badge.svg)<br>
+![CodeQL](https://github.com/1c3t3a/Covid-19-analysis/workflows/CodeQL/badge.svg)<br>
 ![Run class snippet](https://github.com/1c3t3a/Covid-19-analysis/workflows/Run%20class%20snippet/badge.svg)<br><br> 
 
 ## Introduction
