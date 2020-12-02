@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- .gitignore  now includes XCode files
+- duplicates in .gitignore have been removed
 - some minor typos
 
 ### Removed
