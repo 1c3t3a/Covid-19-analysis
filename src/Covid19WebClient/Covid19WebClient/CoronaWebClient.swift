@@ -125,16 +125,17 @@ class CoronaWebClient {
     let strCountriesNoSpaces = strCountries.replacingOccurrences(of: " ", with: "")
     // add these GeoID list to the url
     strURL = strURL + "://" + _server + _urlPath + strCountriesNoSpaces + "/" + strAttribut
+    // add both flags
+    if (bLogarithmic && bBargraph) {
+      strURL = strURL + "?bar=True&log=True"
+    }
     // add the log flag
-    if (bLogarithmic) {
-      strURL = strURL + "&log=True"
+    else if (bLogarithmic) {
+      strURL = strURL + "?log=True"
     }
     // add the bargraph flag
     else if (bBargraph) {
-      strURL = strURL + "&bar=True"
-    }
-    else {
-      strURL = strURL + "?"
+      strURL = strURL + "?bar=True"
     }
     // finally get the image and the url that has been used from the server
     return (GetChartFromURL(strURL: strURL), strURL)
