@@ -96,10 +96,10 @@ class PlotterBuilder:
         """
         if self.__xaxis_formatter is None:
             # plot an index, not a date
-            pldf = df.pivot_table(values=self.__yfield, index=df.index, columns='Country')
+            pldf = df.pivot_table(values=self.__yfield, index=df.index, columns='GeoName')
         else:
             # plot it with a date formatted x axis
-            pldf = df.pivot_table(values=self.__yfield, index='Date', columns='Country')
+            pldf = df.pivot_table(values=self.__yfield, index='Date', columns='GeoName')
         fig, ax = self.build()
         pldf.plot(ax=ax, **options)
         ax.set_ylim(ymin=ylim_min, ymax=ylim_max)
