@@ -19,13 +19,16 @@ class CovidCases(ABC):
     The date of the data 
     
     GeoID
-    The GeoID of the area such as 'FR' for France or 'DE' for Germany
+    The ISO-3166-alpha_3 GeoID of the area such as 'FR' for France or 'DE' for Germany
 
     GeoName
     The name of the area such as 'England' or 'Italy'
 
     Population
     The population of the country
+
+    Continent
+    E.g. The continent of the country. But it also may be grouping value for e.g. the states of a federal republic such as Bavaria
     
     DailyCases
     The number of new cases on a given day
@@ -68,19 +71,35 @@ class CovidCases(ABC):
     """
 
     def __init__(self, df):
-        """The constructor takes a string containing the full filename of a CSV
-        database you can down load from the WHO website:
-        https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
-        The database will be loaded and kept as a private member. To retrieve the
-        data for an individual country you can use the public methods
-        GetCountryDataByGeoID or GetCountryDataByCountryName.
+        """The constructor takes a dataframe loaded by any sub-class containing the data published by the
+        website that is handled in the sub-classes individually.  
+        To retrieve the data for an individual country you can use the public methods
+        GetCountryDataByGeoID or GetCountryDataByCountryName. These functions take ISO 3166 alpha_2 
+        (2 characters long) GeoIDs.
 
         Args:
-            filename (str): The full path and name of the csv file. 
+            df (dataframe): The dataframe containing information about individual countries such as
+                            GeoID, CountryName, Cases and Deaths. 
         """
         # keep the data frame
         self.__df = df
-
+        # load the geo information for the world
+        try:
+            # check if it is running in jupyter
+            get_ipython
+            # the absolute directory of this python file
+            absDirectory = os.path.dirname(os.path.abspath(os.path.abspath('')))
+            # the target filename
+            targetFilename = os.path.join(absDirectory, './data/GeoInformationWorld.csv')
+        except:
+            # the absolute directory of this python file
+            absDirectory = os.path.dirname(os.path.abspath(__file__))
+            # the target filename
+            targetFilename = os.path.join(absDirectory, '../data/GeoInformationWorld.csv')
+        # check if it exist already
+        if os.path.exists(targetFilename):
+            self.__dfGeoInformationWorld = pd.read_csv(targetFilename)
+ 
     @staticmethod
     def __compute_doubling_time(dfSingleCountry):
         """Computes the doubling time for everyday day with the formula:
@@ -123,8 +142,6 @@ class CovidCases(ABC):
         # reset the index on the dataframe (if the argument is just a slice)
         dfSingleCountry.reset_index(inplace=True, drop=True)
 
-        print (dfSingleCountry)
-
         # the cumlative cases
         dfSingleCountry['Cases'] = dfSingleCountry['DailyCases'].cumsum()
         # the cumlative cases
@@ -137,6 +154,8 @@ class CovidCases(ABC):
         dfSingleCountry['DeathsPerMillionPopulation'] = pd.DataFrame({'DeathsPerMillionPopulation': dfSingleCountry['Deaths'].div(dfSingleCountry['Population'].iloc[0] / 1000000)})
         # adds the extra attributes
         dfSingleCountry['DoublingTime'] = self.__compute_doubling_time(dfSingleCountry)
+        # now apply the country names from our internal list
+        dfInfo = self.__dfGeoInformationWorld
         # return the manipulated dataframe
         return dfSingleCountry
 

@@ -14,6 +14,7 @@ from enum import Enum
 # append the src directory to the sys path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from CovidCases import CovidCases
+from CovidCasesWHO import CovidCasesWHO
 from PlotterBuilder import PlotterBuilder
 
 
@@ -68,13 +69,13 @@ class Rest_API:
             since_n: int -> plot since the nth case, if not further specified all available data is plotted
         """
         # load the cases
-        csv_file = CovidCases.download_CSV_file()
-        self.covid_cases = CovidCases(csv_file)
+        csv_file = CovidCasesWHO.download_CSV_file()
+        self.covid_cases = CovidCasesWHO(csv_file)
 
         # try to collect the data for given geoIds, if a wrong geoId is passed, the operation will abort with a 400
         # bad request error
         try:
-            df = self.covid_cases.get_country_data_by_geoid_list(
+            df = self.covid_cases.get_data_by_geoid_list(
                 geo_ids, lastNdays=last_n, sinceNcases=since_n)
         except IndexError:
             raise HTTPException(
@@ -102,8 +103,8 @@ class Rest_API:
         df[['Date']] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
         # create pivot table with all needed values, if the x-axis shows a timedelta with days since the nth case the index
         # has to change
-        pldf = df.pivot_table(values=wanted_attrib.name, index='Date', columns='Country') if since_n == -1 \
-            else df.pivot_table(values=wanted_attrib.name, index=df.index, columns='Country')
+        pldf = df.pivot_table(values=wanted_attrib.name, index='Date', columns='GeoName') if since_n == -1 \
+            else df.pivot_table(values=wanted_attrib.name, index=df.index, columns='GeoName')
 
 
         # use the PlotterBuilder to set up the plot
@@ -149,7 +150,11 @@ class Rest_API:
             SinceN and lastN plots the data starting from the given case or just the lastN days. Log is a boolean value that converts the y-scale to the logarithmic unit.
             """
             # read the geoIds and plot the file
-            geo_ids = re.split(r",\s*", countries.upper())
+            countries = countries.upper()
+            countries = countries.replace('UK', 'GB')
+            countries = countries.replace('EL', 'GR')
+            countries = countries.replace('NA', 'NAM')
+            geo_ids = re.split(r",\s*", countries)
             file = self.generate_plot(geo_ids, wanted_attrib,
                                       last_n=lastN if lastN != None else -1, log=log, since_n=sinceN if sinceN != None else -1, bar=bar)
 

@@ -157,6 +157,8 @@ class CovidMap:
                 myMap.add(geoID, 'gb')
             elif geoID == 'EL':
                 myMap.add(geoID, 'gr')
+            elif geoID == 'NAM':
+                myMap.add(geoID, 'na')
             else:   
                 # add it to the map      
                 dfc = dfDateNoneZero.loc[dfDateNoneZero['GeoID'] == geoID]

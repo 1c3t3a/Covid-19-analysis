@@ -9,6 +9,7 @@ import requests
 import re
 from datetime import date
 from CovidCases import CovidCases
+from GeoInformationWorld import GeoInformationWorld
 
 class CovidCasesOWID(CovidCases):
     """The class will expose data attributes in form of a DataFrame. Its base class also provides methods to process 
@@ -27,6 +28,9 @@ class CovidCasesOWID(CovidCases):
     Population
     The population of the country
 
+    Continent
+    The continent of the country
+
     DailyCases
     The number of new cases on a given day
 
@@ -37,16 +41,17 @@ class CovidCasesOWID(CovidCases):
     The continent of the country as an additional column
     
     Returns:
-        CovidCasesECDC: A class to provide access to some data based on the ECDC file.
+        CovidCasesOWID: A class to provide access to some data based on the OWID file.
     """
 
     def __init__(self, filename):
         """The constructor takes a string containing the full filename of a CSV
-        database you can down load from the WHO website:
-        https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
+        database you can download from the OWID website:
+        https://covid.ourworldindata.org/data/owid-covid-data.csv
         The database will be loaded and kept as a private member. To retrieve the
         data for an individual country you can use the public methods
-        GetCountryDataByGeoID or GetCountryDataByCountryName.
+        GetCountryDataByGeoID or GetCountryDataByCountryName. These functions take 
+        ISO 3166 alpha_2 (2 characters long) GeoIDs.
 
         Args:
             filename (str): The full path and name of the csv file. 
@@ -112,27 +117,57 @@ class CovidCasesOWID(CovidCases):
         # change the type of the 'date' field to a pandas date
         self.__df['Date'] = pd.to_datetime(self.__df['Date'],
                                            format='%Y/%m/%d')
-        
+        # re-order the columns to be similar for all sub-classes                                   
+        self.__df = self.__df[['Date', 
+                              'GeoName', 
+                              'GeoID', 
+                              'Population', 
+                              'Continent', 
+                              'DailyCases',
+                              'DailyDeaths']]
         df = self.__df
-        # we need the newest date being on top
-        # get all GeoIDs in the df
+        # to apply the country names from our internal list
+        giw = GeoInformationWorld()
+        # get all country info
+        dfInfo = giw.get_geo_information_world()
+        # we need the newest date being on top, get all GeoIDs in the df
         geoIDs = df['GeoID'].unique()
         # our result data frame
         dfs = []
         for geoID in geoIDs:
+            # 'nan' workaround
+            if str(geoID) == 'nan':
+                # nothing else worked to detect this nan (it's the 'international' line in the file that doesn't have any GeoIds)
+                continue
             # get the country dataframe
             dfSingleCountry = df.loc[df['GeoID'] == geoID].copy()
             # reset the index to start from index = 0
             dfSingleCountry.reset_index(inplace=True, drop=True)
-            dfSingleCountry = dfSingleCountry.reindex(index=dfSingleCountry.index[::-1])
-            
+            dfSingleCountry = dfSingleCountry.reindex(index=dfSingleCountry.index[::-1])  
+            # 'Kosovo' workaround
+            if geoID == 'OWID_KOS':
+                geoID = 'KOS'
+            # 'OWID World' workaround
+            if geoID == 'OWID_WRL':
+                continue
+            # get the geoName for this geoID from our internal list
+            geoName = giw.geo_name_from_ISO3166_alpha_3(geoID)
+            # get the alpha-2 geoID from the alpha-3 geoID
+            geoID2 = giw.geoID_from_ISO3166_alpha_3(geoID)
+            # the current name         
+            curName = dfSingleCountry['GeoName'][0]
+            # replace it if necessary
+            if geoName != curName:
+                dfSingleCountry['GeoName'] = [geoName for _ in range(0, len(dfSingleCountry['GeoID']))]
+            # now overwrite the alpha-3 geoID with the alpha-2 geoID so all sublasses can use the same geoIDs
+            dfSingleCountry['GeoID'] = [geoID2 for _ in range(0, len(dfSingleCountry['GeoID']))]    
             # add the country to the result
             dfs.append(dfSingleCountry)
+        # done, keep the list
         self.__df = pd.concat(dfs)
-
         # some benchmarking
         end = time.time()
-        print('Panda loading the CSV: ' + str(end - start) + 's')
+        print('Pandas loading the OWID CSV: ' + str(end - start) + 's')
         # pass the dataframe to the base class
         super().__init__(self.__df)
 
@@ -187,11 +222,11 @@ class CovidCasesOWID(CovidCases):
         # the list of GeoIDs in the dataframe
         geoIDs = self.__df['GeoID'].unique()
         # the list of country names in the dataframe
-        countries = self.__df['Country'].unique()
+        countries = self.__df['GeoName'].unique()
         # merge them together
         list_of_tuples = list(zip(geoIDs, countries))
-        # create a datafarme out of the list
-        dfResult = pd.DataFrame(list_of_tuples, columns=['GeoID', 'Country'])
+        # create a dataframe out of the list
+        dfResult = pd.DataFrame(list_of_tuples, columns=['GeoID', 'GeoName'])
         return dfResult
 
     def get_data_source_info(self):
@@ -205,7 +240,7 @@ class CovidCasesOWID(CovidCases):
             Dataframe: A dataframe holding the information
         """
         info = ["Our World In Data", 
-                "OWD since 15/12/2020",
+                "OWID",
                 "https://covid.ourworldindata.org/data/owid-covid-data.csv"]
         return info
 
@@ -241,10 +276,10 @@ class CovidCasesOWID(CovidCases):
         # just the main european countries for a map, pygal doesn't contain e.g. 
         # Andorra, Kosovo (XK)
         geoIdList = 'AM, AL, AZ, AT, BA, BE, BG, BY, CH, CY, CZ, ' + \
-                    'DE, DK, EE, EL, ES, FI, FR, GE, GL, '  + \
+                    'DE, DK, EE, GR, ES, FI, FR, GE, GL, '  + \
                     'HU, HR, IE, IS, IT, LV, LI, LT, ' + \
                     'MD, ME, MK, MT, NL, NO, PL, PT, ' + \
-                    'RU, SE, SI, SK, RO, UA, UK, RS'
+                    'RU, SE, SI, SK, RO, UA, GB, RS'
         return geoIdList
 
     @staticmethod

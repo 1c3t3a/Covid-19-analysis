@@ -9,6 +9,7 @@ import requests
 import re
 from datetime import date
 from CovidCases import CovidCases
+from GeoInformationWorld import GeoInformationWorld
 
 class CovidCasesECDC(CovidCases):
     """The class will expose data attributes in form of a DataFrame. Its base class also provides methods to process 
@@ -23,6 +24,9 @@ class CovidCasesECDC(CovidCases):
 
     GeoName
     The name of the country
+
+    Continent
+    The continent of the country
 
     Population
     The population of the country
@@ -42,11 +46,14 @@ class CovidCasesECDC(CovidCases):
 
     def __init__(self, filename):
         """The constructor takes a string containing the full filename of a CSV
-        database you can down load from the WHO website:
+        database you can download from the ECDC website until 14.12.2021. Since  
+        than the ECDC publishes only 14 day numbers. That was the link until 
+        14.12.2020, the site also contains a link to the new published numbers:
         https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
         The database will be loaded and kept as a private member. To retrieve the
         data for an individual country you can use the public methods
-        GetCountryDataByGeoID or GetCountryDataByCountryName.
+        GetCountryDataByGeoID or GetCountryDataByCountryName. These functions take 
+        ISO 3166 alpha_2 (2 characters long) GeoIDs.
 
         Args:
             filename (str): The full path and name of the csv file. 
@@ -69,12 +76,54 @@ class CovidCasesECDC(CovidCases):
                              'GeoID',
                              'Population',
                              'Continent']
+        # re-order the columns to be similar for all sub-classes                                   
+        self.__df = self.__df[['Date', 
+                              'GeoName', 
+                              'GeoID', 
+                              'Population', 
+                              'Continent', 
+                              'DailyCases',
+                              'DailyDeaths']]
+        # now apply the country names from our internal list
+        giw = GeoInformationWorld()
+        # get all country info
+        dfInfo = giw.get_geo_information_world()
+        
+        # 'nambia testing'
+        #for i in dfInfo['GeoID'].unique():
+        #    print(i)
+
+        # fix the 'namibia' problem by replacing nan with 'NAM'
+        self.__df['GeoID'] = self.__df['GeoID'].replace(np.nan, 'NAM')
+        # fix the 'UK' problem by replacing UK with GB
+        self.__df['GeoID'] = self.__df['GeoID'].replace('UK', 'GB')
+        # fix the 'EL' problem by replacing EL with GR
+        self.__df['GeoID'] = self.__df['GeoID'].replace('EL', 'GR')
+        # our result data frame
+        dfs = []
+        for geoID in self.__df['GeoID'].unique():
+            # get the geoName for this geoID
+            geoName = giw.geo_name_from_geoid(geoID)
+            # get the data for a country and add the additional rows
+            dfSingleCountry = self.__df.loc[self.__df['GeoID'] == geoID].copy()
+            # reset the index
+            dfSingleCountry.reset_index(inplace=True, drop=True)
+            dfSingleCountry.head()   
+            # the current name         
+            curName = dfSingleCountry['GeoName'][0]
+            # replace it if necessary
+            if geoName != curName:
+                dfSingleCountry['GeoName'] = [geoName for _ in range(0, len(dfSingleCountry['GeoID']))]
+            # append this dataframe to our result
+            dfs.append(dfSingleCountry)
+        # keep the concatenated dataframe
+        self.__df = pd.concat(dfs)
         # change the type of the 'date' field to a pandas date
         self.__df['Date'] = pd.to_datetime(self.__df['Date'],
                                            format='%d/%m/%Y')
         # some benchmarking
         end = time.time()
-        print('Panda loading the CSV: ' + str(end - start) + 's')
+        print('Pandas loading the ECDC CSV: ' + str(end - start) + 's')
         # pass the dataframe to the base class
         super().__init__(self.__df)
 
@@ -129,11 +178,11 @@ class CovidCasesECDC(CovidCases):
         # the list of GeoIDs in the dataframe
         geoIDs = self.__df['GeoID'].unique()
         # the list of country names in the dataframe
-        countries = self.__df['Country'].unique()
+        countries = self.__df['GeoName'].unique()
         # merge them together
         list_of_tuples = list(zip(geoIDs, countries))
-        # create a datafarme out of the list
-        dfResult = pd.DataFrame(list_of_tuples, columns=['GeoID', 'Country'])
+        # create a dataframe out of the list
+        dfResult = pd.DataFrame(list_of_tuples, columns=['GeoID', 'GeoName'])
         return dfResult
 
     def get_data_source_info(self):
@@ -147,7 +196,7 @@ class CovidCasesECDC(CovidCases):
             Dataframe: A dataframe holding the information
         """
         info = ["European Centre for Disease Prevention and Control", 
-                "ECDC until 14/12/2020",
+                "ECDC",
                 "https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide"]
         return info
 
@@ -183,10 +232,10 @@ class CovidCasesECDC(CovidCases):
         # just the main european countries for a map, pygal doesn't contain e.g. 
         # Andorra, Kosovo (XK)
         geoIdList = 'AM, AL, AZ, AT, BA, BE, BG, BY, CH, CY, CZ, ' + \
-                    'DE, DK, EE, EL, ES, FI, FR, GE, GL, '  + \
+                    'DE, DK, EE, GR, ES, FI, FR, GE, GL, '  + \
                     'HU, HR, IE, IS, IT, LV, LI, LT, ' + \
                     'MD, ME, MK, MT, NL, NO, PL, PT, ' + \
-                    'RU, SE, SI, SK, RO, UA, UK, RS'
+                    'RU, SE, SI, SK, RO, UA, GB, RS'
         return geoIdList
 
     @staticmethod

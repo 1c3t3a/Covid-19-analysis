@@ -178,7 +178,7 @@ UpgradeLog*.XML
 UpgradeLog*.htm
 
 # ignore data files
-data
+data/*-db.csv
 
 # Xcode
 #
