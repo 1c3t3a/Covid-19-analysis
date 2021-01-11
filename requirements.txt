@@ -5,7 +5,7 @@ notebook==6.1.5
 numpy==1.19.4
 regex==2020.11.13
 pandas==1.2.0
-requests==2.25.0
+requests==2.25.1
 fastapi==0.62.0
 uvicorn==0.12.3
 pygal==2.4.0
