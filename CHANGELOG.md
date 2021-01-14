@@ -14,6 +14,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
+## [5.0.0] - 2021-01-14
+
+### Added
+
+- support for different data provider e.g. ECDC, WHO and OWID
+- new Jupyter Notebook to compare the quality of different data provider  
+- new CovidCasesECDC class to download the data from the ECDC server  
+- new CovidCasesWHO class to download the data from the WHO server
+- new CovidCasesWHOv1 class to download the data from an alternative WHO server
+- new CovidCasesOWID class to download the data from the OWID server
+- new GeoInformationWorld class to handle ISO 3166 alpha-2 and alpha-3 GeoIDs
+- new GeoInformationWorld.csv file in the data directory
+- new GeoInformationWorld.xlsx file in the data directory
+- new 2020-12-14-ECDC.csv file holding the ECDC until December 14th.
+- new 2020-12-14-WHO.csv file holding the WHO until December 14th.
+- new 2020-12-14-OWID.csv file holding the OWID until December 14th.
+
+### Changed
+
+- The CovidDataClass Jupyter Notebook can now use different data providers and defaults to WHO data  
+- The CovidCases class now acts as a abstract class for its sub-classes  
+- The PlotterBuilder class reflects changes in CovidCases  
+- The CovidMap class reflects changes in CovidCases  
+- The CovidClassSnippet reflects changes in CovidCases
+
+### Removed
+
+-
 ## [4.1.0] - 2020-11-30
 
 ### Added
