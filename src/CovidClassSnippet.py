@@ -79,16 +79,16 @@ numCasesince = 10000
 lastN = 100
 
 # the list of comma separated geoIDs
-countryList = 'DE, GB, FR, ES, IT, CH, AT'
+countryList = 'DE, GB, FR, ES, IT, CH, AT, EL'
 
 # create instances
-#covidCases_ecdc = CovidCasesECDC(pathToCSV_ecdc)
+covidCases_ecdc = CovidCasesECDC(pathToCSV_ecdc)
 covidCases_owid = CovidCasesOWID(pathToCSV_owid)
-covidCases_whov1 = CovidCasesWHOv1(pathToCSV_whov1)
+#covidCases_whov1 = CovidCasesWHOv1(pathToCSV_whov1)
 covidCases_who = CovidCasesWHO(pathToCSV_who)
 
 # create tuples of instances and country codes
-objList = [covidCases_owid, covidCases_who, covidCases_whov1]
+objList = [covidCases_owid, covidCases_who, covidCases_ecdc]
 
 # get the combined dataframe
 df = create_combined_dataframe(objList, countryList)

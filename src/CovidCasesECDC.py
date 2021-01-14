@@ -200,6 +200,27 @@ class CovidCasesECDC(CovidCases):
                 "https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide"]
         return info
 
+    def review_geoid_list(self, geoIDs):
+        """
+        Returns a corrected version of the given geoID list to ensure that cases of mismatches like UK-GB are corrected by the sub-class.  
+        geoIDs: The list holding the geoIDs as requested such as ['DE', 'UK']
+
+        Returns:
+            list: A corrected list such as ['DE', 'GB'] that translates incorrect country codes to corrected codes 
+        """
+        # fix the ECDC mistakes and map e.g. UK to GB 
+        corrected = []
+        for geoID in geoIDs:
+            if geoID == 'GB':
+                corrected.append('UK')
+            elif geoID == 'GR':
+                corrected.append('EL')
+            elif geoID == 'NA':
+                corrected.append('NAM')
+            else:
+                corrected.append(geoID)
+        return corrected
+
     @staticmethod
     def get_pygal_european_geoid_list():
         """Returns a list of GeoIDs of European countries that are available in PayGal and 

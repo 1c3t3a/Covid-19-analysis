@@ -9,7 +9,6 @@ import requests
 import re
 from datetime import date
 from abc import ABC, abstractmethod
-
 class CovidCases(ABC):
     """This abstract base class will expose data attributes in form of a DataFrame. It also provides methods to process 
     the data which will end up in additional columns in the DataFrame.  
@@ -372,6 +371,8 @@ class CovidCases(ABC):
         Returns:
             DataFrame: A data frame holding the information of the selected countries
         """
+        # correct potentially incorrect lists
+        geoIDs = self.review_geoid_list(geoIDs)
         # check if only one optional parameter is used
         if lastNdays > 0 and sinceNcases > 0:
             raise ValueError("Only one optional parameter allowed!")
@@ -458,5 +459,16 @@ class CovidCases(ABC):
 
         Returns:
             Dataframe: A dataframe holding the information
+        """
+        pass 
+
+    @abstractmethod
+    def review_geoid_list(self, geoIDs):
+        """
+        Returns a corrected version of the given geoID list to ensure that cases of mismatches like UK-GB are corrected by the sub-class.  
+        geoIDs: The list holding the geoIDs as requested such as ['DE', 'UK']
+
+        Returns:
+            list: A corrected list such as ['DE', 'GB'] that translates incorrect country codes to corrected codes 
         """
         pass 

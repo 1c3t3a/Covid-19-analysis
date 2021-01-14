@@ -91,7 +91,7 @@ class GeoInformationWorld():
         return dfTheOne['GeoID'].values[0]
 
     def ISO3166_alpha_3_from_geoID (self, geoID):
-        """Return the name of a country of the internal geo information from a given ISO-3166-alpha_2 geoid.
+        """Return the ISO-3166-alpha_2 geoid of a country of the internal geo information from a given ISO-3166-alpha_2 geoid.
 
         Args:
             geoID (str):  a string of a ISO-3166-alpha_2 geoid
@@ -107,10 +107,10 @@ class GeoInformationWorld():
         return dfTheOne['ISO-3166-alpha_3'].values[0]
 
     def population_from_geoid(self, geoID):
-        """Return the population of a country of the internal geo information from a given geoName.
+        """Return the population of a country of the internal geo information from a given ISO-3166-alpha_2 geoid.
 
         Args:
-            geoID (str):  a string with the country name such as 'Germany'
+            geoID (str):  a string of a ISO 3166 alpha_2 geoid
 
         Returns:
             int: the population of the country
@@ -124,10 +124,10 @@ class GeoInformationWorld():
         return pop
 
     def continent_from_geoid(self, geoID):
-        """Return the continent of a country of the internal geo information from a given geoName.
+        """Return the continent of a country of the internal geo information from a given ISO-3166-alpha_2 geoid.
 
         Args:
-            geoID (str):  a string with the country name such as 'Germany'
+            geoID (str):  a string of a ISO 3166 alpha_2 geoid
 
         Returns:
             str: the continent of the country

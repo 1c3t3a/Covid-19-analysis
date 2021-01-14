@@ -105,7 +105,12 @@ class CovidCasesOWID(CovidCases):
                                             'handwashing_facilities',
                                             'hospital_beds_per_thousand',
                                             'life_expectancy',
-                                            'human_development_index'])
+                                            'human_development_index',
+                                            # three more columns have been introduced
+                                            'new_vaccinations',
+                                            'new_vaccinations_smoothed',
+                                            'new_vaccinations_smoothed_per_million'])
+        print(self.__df)
         # rename the columns to be more readable
         self.__df.columns = ['GeoID',
                              'Continent',
@@ -243,6 +248,27 @@ class CovidCasesOWID(CovidCases):
                 "OWID",
                 "https://covid.ourworldindata.org/data/owid-covid-data.csv"]
         return info
+
+    def review_geoid_list(self, geoIDs):
+        """
+        Returns a corrected version of the given geoID list to ensure that cases of mismatches like UK-GB are corrected by the sub-class.  
+        geoIDs: The list holding the geoIDs as requested such as ['DE', 'UK']
+
+        Returns:
+            list: A corrected list such as ['DE', 'GB'] that translates incorrect country codes to corrected codes 
+        """
+        # fix the ECDC mistakes and map e.g. UK to GB 
+        corrected = []
+        for geoID in geoIDs:
+            if geoID == 'UK':
+                corrected.append('GB')
+            elif geoID == 'EL':
+                corrected.append('GR')
+            elif geoID == 'NA':
+                corrected.append('NAM')
+            else:
+                corrected.append(geoID)
+        return corrected
 
     @staticmethod
     def get_pygal_european_geoid_list():
