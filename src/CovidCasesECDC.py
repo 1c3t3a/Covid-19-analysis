@@ -89,10 +89,6 @@ class CovidCasesECDC(CovidCases):
         # get all country info
         dfInfo = giw.get_geo_information_world()
         
-        # 'nambia testing'
-        #for i in dfInfo['GeoID'].unique():
-        #    print(i)
-
         # fix the 'namibia' problem by replacing nan with 'NAM'
         self.__df['GeoID'] = self.__df['GeoID'].replace(np.nan, 'NAM')
         # fix the 'UK' problem by replacing UK with GB
