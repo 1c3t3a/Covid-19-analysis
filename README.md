@@ -4,7 +4,9 @@
 ![Run class snippet](https://github.com/1c3t3a/Covid-19-analysis/workflows/Run%20class%20snippet/badge.svg)<br><br> 
 
 ## Introduction
-We supply source code to get and process the data about Covid-19 infections around the world over the time. The documentation of the source code be found here: <a href="http://mb.cmbt.de/python-class-documentation/" target="blank">http://mb.cmbt.de/docscan</a>. Beside some Jupyter Notebooks, a REST API and Windows and MacOS applications to access it, you will find python classes to automatically download the data from the following organizations:
+We supply source code to get and process the data about Covid-19 infections around the world over the time. The documentation of the source code be found here:  
+<a href="http://mb.cmbt.de/python-class-documentation/" target="blank">http://mb.cmbt.de/</a>.  
+Beside some Jupyter Notebooks, a REST API and Windows and MacOS applications to access it, you will find python classes to automatically download the data from the following organizations:
 
 1. World Health Organization (WHO)
 
