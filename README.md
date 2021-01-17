@@ -49,18 +49,17 @@ Other functions will allow you to calculate the following additional attributes:
 
 Once having the data calculated we generate plots using the *matplot* library such as these:  
 
-![sample covid-19 plot](doc/plot.png)
-![sample covid-19 plot](doc/plot2.png)
+<img src="doc/plot.png" width="55%">
+<img src="doc/plot2.png" width="60%">
 
 You can also generate heatmaps using *pygal* such as this:
 
-![sample covid-19 heatmap](doc/output_29_12.svg)
+<img src="doc/output_29_12.svg" width="60%">
 
 All of that graphics can be published using a REST API for which you will find the sources here as well. For your convenience in getting a quick look to the data we offer the REST API on a private server that you can access here: <a href="http://mb.cmbt.de/docs" target="blank">http://mb.cmbt.de/docs</a>  
 
 For the quick look we also offer a Windows Forms CSharp application and a MacOS Swift application. You will find the source code for them here as well and you can download the <a href="http://mb.cmbt.de/download-area" target="blank">installer here</a>. Here are some screenshots of the applications:  
 
-![sample covid-19 MacOS app](doc/version41.png)
+<img src="doc/version41.png" width="60%">
 
-![sample covid-19 Windows app](doc/screenshot.png)
-
+<img src="doc/screenshot.png" width="60%">
