@@ -4,69 +4,63 @@
 ![Run class snippet](https://github.com/1c3t3a/Covid-19-analysis/workflows/Run%20class%20snippet/badge.svg)<br><br> 
 
 ## Introduction
-Gets the WHO data about COVID-19 from the [European Center of Disease Control](https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide) and visualize them.<br>
-Additionally it will calculate some important numbers such as the doubling time and the reproduction number R0. To do so it offers a set of Python classes and functions including a Jupyter notebook to generate PDF reports. The functions are also available through a REST API and the repository offers a C# application in source code to call the REST API. To execute the REST API on your local machine you may want to use [Uvicorn](www.uvicorn.org) which wraps a simple webserver in Python. <br><br>
-## Installation
-You basically neet to install the JupyterLab, MatPlotLib and Pandas libraries. To use some interactions in the notebook we are using ipywidgets as well.  
-These are the pip commands to install the packages:  
-```
-pip install jupyterlab  
-pip install pandas  
-pip install matplolib  
-pip install ipywidgets
-```
-If you want to use the REST API on your local machine you have to install Uvicorn and FastAPI as well:
-```
-pip install uvicorn
-pip install fastapi
-```
+We supply source code to get and process the data about Covid-19 infections around the world over the time. The documentation of the source code be found here: <a href="http://mb.cmbt.de/python-class-documentation/" target="blank">http://mb.cmbt.de/docscan</a>. Beside some Jupyter Notebooks, a REST API and Windows and MacOS applications to access it, you will find python classes to automatically download the data from the following organizations:
 
-In order to get ipywidgets working with jupyter notebook please run the following command:  
-```
-jupyter nbextension enable --py --sys-prefix widgetsnbextension
-```
-    
-If you're using jupyter lab you also have to register the extension:  
-```
-jupyter labextension install @jupyter-widgets/jupyterlab-manager
-```
+1. World Health Organization (WHO)
 
-Please refer to: [https://github.com/jupyter-widgets/ipywidgets/blob/master/README.md](https://github.com/jupyter-widgets/ipywidgets/blob/master/README.md)  
-  
-When exectuing the second command you may wonder that the terminal is somehow standing still. Don't worry, start the jupyter notebook in a second terminal using:  
+> The WHO publishes the data on a dashboard available on the <a href="https://covid19.who.int/table" target="blank">WHO Covid-19 pages</a>.   
 
-```
-jupyter lab
-```
-  
-For your convenience we added all of these indivdual installtion to one requirements text file that you can execute using the one and only following command (you will find requirements.txt in the root folder of this project):  
-```
-pip install -r requirements.txt
-```
+2. European Centre for Disease Prevention and Control (ECDC)
+
+> Since 14.12.2020 the <a href="https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide" target="blank">ECDC</a> publishes only weekly numbers.  
+
+3. Our World in Data (OWID)
+
+> According to the <a href="https://github.com/owid/covid-19-data/tree/master/public/data" target="blank">OWID website</a> the Covid-19 data provided is coming from the *COVID-19 Data Repository by the Center for Systems Science  
+and Engineering (CSSE) at Johns Hopkins University* (<a href="https://github.com/CSSEGISandData/COVID-19" target="blank">JHU</a>).  
+
+Based on that raw data we provide functions to calculate the following attributes:  
+<br>
+
+| Column | Description |
+| --- | --- |
+| **GeoName** | The name of the country, county or city  
+| **GeoID** | The GeoID of the country. Refer [to this post](/covid-19-analysis/list-of-geoids-and-countries/) to get a list of GeoIDs and country names.  
+| **Population** | The population of the country, county or city based on 2019 data.  
+| **Continent** | The continent of the country. In case of a city it may be the county. In case of a county it may be a federal state or region. In general it's a grouping in a level above the meaning of the GeoName -  GeoID combination.  
+| **DailyCases** | The daily number of confirmed cases.  
+| **DailyDeaths** | The daily number of deaths of confirmed cases  
+| **Cases** | The overall number of confirmed infections (here called *cases*) since December 31st. 2019 as published by the data source.  
+| **Deaths** | The overall number of deaths of confirmed cases.  
+| **PercentDeaths** | The percentage of deaths of the confirmed cases. This is also called <a href="https://en.wikipedia.org/wiki/Case_fatality_rate" target="blank">Case-Fatality-Rate (CFR)</a> which is an estimation for the <a href="https://en.wikipedia.org/wiki/Case_fatality_rate#Infection_fatality_rate" target="blank">Infection-Fatality-Rate (IFR)</a> which also includes unconfirmed (*hidden* or *dark*) infections  
+| **DoublingTime** | The time in days after which the number of Cases are doubled  
+| **CasesPerMillionPopulation** | The number of **Cases** divided by the population in million  
+| **DeathsPerMillionPopulation** | The number of **Deaths** divided by the population in million  
+
+Other functions will allow you to calculate the following additional attributes:  
+<br>
+
+| Column | Description |
+| --- | --- |
+| **R** | An estimation of the reproduction number R0. The attribute should finally be low-pass filtered with a kernel size of 7.  
+| **Incidence7DayPer100Kpopulation** | The accumulated 7-day incidence. That is the sum of the daily cases of the last 7 days divided by the population in 100000 people.  
+| **DailyCases7** | After calling ```add_lowpass_filter_for_attribute``` with the attribute name **DailyCases** and a filter size of **7** you will get this new attribute that represents the average number of **DailyCases** of the last 7 days. Of course you can filter all of the attributes given in the list above with whatever filter size.  
 
 
-## Using a Docker image to execute the REST API
-To build the Docker image use the following command line:
+Once having the data calculated we generate plots using the *matplot* library such as these:  
 
-```
-docker build -t covid_api:latest .
-```
+![sample covid-19 plot](doc/plot.png)
+![sample covid-19 plot](doc/plot2.png)
 
-It will take a while to build but finally it will generate a Docker image that you can run using:
+You can also generate heatmaps using *pygal* such as this:
 
-```
-docker run -d -p 8080:5000 --name covidREST covid_api:latest 
-```
-This will start a Docker container that is running the REST API and that is listing to port 8080. The container name is *covidREST*. Port 8080 on the host is mapped to port 5000 inside the container. Start a browser and go to the following web site http://localhost:8080/api/data/DE,UK,FR,IT,ES/CumulativeCases
-You may also want to try some more links such as:
-- http://localhost:8080/api/data/DE,UK,FR,IT,ES/Cases?lastN=30&bar=True
-- http://localhost:8080/api/data/JP,KR,SG/CumulativeCases?sinceN=100
-- http://localhost:8080/api/data/US,RU,BR,PE,MX/CumulativeCases?sinceN=100&log=True
+![sample covid-19 heatmap](doc/output_29_12.svg)
 
-As this REST API is build on the [FastAPI framework](https://fastapi.tiangolo.com), the documentation is generated at <host>:8080/docs. You will find a documentation of certain parameters there as well as the possibility to test the API by submitting requests to it.
+All of that graphics can be published using a REST API for which you will find the sources here as well. For your convenience in getting a quick look to the data we offer the REST API on a private server that you can access here: <a href="http://mb.cmbt.de/docs" target="blank">http://mb.cmbt.de/docs</a>  
 
-To stop the Docker image use:
+For the quick look we also offer a Windows Forms CSharp application and a MacOS Swift application. You will find the source code for them here as well and you can download the <a href="http://mb.cmbt.de/download-area" target="blank">installer here</a>. Here are some screenshots of the applications:  
 
-````
-docker stop covidREST 
-````
+![sample covid-19 MacOS app](doc/version41.png)
+
+![sample covid-19 Windows app](doc/screenshot.png)
+
