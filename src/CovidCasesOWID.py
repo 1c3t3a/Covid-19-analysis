@@ -109,7 +109,11 @@ class CovidCasesOWID(CovidCases):
                                             # three more columns have been introduced
                                             'new_vaccinations',
                                             'new_vaccinations_smoothed',
-                                            'new_vaccinations_smoothed_per_million'])
+                                            'new_vaccinations_smoothed_per_million',
+                                            'people_fully_vaccinated',
+                                            'people_fully_vaccinated_per_hundred',
+                                            'people_vaccinated',
+                                            'people_vaccinated_per_hundred'])
         print(self.__df)
         # rename the columns to be more readable
         self.__df.columns = ['GeoID',
