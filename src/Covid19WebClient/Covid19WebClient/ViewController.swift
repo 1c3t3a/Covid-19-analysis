@@ -37,7 +37,7 @@ class ViewController: NSViewController {
                    "US, BR, MX, PE, CO, RU, IN",
                    "SE, NO, FI, DK",
                    "AT, HR, SI, ME, BA, XK",
-                   "KR, JP, SG, TW, VN, PH, MY, TH"], forKey: "favourites")
+                   "KR, JP, SG, VN, PH, MY, TH"], forKey: "favourites")
     // flag that we have defaults
     _defaults.set(true, forKey: "hasDefaults")
   }
