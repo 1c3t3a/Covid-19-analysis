@@ -71,6 +71,10 @@ class GeoInformationWorld():
         dfInfo = self.get_geo_information_world()
         # find the row in our internal listin the GeoID column
         dfTheOne = dfInfo.loc[dfInfo['ISO-3166-alpha_3'] == geoID]
+        if dfTheOne.empty:
+            # print the geoid that is not in the database
+            print('Unknown GeoId: ' + geoID)
+            return 'Unknown'
         # the name used in our internal list
         return dfTheOne['GeoName'].values[0]
 
@@ -87,6 +91,11 @@ class GeoInformationWorld():
         dfInfo = self.get_geo_information_world()
         # find the row in our internal listin the GeoID column
         dfTheOne = dfInfo.loc[dfInfo['ISO-3166-alpha_3'] == geoID]
+        # check if it is empty
+        if dfTheOne.empty:
+            # print the geoid that is not in the database
+            print('Unknown GeoId: ' + geoID)
+            return 'Unknown'
         # the name used in our internal list
         return dfTheOne['GeoID'].values[0]
 
