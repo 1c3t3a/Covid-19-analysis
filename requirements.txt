@@ -3,7 +3,7 @@ json5==0.9.5
 matplotlib==3.4.1
 numpy==1.20.1
 notebook==6.3.0
-regex==2020.11.13
+regex==2021.4.4
 pandas==1.2.3
 requests==2.25.1
 fastapi==0.63.0
