@@ -1,0 +1,15 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: monthly
+    time: "04:00"
+  open-pull-requests-limit: 10
+  reviewers:
+  - 1c3t3a
+  - cmbTea
+  ignore:
+  - dependency-name: pandas
+    versions:
+    - 1.2.2
