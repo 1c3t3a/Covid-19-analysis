@@ -2,7 +2,7 @@ ipywidgets==7.6.3
 json5==0.9.5
 matplotlib==3.4.2
 numpy==1.20.2
-notebook==6.3.0
+notebook==6.4.0
 regex==2021.4.4
 pandas==1.2.4
 requests==2.25.1
