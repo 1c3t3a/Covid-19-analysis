@@ -4,7 +4,7 @@ matplotlib==3.4.2
 numpy==1.20.3
 notebook==6.4.0
 regex==2021.4.4
-pandas==1.2.4
+pandas==1.2.5
 requests==2.25.1
 fastapi==0.65.1
 uvicorn==0.13.4
