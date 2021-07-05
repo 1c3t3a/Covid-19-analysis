@@ -113,7 +113,9 @@ class CovidCasesOWID(CovidCases):
                                             'people_fully_vaccinated',
                                             'people_fully_vaccinated_per_hundred',
                                             'people_vaccinated',
-                                            'people_vaccinated_per_hundred'])
+                                            'people_vaccinated_per_hundred',
+                                            # again a new field
+                                            'excess_mortality'])
         print(self.__df)
         # rename the columns to be more readable
         self.__df.columns = ['GeoID',
