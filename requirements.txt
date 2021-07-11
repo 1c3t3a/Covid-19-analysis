@@ -1,5 +1,5 @@
 ipywidgets==7.6.3
-json5==0.9.5
+json5==0.9.6
 matplotlib==3.4.2
 numpy==1.21.0
 notebook==6.4.0
