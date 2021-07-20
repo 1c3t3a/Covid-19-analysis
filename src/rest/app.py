@@ -1,3 +1,12 @@
+import sys
+import os
+# append the src directory to the sys path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+from CovidCasesECDC import CovidCasesECDC
+from CovidCasesOWID import CovidCasesOWID
+from PlotterBuilder import PlotterBuilder
+from CovidCasesWHO import CovidCasesWHO
+from CovidCases import CovidCases
 from typing import Optional
 import re
 import pandas as pd
@@ -6,16 +15,9 @@ import matplotlib
 import io
 import requests
 from datetime import date
-import os
-import sys
 from starlette.responses import StreamingResponse
 from fastapi import FastAPI, HTTPException
 from enum import Enum
-# append the src directory to the sys path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-from CovidCases import CovidCases
-from CovidCasesWHO import CovidCasesWHO
-from PlotterBuilder import PlotterBuilder
 
 
 class Attributes(Enum):
@@ -68,21 +70,46 @@ class AttributeTitles(Enum):
     PercentPeopleReceivedAllDoses = 'Percent of citizens that received all doses'
     VaccineDosesAdministered = 'Vaccine doses administered'
 
+class DataSource(Enum):
+    """
+    Enumeration of all possible data sources.
+    """
+    WHO = 'WHO'  # World Health Organization
+    Owid = 'Owid'  # Our World in data
+    ECDC = 'ECDC'  # European Center for Disease Control
+
 class Rest_API:
 
-    def generate_plot(self, geo_ids, wanted_attrib, log=False, last_n=-1, since_n=-1, bar=False):
+    def generate_plot(self, geo_ids, wanted_attrib, data_source, log=False, last_n=-1, since_n=-1, bar=False):
         """
         Generates a plot for given GeoIds and returns it in form of a byteIO stream
         Parameters:
             geo_ids: [String] -> countries that should be plotted
             wanted_attrib: String -> the field you want to plot, e.g. Cases
+            data_source: DataSource -> Source of the data defined by the enum. Note! If vaccination data is selected and another
+                                       source than OWID is selected this will implicitly switch!
             log: bool -> should the plot be logarithmic
             last_n: int -> plot the last n days, if not further specified all available data is plotted
             since_n: int -> plot since the nth case, if not further specified all available data is plotted
         """
+        # uses the fact that every name of the attribute concerning vaccination data contains
+        # the word 'dose'
+        match data_source:
+            case DataSource.ECDC | DataSource.WHO if "dose" in wanted_attrib.value.lower():
+                data_source = DataSource.Owid
+            case _: pass
+
         # load the cases
-        csv_file = CovidCasesWHO.download_CSV_file()
-        self.covid_cases = CovidCasesWHO(csv_file)
+        match data_source:
+            case DataSource.Owid:
+                csv_file = CovidCasesOWID.download_CSV_file()
+                self.covid_cases = CovidCasesOWID(csv_file)
+            case DataSource.ECDC:
+                csv_file = CovidCasesECDC.download_CSV_file()
+                self.covid_cases = CovidCasesECDC(csv_file)
+            case DataSource.WHO:
+                csv_file = CovidCasesWHO.download_CSV_file()
+                self.covid_cases = CovidCasesWHO(csv_file)
 
         # try to collect the data for given geoIds, if a wrong geoId is passed, the operation will abort with a 400
         # bad request error
@@ -99,11 +126,14 @@ class Rest_API:
         if wanted_attrib == Attributes.R7:
             df = self.covid_cases.add_lowpass_filter_for_attribute(df, 'R', 7)
         if wanted_attrib == Attributes.DailyCases7:
-            df = self.covid_cases.add_lowpass_filter_for_attribute(df, 'DailyCases', 7)
+            df = self.covid_cases.add_lowpass_filter_for_attribute(
+                df, 'DailyCases', 7)
         if wanted_attrib == Attributes.DailyDeaths7:
-            df = self.covid_cases.add_lowpass_filter_for_attribute(df, 'DailyDeaths', 7)
+            df = self.covid_cases.add_lowpass_filter_for_attribute(
+                df, 'DailyDeaths', 7)
         if wanted_attrib == Attributes.DoublingTime7:
-            df = self.covid_cases.add_lowpass_filter_for_attribute(df, 'DoublingTime', 7)
+            df = self.covid_cases.add_lowpass_filter_for_attribute(
+                df, 'DoublingTime', 7)
         if wanted_attrib == Attributes.Incidence7DayPer100Kpopulation:
             df = self.covid_cases.add_incidence_7day_per_100Kpopulation(df)
 
@@ -114,10 +144,9 @@ class Rest_API:
         pldf = df.pivot_table(values=wanted_attrib.name, index='Date', columns='GeoName') if since_n == -1 \
             else df.pivot_table(values=wanted_attrib.name, index=df.index, columns='GeoName')
 
-
         # use the PlotterBuilder to set up the plot
         builder = (PlotterBuilder(wanted_attrib)
-                   #.set_title(re.sub(r"([a-z])([A-Z])", r"\g<1> \g<2>", wanted_attrib.name))
+                   # .set_title(re.sub(r"([a-z])([A-Z])", r"\g<1> \g<2>", wanted_attrib.name))
                    .set_title(AttributeTitles[wanted_attrib.value].value)
                    .set_grid())
         if log:
@@ -150,7 +179,7 @@ class Rest_API:
 
         # setting up routes and implement methods
         @app.get('/api/data/{countries}/{wanted_attrib}')
-        def get_data(countries: str, wanted_attrib: Attributes, sinceN: Optional[int] = None, lastN: Optional[int] = None, log: Optional[bool] = None, bar: Optional[bool] = None):
+        def get_data(countries: str, wanted_attrib: Attributes, dataSource: Optional[DataSource] = DataSource.WHO, sinceN: Optional[int] = None, lastN: Optional[int] = None, log: Optional[bool] = None, bar: Optional[bool] = None):
             """
             Returns a png image of the plotted Attribute (see Attributes) for a list of Countries(comma seperated). The URL needs to be in the following form:
             **/api/data/<country codes comma separated>/<attribute to be plotted>
@@ -164,7 +193,7 @@ class Rest_API:
             countries = countries.replace('NA', 'NAM')
             geo_ids = re.split(r",\s*", countries)
             file = self.generate_plot(geo_ids, wanted_attrib,
-                                      last_n=lastN if lastN != None else -1, log=log, since_n=sinceN if sinceN != None else -1, bar=bar)
+                                      dataSource, last_n=lastN if lastN != None else -1, log=log, since_n=sinceN if sinceN != None else -1, bar=bar)
 
             # return the created stream as png image
             return StreamingResponse(file, media_type="image/png")
