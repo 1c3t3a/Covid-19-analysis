@@ -75,7 +75,7 @@ class DataSource(Enum):
     Enumeration of all possible data sources.
     """
     WHO = 'WHO'  # World Health Organization
-    Owid = 'Owid'  # Our World in data
+    OWID = 'OWID'  # Our World in data
     ECDC = 'ECDC'  # European Center for Disease Control
 
 class Rest_API:
@@ -94,14 +94,14 @@ class Rest_API:
         """
         # uses the fact that every name of the attribute concerning vaccination data contains
         # the word 'dose'
-        match data_source:
-            case DataSource.ECDC | DataSource.WHO if "dose" in wanted_attrib.value.lower():
-                data_source = DataSource.Owid
-            case _: pass
+        match (data_source, wanted_attrib):
+            case (DataSource.ECDC | DataSource.WHO, Attributes.VaccineDosesAdministered | Attributes.PeopleReceivedAllDoses | Attributes.PercentPeopleReceivedAllDoses | Attributes.PeopleReceivedFirstDose | Attributes.PercentPeopleReceivedFirstDose | Attributes.DailyVaccineDosesAdministered7DayAverage):
+                data_source = DataSource.OWID
+            case (_, _): pass
 
         # load the cases
         match data_source:
-            case DataSource.Owid:
+            case DataSource.OWID:
                 csv_file = CovidCasesOWID.download_CSV_file()
                 self.covid_cases = CovidCasesOWID(csv_file)
             case DataSource.ECDC:
