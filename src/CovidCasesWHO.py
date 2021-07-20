@@ -16,7 +16,7 @@ class CovidCasesWHO(CovidCases):
     the data which will end up in additional columns in the DataFrame. These are the name sof the columns
     that are generated. Notice: The 'Continent' column is additionally and specific to this sub class.
 
-    ATTENTION: The CovidCasesWHO class is a newer version of this class and it will load 50% faster. Both classes
+    ATTENTION: The CovidCasesWHOv1 class is a older version of this class and it will load 50% slower. Both classes
                produce the same results
 
     Date
@@ -411,7 +411,7 @@ class CovidCasesWHO(CovidCases):
         # Qatar (QA)
         geoIdList = 'AF, BH, BD, BT, BN, KH, CN, IR, IQ, IL, JP, JO, '  + \
                     'KZ, KW, KG, LA, LB, MY, MV, MN, MM, NP, OM, PK, PS, PH, '  + \
-                    'QA, SA, SG, KR, LK, SY, TW, TJ, TH, TL, TR, AE, UZ, VN, YE, IN, ID'
+                    'QA, SA, SG, KR, LK, SY, TJ, TH, TL, TR, AE, UZ, VN, YE, IN, ID'
         return geoIdList
     
     @staticmethod

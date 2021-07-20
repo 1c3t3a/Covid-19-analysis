@@ -11,6 +11,43 @@ from datetime import date
 from CovidCases import CovidCases
 from GeoInformationWorld import GeoInformationWorld
 
+# terms and their description from the OWID website:
+#total_vaccinations	
+# National government reports	
+# Total number of COVID-19 vaccination doses administered
+
+#people_vaccinated	
+# National government reports	
+# Total number of people who received at least one vaccine dose
+
+#people_fully_vaccinated	
+# National government reports	
+# Total number of people who received all doses prescribed by the vaccination protocol
+
+#new_vaccinations	
+# National government reports	
+# New COVID-19 vaccination doses administered (only calculated for consecutive days)
+
+#new_vaccinations_smoothed	
+# National government reports	
+# New COVID-19 vaccination doses administered (7-day smoothed). For countries that don't report vaccination data on a daily basis, we assume that vaccination changed equally on a daily basis over any periods in which no data was reported. This produces a complete series of daily figures, which is then averaged over a rolling 7-day window
+
+#total_vaccinations_per_hundred	
+# National government reports	
+# Total number of COVID-19 vaccination doses administered per 100 people in the total population
+
+#people_vaccinated_per_hundred	
+# National government reports	
+# Total number of people who received at least one vaccine dose per 100 people in the total population
+
+#people_fully_vaccinated_per_hundred	
+# National government reports	
+# Total number of people who received all doses prescribed by the vaccination protocol per 100 people in the total population
+
+#new_vaccinations_smoothed_per_million	
+# National government reports	
+# New COVID-19 vaccination doses administered (7-day smoothed) per 1,000,000 people in the total population
+
 class CovidCasesOWID(CovidCases):
     """The class will expose data attributes in form of a DataFrame. Its base class also provides methods to process 
     the data which will end up in additional columns in the DataFrame. These are the name sof the columns
@@ -37,8 +74,29 @@ class CovidCasesOWID(CovidCases):
     DailyDeaths
     The number of new deaths on the given date
 
+    DailyVaccineDosesAdministered7DayAverage
+    New COVID-19 vaccination doses administered (7-day smoothed). For countries that 
+    don't report vaccination data on a daily basis, we assume that vaccination 
+    changed equally on a daily basis over any periods in which no data was reported. 
+    This produces a complete series of daily figures, which is then averaged over a 
+    rolling 7-day window. 
+    In OWID words this is the new_vaccinations_smoothed value.
+                              
+    PeopleReceivedFirstDose
+    Total number of people who received at least one vaccine dose.
+    In OWID words this is the people_vaccinated value.
+
+    PeopleReceivedAllDoses
+    Total number of people who received all doses prescribed by the vaccination protocol.
+    In OWID words this is the people_fully_vaccinated value.
+
+    VaccineDosesAdministered
+    Total number of COVID-19 vaccination doses administered. It's the sum of 
+    PeopleReceivedFirstDose and PeopleReceivedAllDoses.
+    In OWID words this is the total_vaccinations value.
+
     Continent
-    The continent of the country as an additional column
+    The continent of the country as an additional column.
     
     Returns:
         CovidCasesOWID: A class to provide access to some data based on the OWID file.
@@ -89,7 +147,7 @@ class CovidCasesOWID(CovidCases):
                                             'positive_rate',
                                             'tests_per_case',
                                             'tests_units',
-                                            'total_vaccinations',
+                                            #'total_vaccinations',
                                             'total_vaccinations_per_hundred',
                                             'stringency_index',
                                             'population_density',
@@ -108,15 +166,15 @@ class CovidCasesOWID(CovidCases):
                                             'human_development_index',
                                             # three more columns have been introduced
                                             'new_vaccinations',
-                                            'new_vaccinations_smoothed',
+                                            #'new_vaccinations_smoothed',
                                             'new_vaccinations_smoothed_per_million',
-                                            'people_fully_vaccinated',
+                                            #'people_fully_vaccinated',
                                             'people_fully_vaccinated_per_hundred',
-                                            'people_vaccinated',
+                                            #'people_vaccinated',
                                             'people_vaccinated_per_hundred',
                                             # again a new field
                                             'excess_mortality'])
-        print(self.__df)
+        #print(self.__df)
         # rename the columns to be more readable
         self.__df.columns = ['GeoID',
                              'Continent',
@@ -124,7 +182,12 @@ class CovidCasesOWID(CovidCases):
                              'Date',
                              'DailyCases',
                              'DailyDeaths',
+                             'VaccineDosesAdministered',
+                             'PeopleReceivedFirstDose',
+                             'PeopleReceivedAllDoses',
+                             'DailyVaccineDosesAdministered7DayAverage',
                              'Population']
+        #print(self.__df)
         # change the type of the 'date' field to a pandas date
         self.__df['Date'] = pd.to_datetime(self.__df['Date'],
                                            format='%Y/%m/%d')
@@ -135,7 +198,12 @@ class CovidCasesOWID(CovidCases):
                               'Population', 
                               'Continent', 
                               'DailyCases',
-                              'DailyDeaths']]
+                              'DailyDeaths',
+                              'DailyVaccineDosesAdministered7DayAverage',
+                              'PeopleReceivedFirstDose',
+                              'PeopleReceivedAllDoses',
+                              'VaccineDosesAdministered']]
+        #print(self.__df)
         df = self.__df
         # to apply the country names from our internal list
         giw = GeoInformationWorld()

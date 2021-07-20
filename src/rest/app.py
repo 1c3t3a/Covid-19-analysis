@@ -36,6 +36,12 @@ class Attributes(Enum):
     DoublingTime7 = 'DoublingTime7'
     R = 'R'
     R7 = 'R7'
+    DailyVaccineDosesAdministered7DayAverage = 'DailyVaccineDosesAdministered7DayAverage'
+    PeopleReceivedFirstDose = 'PeopleReceivedFirstDose'
+    PercentPeopleReceivedFirstDose = 'PercentPeopleReceivedFirstDose'
+    PeopleReceivedAllDoses = 'PeopleReceivedAllDoses'
+    PercentPeopleReceivedAllDoses = 'PercentPeopleReceivedAllDoses'
+    VaccineDosesAdministered = 'VaccineDosesAdministered'
 
 class AttributeTitles(Enum):
     """
@@ -55,6 +61,12 @@ class AttributeTitles(Enum):
     DoublingTime7 = 'Doubling time: 7-day rolling average'
     R = 'Reproduction rate'
     R7 = 'Reproduction rate: 7-day rolling average'
+    DailyVaccineDosesAdministered7DayAverage = '7-day rolling average of daily vaccination doses administered'
+    PeopleReceivedFirstDose = 'Number of citizens that received first dose'
+    PercentPeopleReceivedFirstDose = 'Percent of citizens that received first dose'
+    PeopleReceivedAllDoses = 'Number of citizens that received all doses'
+    PercentPeopleReceivedAllDoses = 'Percent of citizens that received all doses'
+    VaccineDosesAdministered = 'Vaccine doses administered'
 
 class Rest_API:
 
@@ -87,17 +99,13 @@ class Rest_API:
         if wanted_attrib == Attributes.R7:
             df = self.covid_cases.add_lowpass_filter_for_attribute(df, 'R', 7)
         if wanted_attrib == Attributes.DailyCases7:
-            df = self.covid_cases.add_lowpass_filter_for_attribute(
-                df, 'DailyCases', 7)
+            df = self.covid_cases.add_lowpass_filter_for_attribute(df, 'DailyCases', 7)
         if wanted_attrib == Attributes.DailyDeaths7:
-            df = self.covid_cases.add_lowpass_filter_for_attribute(
-                df, 'DailyDeaths', 7)
+            df = self.covid_cases.add_lowpass_filter_for_attribute(df, 'DailyDeaths', 7)
         if wanted_attrib == Attributes.DoublingTime7:
-            df = self.covid_cases.add_lowpass_filter_for_attribute(
-                df, 'DoublingTime', 7)
+            df = self.covid_cases.add_lowpass_filter_for_attribute(df, 'DoublingTime', 7)
         if wanted_attrib == Attributes.Incidence7DayPer100Kpopulation:
-            df = self.covid_cases.add_incidence_7day_per_100Kpopulation(
-                df)
+            df = self.covid_cases.add_incidence_7day_per_100Kpopulation(df)
 
         # concat to one DataFrame and set date
         df[['Date']] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
@@ -162,7 +170,7 @@ class Rest_API:
             return StreamingResponse(file, media_type="image/png")
 
 
-# change matplotlib backend to agg (agg is not interactive and it can't be intaractive)
+# change matplotlib backend to agg (agg is not interactive and it can't be interactive)
 matplotlib.use('agg')
 app = FastAPI()
 Rest_API().setup_routes(app)
