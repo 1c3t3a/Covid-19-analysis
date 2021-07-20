@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
-import matplotlib
+import matplotlib as mpl
 import matplotlib.dates as mdates
-
-
+from matplotlib.ticker import FormatStrFormatter
+from matplotlib.ticker import ScalarFormatter
+from matplotlib.ticker import LogFormatter
+from matplotlib.ticker import LogFormatterSciNotation
 class PlotterBuilder:
     """
     A class that let's you easily build the wanted plotting configuration. If not further specified you get some
@@ -26,10 +28,11 @@ class PlotterBuilder:
         self.__grid = False
         self.__yscale = 'linear'
         self.__xaxis_formatter = mdates.DateFormatter('%d/%m/%Y')
+        self.__yaxis_formatter = mpl.ticker.StrMethodFormatter('{x:,.0f}')        
         self.__yfield = yfield
         self.__xlabel = ""
         self.__ylabel = ""
-
+       
     def set_figsize(self, sizes):
         """
         Setter for the figure size.
@@ -44,25 +47,38 @@ class PlotterBuilder:
         self.__title = title
         return self
 
-    def set_grid(self):
+    def set_grid(self, grided=True):
         """
         Sets the grid value to True.
         """
-        self.__grid = True
+        if grided == True:
+            self.__grid = True
+        else:
+            self.__grid = False
         return self
 
-    def set_log(self):
+    def set_log(self, logged=True):
         """
         Formats the yscale to logarithmic.
         """
-        self.__yscale = 'log'
+        if logged == True:
+            self.__yscale = 'log'
+        else:
+            self.__yscale = 'linear'
         return self
 
-    def set_xaxis_index(self):
+    def set_xaxis_index(self, indexed=True):
         """
         Tells the x-axis that you don't want to plot a date.
         """
-        self.__xaxis_formatter = None
+        if indexed == True:
+            self.__xaxis_formatter = None
+        else:
+            self.__xaxis_formatter = mdates.DateFormatter('%d/%m/%Y')
+        return self
+
+    def set_yaxis_formatter(self, formatter):
+        self.__yaxis_formatter = formatter
         return self
 
     def set_axis_labels(self, xlabel="", ylabel=""):
@@ -83,8 +99,16 @@ class PlotterBuilder:
         fig, ax = plt.subplots(1, 1, figsize=self.__figsize)
         ax.set_title(self.__title)
         ax.set_yscale(self.__yscale)
-        if self.__xaxis_formatter:
-            ax.xaxis.set_major_formatter(self.__xaxis_formatter)
+        if self.__yscale == 'log':
+            formatter = LogFormatterSciNotation(labelOnlyBase=False, minor_thresholds=(3, 0.5))
+            ax.yaxis.set_minor_formatter(formatter)
+            ax.yaxis.set_major_formatter(formatter)
+        else:
+            ax.ticklabel_format(useOffset=False, style='plain')
+            if self.__yaxis_formatter:
+                ax.yaxis.set_major_formatter(self.__yaxis_formatter)
+            if self.__xaxis_formatter:
+                ax.xaxis.set_major_formatter(self.__xaxis_formatter)
         ax.set(xlabel=self.__xlabel)
         ax.set(ylabel=self.__ylabel)
         return [fig, ax]
