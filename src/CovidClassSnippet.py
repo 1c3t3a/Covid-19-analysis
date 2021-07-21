@@ -1,12 +1,11 @@
-import datetime
-from datetime import date
 import math
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import pandas as pd
+import os
 import time
-import datetime
+from datetime import timedelta, date
 from CovidCases import CovidCases
 from CovidCasesECDC import CovidCasesECDC
 from CovidCasesOWID import CovidCasesOWID
@@ -14,6 +13,7 @@ from CovidCasesWHOv1 import CovidCasesWHOv1
 from CovidCasesWHO import CovidCasesWHO
 from PlotterBuilder import PlotterBuilder
 import CovidMap as dfm
+from IPython.display import SVG, display
 
 def plot_the_data (df):
     # the name of the attribute we want to plot
@@ -82,7 +82,29 @@ def plot_the_data (df):
         .set_grid()
         .plot_dataFrame(df))
 
-    
+def plot_map(theClass):
+    # the root of the output directory
+    outputDirectory = str(os.path.expanduser('~/Desktop')) 
+    # the list of comma separated geoIDs for the major European countries
+    countryListAll = theClass.get_pygal_american_geoid_string_list() + ',' + \
+                     theClass.get_pygal_european_geoid_string_list() + ',' + \
+                     theClass.get_pygal_african_geoid_string_list() + ',' + \
+                     theClass.get_pygal_oceania_geoid_string_list() + ',' + \
+                     theClass.get_pygal_asian_geoid_string_list()  
+    # get the dataframe for these countries
+    dfAll = theClass.get_data_by_geoid_string_list(countryListAll)
+    # create a map for the dataframe
+    map = dfm.CovidMap(dfAll)
+    # a list of requested maps
+    gis = []
+    # append maps to be generated
+    gis.append(dfm.mapInfo("Cases", 'Accumulated confirmed cases', outputDirectory))
+    # select a date
+    theDay = date.today() - timedelta(days=4)
+    for gi in gis:
+        # generate the map
+        result = map.create_map_for_date(gi, theDay)
+
 # get the latests database file as a CSV
 try:
     pathToCSV_owid = CovidCasesOWID.download_CSV_file()

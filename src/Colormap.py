@@ -11,7 +11,7 @@ class heatmapResult:
     """
     # the minmum of the given value
     minimum: float
-    # the maximum of the fiven values
+    # the maximum of the given values
     maximum: float
     # an array of colors, one per given value
     colors: [] = None
@@ -142,7 +142,7 @@ class Colormap:
         if len(colorValues) == 0:
             raise ValueError('Expect an array of R, G, B tuples. Instead len(colorValues) is 0.')
         if len(blendValue) != 3:
-            raise ValueError('Tuple lenght of blendValue should be 3. Instead it is: ' + str(len(blendValue) + '.'))
+            raise ValueError('Tuple length of blendValue should be 3. Instead it is: ' + str(len(blendValue) + '.'))
         if len(colorValues[0]) != 3:
             raise ValueError('Tuple length of colorValues should be 3. Instead it is: ' + str(len(colorValues) + '.'))
         result = []
@@ -220,6 +220,9 @@ class Colormap:
         r = 1.0
         g = 1.0
         b = 1.0
+        # check if the val is NaN and return white for this case
+        if math.isnan(val):
+            return (r, g, b)
         # check the limits
         if (val < minVal):
             val = minVal

@@ -116,6 +116,9 @@ class CovidMap:
         """
         # the output directory
         outputDirectory = info.output_directory + '/' + info.attribute + '/'
+        # create the directory if it doesn't exist 
+        if not os.path.exists(outputDirectory):
+            os.makedirs(outputDirectory)
         print(info.attribute + ': ' + str(the_day))
         # converted into a pandas date
         pdDate = pd.to_datetime(the_day)

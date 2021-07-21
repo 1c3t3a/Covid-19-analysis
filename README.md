@@ -39,6 +39,18 @@ Based on that raw data we provide functions to calculate the following attribute
 | **CasesPerMillionPopulation** | The number of **Cases** divided by the population in million  
 | **DeathsPerMillionPopulation** | The number of **Deaths** divided by the population in million  
 
+If you use the data from **Our World in Data** you have additional access to the following attributes:  
+<br>
+
+| Column | Description |
+| --- | --- |
+| **DailyVaccineDosesAdministered7DayAverage** | New COVID-19 vaccination doses administered (7-day smoothed). For countries that don't report vaccination data on a daily basis, we assume that vaccination changed equally on a daily basis over any periods in which no data was reported. This produces a complete series of daily figures, which is then averaged over a rolling 7-day window. In OWID words this is the new_vaccinations_smoothed value.  
+| **VaccineDosesAdministered** | Total number of COVID-19 vaccination doses administered. It's the sum of *PeopleReceivedFirstDose* and *PeopleReceivedAllDoses*. In OWID words this is the total_vaccinations value.  
+| **PeopleReceivedFirstDose** | Total number of people who received at least one vaccine dose. In OWID words this is the people_vaccinated value.  
+| **PercentPeopleReceivedFirstDose** | The percentage of people of the population who received at least one vaccine dose.  
+| **PeopleReceivedAllDoses** | Total number of people who received all doses defined by the vaccination protocol. In OWID words this is the people_fully_vaccinated value.  
+| **PercentPeopleReceivedAllDoses** | The percentage of people of the population who received all doses defined by the vaccination protocol.  
+
 Other functions will allow you to calculate the following additional attributes:  
 <br>
 
