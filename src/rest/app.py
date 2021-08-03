@@ -76,7 +76,6 @@ class DataSource(Enum):
     """
     WHO = 'WHO'  # World Health Organization
     OWID = 'OWID'  # Our World in data
-    ECDC = 'ECDC'  # European Center for Disease Control
 
 class Rest_API:
 
@@ -92,25 +91,38 @@ class Rest_API:
             last_n: int -> plot the last n days, if not further specified all available data is plotted
             since_n: int -> plot since the nth case, if not further specified all available data is plotted
         """
-        # uses the fact that every name of the attribute concerning vaccination data contains
-        # the word 'dose'
+        # vaccination data is only available with OWID
+        if data_source != DataSource.OWID: 
+            if (wanted_attrib == Attributes.VaccineDosesAdministered) or (wanted_attrib == Attributes.DailyVaccineDosesAdministered7DayAverage):
+                data_source = DataSource.OWID
+            if (wanted_attrib == Attributes.PeopleReceivedAllDoses) or (wanted_attrib == Attributes.PercentPeopleReceivedAllDoses):
+                data_source = DataSource.OWID
+            if (wanted_attrib == Attributes.PeopleReceivedFirstDose) or (wanted_attrib == Attributes.PercentPeopleReceivedFirstDose):
+                data_source = DataSource.OWID
+        """ 
+        Alternatively in latest Python version
         match (data_source, wanted_attrib):
-            case (DataSource.ECDC | DataSource.WHO, Attributes.VaccineDosesAdministered | Attributes.PeopleReceivedAllDoses | Attributes.PercentPeopleReceivedAllDoses | Attributes.PeopleReceivedFirstDose | Attributes.PercentPeopleReceivedFirstDose | Attributes.DailyVaccineDosesAdministered7DayAverage):
+            case (DataSource.WHO, Attributes.VaccineDosesAdministered | Attributes.PeopleReceivedAllDoses | Attributes.PercentPeopleReceivedAllDoses | Attributes.PeopleReceivedFirstDose | Attributes.PercentPeopleReceivedFirstDose | Attributes.DailyVaccineDosesAdministered7DayAverage):
                 data_source = DataSource.OWID
             case (_, _): pass
-
+        """
         # load the cases
+        if data_source == DataSource.OWID:
+            csv_file = CovidCasesOWID.download_CSV_file()
+            self.covid_cases = CovidCasesOWID(csv_file)
+        if data_source == DataSource.WHO:
+            csv_file = CovidCasesWHO.download_CSV_file()
+            self.covid_cases = CovidCasesWHO(csv_file)  
+        """ 
+        Alternatively in latest Python version
         match data_source:
             case DataSource.OWID:
                 csv_file = CovidCasesOWID.download_CSV_file()
                 self.covid_cases = CovidCasesOWID(csv_file)
-            case DataSource.ECDC:
-                csv_file = CovidCasesECDC.download_CSV_file()
-                self.covid_cases = CovidCasesECDC(csv_file)
             case DataSource.WHO:
                 csv_file = CovidCasesWHO.download_CSV_file()
                 self.covid_cases = CovidCasesWHO(csv_file)
-
+        """
         # try to collect the data for given geoIds, if a wrong geoId is passed, the operation will abort with a 400
         # bad request error
         try:

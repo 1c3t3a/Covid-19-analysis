@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- A method called *create_combined_data frame_by_geoid_string_list* was added to the *CovidCases* class. The method will create a combined data frame from a list of individual data fames. To avoid duplicate country names the method will add a *-DATASOURCE* string behind the country name (e.g. 'Germany-OWID'). 
+- A method called ```create_combined_dataframe_by_geoid_string_list``` was added to the *CovidCases* class. The method will create a combined data frame from a list of individual data fames. To avoid duplicate country names the method will add a *-DATASOURCE* string behind the country name (e.g. 'Germany-OWID'). 
 - The *CovidCasesOWID* now provides information about the vaccination status of a country. This includes the following attributes:  
 
 1. DailyVaccineDosesAdministered7DayAverage  
@@ -39,15 +39,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 6. VaccineDosesAdministered  
     Total number of COVID-19 vaccination doses administered. It's the sum of *PeopleReceivedFirstDose* and *PeopleReceivedAllDoses*. In OWID words this is the total_vaccinations value.  
 
-- A method called *set_grid* has been added to toggle the display of a grid in the *PlotterBuilder* class.  
+- A method called ```set_grid``` has been added to toggle the display of a grid in the *PlotterBuilder* class.  
 
-- The method *set_log* of the *PlotterBuilder* class now has an argument to toggle between a linear or logarithmic y-axis.  
+- The method ```set_log``` of the *PlotterBuilder* class now has an argument to toggle between a linear or logarithmic y-axis.  
 
-- The method *set_xaxis_index* now has a parameter to toggle between index or date based x-axis.
+- The method ```set_xaxis_index``` now has a parameter to toggle between index or date based x-axis.
 
-- A new attribute *__xaxis_formatter* has been add to the *PlotterBuilder* class. The attribute can be changed by *set_yaxis_formatter*. The default yaxis_formatter is now ```mpl.ticker.StrMethodFormatter('{x:,.0f}') ```.
+- A new attribute ```__xaxis_formatter``` has been add to the *PlotterBuilder* class. The attribute can be changed by ```set_yaxis_formatter```. The default yaxis_formatter is now ```mpl.ticker.StrMethodFormatter('{x:,.0f}') ```.
 
 - The Jupyter Notebook now includes the vaccination data for the given list of countries.
+
+- The REST API now lets you switch between different data providers. This is done by the new parameter called *data_spurce*. This can be *WHO* or *OWID*. If the parameter is not given it will use *WHO* as a default.
+
+- The REST API now also includes vaccination data for the given list of countries. The online version on [mb.cmbt.de](http://mb.cmbt.de/python-class-documentation/the-rest-api/) includes this feature as well.
 
 ### Changed  
 
@@ -163,7 +167,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The width of the lowpass is given by the number n. The name of the newly
   created attribute is the given name with a tailing number n. E.g. 'Cases' 
   with n = 7 will add to a newly added attribute named 'Cases7'.
-- added a function to save a dataframe to a CSV file
+- added a function to save a data frame to a CSV file
 - added a function to calculate an estimation for the reproduction rate R0
 
 ### Changed
