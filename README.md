@@ -58,7 +58,7 @@ Other functions will allow you to calculate the following additional attributes:
 | --- | --- |
 | **R** | An estimation of the reproduction number R0. The attribute should finally be low-pass filtered with a kernel size of 7.  
 | **Incidence7DayPer100Kpopulation** | The accumulated 7-day incidence. That is the sum of the daily cases of the last 7 days divided by the population in 100000 people.  
-| **DailyCases7** | After calling ```add_lowpass_filter_for_attribute``` with the attribute name **DailyCases** and a filter size of **7** you will get this new attribute that represents the average number of **DailyCases** of the last 7 days. Of course you can filter all of the attributes given in the list above with whatever filter size.  
+| **DailyCases7** | After calling ```add_lowpass_filter_for_attribute``` with the attribute name **DailyCases** and a filter size of **7** you will get this new attribute that represents the average number of **DailyCases** of the last 7 days. Of course you can filter **all of the attributes** given in the lists above with whatever filter size.  
 
 
 Once having the data calculated we generate plots using the *matplot* library such as these:  
