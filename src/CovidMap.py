@@ -46,7 +46,7 @@ class mapResult:
     maximum: float
 
 class CovidMap:
-    """a class to calculuate pygal maps from a dataframe column
+    """a class to calculate pygal maps from a dataframe column
 
     Returns:
         CovidMap: the object to access the class
@@ -109,13 +109,16 @@ class CovidMap:
 
         Args:
             info (mapInfo): Information about the graph such as the title of the graph
-            the_day (date): The date for whichn the graph sould be created
+            the_day (date): The date for which the graph should be created
 
         Returns:
             mapResult: A struct to hold information about the generated map
         """
         # the output directory
         outputDirectory = info.output_directory + '/' + info.attribute + '/'
+        # create the directory if it doesn't exist 
+        if not os.path.exists(outputDirectory):
+            os.makedirs(outputDirectory)
         print(info.attribute + ': ' + str(the_day))
         # converted into a pandas date
         pdDate = pd.to_datetime(the_day)

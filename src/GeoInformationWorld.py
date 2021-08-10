@@ -73,7 +73,7 @@ class GeoInformationWorld():
         dfTheOne = dfInfo.loc[dfInfo['ISO-3166-alpha_3'] == geoID]
         if dfTheOne.empty:
             # print the geoid that is not in the database
-            print('Unknown GeoId: ' + geoID)
+            #print('Unknown GeoId: ' + geoID)
             return 'Unknown'
         # the name used in our internal list
         return dfTheOne['GeoName'].values[0]
@@ -94,7 +94,7 @@ class GeoInformationWorld():
         # check if it is empty
         if dfTheOne.empty:
             # print the geoid that is not in the database
-            print('Unknown GeoId: ' + geoID)
+            #print('Unknown GeoId: ' + geoID)
             return 'Unknown'
         # the name used in our internal list
         return dfTheOne['GeoID'].values[0]

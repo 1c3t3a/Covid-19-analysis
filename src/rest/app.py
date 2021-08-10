@@ -1,3 +1,12 @@
+import sys
+import os
+# append the src directory to the sys path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+from CovidCasesECDC import CovidCasesECDC
+from CovidCasesOWID import CovidCasesOWID
+from PlotterBuilder import PlotterBuilder
+from CovidCasesWHO import CovidCasesWHO
+from CovidCases import CovidCases
 from typing import Optional
 import re
 import pandas as pd
@@ -6,16 +15,9 @@ import matplotlib
 import io
 import requests
 from datetime import date
-import os
-import sys
 from starlette.responses import StreamingResponse
 from fastapi import FastAPI, HTTPException
 from enum import Enum
-# append the src directory to the sys path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-from CovidCases import CovidCases
-from CovidCasesWHO import CovidCasesWHO
-from PlotterBuilder import PlotterBuilder
 
 
 class Attributes(Enum):
@@ -36,6 +38,12 @@ class Attributes(Enum):
     DoublingTime7 = 'DoublingTime7'
     R = 'R'
     R7 = 'R7'
+    DailyVaccineDosesAdministered7DayAverage = 'DailyVaccineDosesAdministered7DayAverage'
+    PeopleReceivedFirstDose = 'PeopleReceivedFirstDose'
+    PercentPeopleReceivedFirstDose = 'PercentPeopleReceivedFirstDose'
+    PeopleReceivedAllDoses = 'PeopleReceivedAllDoses'
+    PercentPeopleReceivedAllDoses = 'PercentPeopleReceivedAllDoses'
+    VaccineDosesAdministered = 'VaccineDosesAdministered'
 
 class AttributeTitles(Enum):
     """
@@ -55,23 +63,66 @@ class AttributeTitles(Enum):
     DoublingTime7 = 'Doubling time: 7-day rolling average'
     R = 'Reproduction rate'
     R7 = 'Reproduction rate: 7-day rolling average'
+    DailyVaccineDosesAdministered7DayAverage = '7-day rolling average of daily vaccination doses administered'
+    PeopleReceivedFirstDose = 'Number of citizens that received first dose'
+    PercentPeopleReceivedFirstDose = 'Percent of citizens that received first dose'
+    PeopleReceivedAllDoses = 'Number of citizens that received all doses'
+    PercentPeopleReceivedAllDoses = 'Percent of citizens that received all doses'
+    VaccineDosesAdministered = 'Vaccine doses administered'
+
+class DataSource(Enum):
+    """
+    Enumeration of all possible data sources.
+    """
+    WHO = 'WHO'  # World Health Organization
+    OWID = 'OWID'  # Our World in data
 
 class Rest_API:
 
-    def generate_plot(self, geo_ids, wanted_attrib, log=False, last_n=-1, since_n=-1, bar=False):
+    def generate_plot(self, geo_ids, wanted_attrib, data_source, log=False, last_n=-1, since_n=-1, bar=False):
         """
         Generates a plot for given GeoIds and returns it in form of a byteIO stream
         Parameters:
             geo_ids: [String] -> countries that should be plotted
             wanted_attrib: String -> the field you want to plot, e.g. Cases
+            data_source: DataSource -> Source of the data defined by the enum. Note! If vaccination data is selected and another
+                                       source than OWID is selected this will implicitly switch!
             log: bool -> should the plot be logarithmic
             last_n: int -> plot the last n days, if not further specified all available data is plotted
             since_n: int -> plot since the nth case, if not further specified all available data is plotted
         """
+        # vaccination data is only available with OWID
+        if data_source != DataSource.OWID: 
+            if (wanted_attrib == Attributes.VaccineDosesAdministered) or (wanted_attrib == Attributes.DailyVaccineDosesAdministered7DayAverage):
+                data_source = DataSource.OWID
+            if (wanted_attrib == Attributes.PeopleReceivedAllDoses) or (wanted_attrib == Attributes.PercentPeopleReceivedAllDoses):
+                data_source = DataSource.OWID
+            if (wanted_attrib == Attributes.PeopleReceivedFirstDose) or (wanted_attrib == Attributes.PercentPeopleReceivedFirstDose):
+                data_source = DataSource.OWID
+        """ 
+        Alternatively in latest Python version
+        match (data_source, wanted_attrib):
+            case (DataSource.WHO, Attributes.VaccineDosesAdministered | Attributes.PeopleReceivedAllDoses | Attributes.PercentPeopleReceivedAllDoses | Attributes.PeopleReceivedFirstDose | Attributes.PercentPeopleReceivedFirstDose | Attributes.DailyVaccineDosesAdministered7DayAverage):
+                data_source = DataSource.OWID
+            case (_, _): pass
+        """
         # load the cases
-        csv_file = CovidCasesWHO.download_CSV_file()
-        self.covid_cases = CovidCasesWHO(csv_file)
-
+        if data_source == DataSource.OWID:
+            csv_file = CovidCasesOWID.download_CSV_file()
+            self.covid_cases = CovidCasesOWID(csv_file)
+        if data_source == DataSource.WHO:
+            csv_file = CovidCasesWHO.download_CSV_file()
+            self.covid_cases = CovidCasesWHO(csv_file)  
+        """ 
+        Alternatively in latest Python version
+        match data_source:
+            case DataSource.OWID:
+                csv_file = CovidCasesOWID.download_CSV_file()
+                self.covid_cases = CovidCasesOWID(csv_file)
+            case DataSource.WHO:
+                csv_file = CovidCasesWHO.download_CSV_file()
+                self.covid_cases = CovidCasesWHO(csv_file)
+        """
         # try to collect the data for given geoIds, if a wrong geoId is passed, the operation will abort with a 400
         # bad request error
         try:
@@ -96,8 +147,7 @@ class Rest_API:
             df = self.covid_cases.add_lowpass_filter_for_attribute(
                 df, 'DoublingTime', 7)
         if wanted_attrib == Attributes.Incidence7DayPer100Kpopulation:
-            df = self.covid_cases.add_incidence_7day_per_100Kpopulation(
-                df)
+            df = self.covid_cases.add_incidence_7day_per_100Kpopulation(df)
 
         # concat to one DataFrame and set date
         df[['Date']] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
@@ -106,10 +156,9 @@ class Rest_API:
         pldf = df.pivot_table(values=wanted_attrib.name, index='Date', columns='GeoName') if since_n == -1 \
             else df.pivot_table(values=wanted_attrib.name, index=df.index, columns='GeoName')
 
-
         # use the PlotterBuilder to set up the plot
         builder = (PlotterBuilder(wanted_attrib)
-                   #.set_title(re.sub(r"([a-z])([A-Z])", r"\g<1> \g<2>", wanted_attrib.name))
+                   # .set_title(re.sub(r"([a-z])([A-Z])", r"\g<1> \g<2>", wanted_attrib.name))
                    .set_title(AttributeTitles[wanted_attrib.value].value)
                    .set_grid())
         if log:
@@ -142,7 +191,7 @@ class Rest_API:
 
         # setting up routes and implement methods
         @app.get('/api/data/{countries}/{wanted_attrib}')
-        def get_data(countries: str, wanted_attrib: Attributes, sinceN: Optional[int] = None, lastN: Optional[int] = None, log: Optional[bool] = None, bar: Optional[bool] = None):
+        def get_data(countries: str, wanted_attrib: Attributes, dataSource: Optional[DataSource] = DataSource.WHO, sinceN: Optional[int] = None, lastN: Optional[int] = None, log: Optional[bool] = None, bar: Optional[bool] = None):
             """
             Returns a png image of the plotted Attribute (see Attributes) for a list of Countries(comma seperated). The URL needs to be in the following form:
             **/api/data/<country codes comma separated>/<attribute to be plotted>
@@ -156,13 +205,13 @@ class Rest_API:
             countries = countries.replace('NA', 'NAM')
             geo_ids = re.split(r",\s*", countries)
             file = self.generate_plot(geo_ids, wanted_attrib,
-                                      last_n=lastN if lastN != None else -1, log=log, since_n=sinceN if sinceN != None else -1, bar=bar)
+                                      dataSource, last_n=lastN if lastN != None else -1, log=log, since_n=sinceN if sinceN != None else -1, bar=bar)
 
             # return the created stream as png image
             return StreamingResponse(file, media_type="image/png")
 
 
-# change matplotlib backend to agg (agg is not interactive and it can't be intaractive)
+# change matplotlib backend to agg (agg is not interactive and it can't be interactive)
 matplotlib.use('agg')
 app = FastAPI()
 Rest_API().setup_routes(app)

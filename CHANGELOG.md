@@ -7,12 +7,74 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [ToDo]
 
-- adding support for different datasources. Could be done by an enumeration passed in to the load datatabase function
 - Conversion SVG to PNG so that the maps can be added to the REST API smoothly
+- graphs with two different y-axis to compare e.g. *DailyCases* with vaccination effort.
 
 ## [Unreleased]
 
 -
+
+## [5.2.0] - 2021-07-19
+
+### Added
+
+- A method called ```create_combined_dataframe_by_geoid_string_list``` was added to the *CovidCases* class. The method will create a combined data frame from a list of individual data fames. To avoid duplicate country names the method will add a *-DATASOURCE* string behind the country name (e.g. 'Germany-OWID'). 
+- The *CovidCasesOWID* now provides information about the vaccination status of a country. This includes the following attributes:  
+
+1. DailyVaccineDosesAdministered7DayAverage  
+    New COVID-19 vaccination doses administered (7-day smoothed). For countries that don't report vaccination data on a daily basis, we assume that vaccination changed equally on a daily basis over any periods in which no data was reported. This produces a complete series of daily figures, which is then averaged over a rolling 7-day window. In OWID words this is the new_vaccinations_smoothed value.  
+
+2. PeopleReceivedFirstDose  
+    Total number of people who received at least one vaccine dose. In OWID words this is the people_vaccinated value.  
+
+3. PercentPeopleReceivedFirstDose  
+    The percentage of people of the population who received at least one vaccine dose.  
+
+4. PeopleReceivedAllDoses  
+   Total number of people who received all doses defined by the vaccination protocol. In OWID words this is the people_fully_vaccinated value.  
+
+5. PercentPeopleReceivedAllDoses  
+   The percentage of people of the population who received all doses defined by the vaccination protocol.  
+
+6. VaccineDosesAdministered  
+    Total number of COVID-19 vaccination doses administered. It's the sum of *PeopleReceivedFirstDose* and *PeopleReceivedAllDoses*. In OWID words this is the total_vaccinations value.  
+
+- A method called ```set_grid``` has been added to toggle the display of a grid in the *PlotterBuilder* class.  
+
+- The method ```set_log``` of the *PlotterBuilder* class now has an argument to toggle between a linear or logarithmic y-axis.  
+
+- The method ```set_xaxis_index``` now has a parameter to toggle between index or date based x-axis.
+
+- A new attribute ```__xaxis_formatter``` has been add to the *PlotterBuilder* class. The attribute can be changed by ```set_yaxis_formatter```. The default yaxis_formatter is now ```mpl.ticker.StrMethodFormatter('{x:,.0f}') ```.
+
+- The Jupyter Notebook now includes the vaccination data for the given list of countries.
+
+- The REST API now lets you switch between different data providers. This is done by the new parameter called *data_spurce*. This can be *WHO* or *OWID*. If the parameter is not given it will use *WHO* as a default.
+
+- The REST API now also includes vaccination data for the given list of countries. The online version on [mb.cmbt.de](http://mb.cmbt.de/python-class-documentation/the-rest-api/) includes this feature as well.
+
+### Changed  
+
+- The *CovidCasesWHO* class included Taiwan in the return of a call to *get_pygal_asian_geoid_list* even when Taiwan was not included in the WHO dataset. Because of that the generation of Asian pygal maps were incorrect.  
+
+- There was a bug in the method *__compute_doubling_time* of the *CovidCase*s class that could lead to a division by zero.  
+
+### Removed  
+
+-  
+
+## [5.1.0] - 2021-03-16
+
+### Added
+
+- The MacOS application now supports the Apple M1 processor. Use [this link](http://mb.cmbt.de/download-area/) to get the MacOS and Windows applications to access an online version of the Covid-19 REST API. After copying the MacOS application to the *applications* directory you need to start it for the first time with a right-click and selecting *execute* to approve the application. Afterwards you can start it with the regular double-click. This is the common procedure for none-AppStore applications.     
+
+### Changed  
+
+-  
+### Removed  
+
+-  
 
 ## [5.0.0] - 2021-01-14
 
@@ -105,7 +167,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The width of the lowpass is given by the number n. The name of the newly
   created attribute is the given name with a tailing number n. E.g. 'Cases' 
   with n = 7 will add to a newly added attribute named 'Cases7'.
-- added a function to save a dataframe to a CSV file
+- added a function to save a data frame to a CSV file
 - added a function to calculate an estimation for the reproduction rate R0
 
 ### Changed
