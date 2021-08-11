@@ -150,8 +150,6 @@ class Rest_API:
         if wanted_attrib == Attributes.Incidence7DayPer100Kpopulation:
             df = self.covid_cases.add_incidence_7day_per_100Kpopulation(df)
 
-        # concat to one DataFrame and set date
-        #df[['Date']] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
         # create pivot table with all needed values, if the x-axis shows a timedelta with days since the nth case the index
         # has to change
         pldf = df.pivot_table(values=wanted_attrib.name, index='Date', columns='GeoName') if since_n == -1 \

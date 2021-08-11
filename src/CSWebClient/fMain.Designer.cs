@@ -30,6 +30,11 @@
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(fMain));
       this.panel2 = new System.Windows.Forms.Panel();
+      this.btnHelpDataSources = new System.Windows.Forms.Button();
+      this.panel6 = new System.Windows.Forms.Panel();
+      this.rbOWID = new System.Windows.Forms.RadioButton();
+      this.rbWHO = new System.Windows.Forms.RadioButton();
+      this.btnHelpAttributes = new System.Windows.Forms.Button();
       this.panel5 = new System.Windows.Forms.Panel();
       this.rbLog = new System.Windows.Forms.RadioButton();
       this.rbLinear = new System.Windows.Forms.RadioButton();
@@ -59,9 +64,9 @@
       this.btnSaveImage = new System.Windows.Forms.Button();
       this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
       this.btnGitHub = new System.Windows.Forms.Button();
-      this.btnHelpAttributes = new System.Windows.Forms.Button();
       this.pbReply = new System.Windows.Forms.PictureBox();
       this.panel2.SuspendLayout();
+      this.panel6.SuspendLayout();
       this.panel5.SuspendLayout();
       this.panel4.SuspendLayout();
       this.panel3.SuspendLayout();
@@ -74,6 +79,8 @@
       // 
       // panel2
       // 
+      this.panel2.Controls.Add(this.btnHelpDataSources);
+      this.panel2.Controls.Add(this.panel6);
       this.panel2.Controls.Add(this.btnHelpAttributes);
       this.panel2.Controls.Add(this.panel5);
       this.panel2.Controls.Add(this.panel4);
@@ -82,16 +89,69 @@
       this.panel2.Controls.Add(this.cbAvailableAttributes);
       this.panel2.Location = new System.Drawing.Point(13, 120);
       this.panel2.Name = "panel2";
-      this.panel2.Size = new System.Drawing.Size(319, 131);
+      this.panel2.Size = new System.Drawing.Size(342, 175);
       this.panel2.TabIndex = 10;
+      // 
+      // btnHelpDataSources
+      // 
+      this.btnHelpDataSources.Image = global::CSWebClient.Properties.Resources.imgHelp20x20;
+      this.btnHelpDataSources.Location = new System.Drawing.Point(308, 56);
+      this.btnHelpDataSources.Name = "btnHelpDataSources";
+      this.btnHelpDataSources.Size = new System.Drawing.Size(28, 28);
+      this.btnHelpDataSources.TabIndex = 2;
+      this.btnHelpDataSources.UseVisualStyleBackColor = true;
+      this.btnHelpDataSources.Click += new System.EventHandler(this.btnHelpDataSources_Click);
+      // 
+      // panel6
+      // 
+      this.panel6.Controls.Add(this.rbOWID);
+      this.panel6.Controls.Add(this.rbWHO);
+      this.panel6.Location = new System.Drawing.Point(169, 43);
+      this.panel6.Name = "panel6";
+      this.panel6.Size = new System.Drawing.Size(136, 54);
+      this.panel6.TabIndex = 8;
+      // 
+      // rbOWID
+      // 
+      this.rbOWID.AutoSize = true;
+      this.rbOWID.Location = new System.Drawing.Point(4, 26);
+      this.rbOWID.Name = "rbOWID";
+      this.rbOWID.Size = new System.Drawing.Size(133, 17);
+      this.rbOWID.TabIndex = 1;
+      this.rbOWID.Text = "Use Our World In Data";
+      this.rbOWID.UseVisualStyleBackColor = true;
+      this.rbOWID.CheckedChanged += new System.EventHandler(this.rbOWID_CheckedChanged);
+      // 
+      // rbWHO
+      // 
+      this.rbWHO.AutoSize = true;
+      this.rbWHO.Checked = true;
+      this.rbWHO.Location = new System.Drawing.Point(4, 3);
+      this.rbWHO.Name = "rbWHO";
+      this.rbWHO.Size = new System.Drawing.Size(98, 17);
+      this.rbWHO.TabIndex = 0;
+      this.rbWHO.TabStop = true;
+      this.rbWHO.Text = "Use WHO data";
+      this.rbWHO.UseVisualStyleBackColor = true;
+      this.rbWHO.CheckedChanged += new System.EventHandler(this.rbWHO_CheckedChanged);
+      // 
+      // btnHelpAttributes
+      // 
+      this.btnHelpAttributes.Image = global::CSWebClient.Properties.Resources.imgHelp20x20;
+      this.btnHelpAttributes.Location = new System.Drawing.Point(308, 5);
+      this.btnHelpAttributes.Name = "btnHelpAttributes";
+      this.btnHelpAttributes.Size = new System.Drawing.Size(28, 28);
+      this.btnHelpAttributes.TabIndex = 1;
+      this.btnHelpAttributes.UseVisualStyleBackColor = true;
+      this.btnHelpAttributes.Click += new System.EventHandler(this.btnHelpAttributes_Click);
       // 
       // panel5
       // 
       this.panel5.Controls.Add(this.rbLog);
       this.panel5.Controls.Add(this.rbLinear);
-      this.panel5.Location = new System.Drawing.Point(168, 89);
+      this.panel5.Location = new System.Drawing.Point(169, 125);
       this.panel5.Name = "panel5";
-      this.panel5.Size = new System.Drawing.Size(122, 41);
+      this.panel5.Size = new System.Drawing.Size(136, 41);
       this.panel5.TabIndex = 7;
       // 
       // rbLog
@@ -120,9 +180,9 @@
       // 
       this.panel4.Controls.Add(this.rbBarGraph);
       this.panel4.Controls.Add(this.rbLinePlot);
-      this.panel4.Location = new System.Drawing.Point(168, 43);
+      this.panel4.Location = new System.Drawing.Point(0, 125);
       this.panel4.Name = "panel4";
-      this.panel4.Size = new System.Drawing.Size(123, 40);
+      this.panel4.Size = new System.Drawing.Size(163, 40);
       this.panel4.TabIndex = 6;
       // 
       // rbBarGraph
@@ -259,15 +319,15 @@
       this.cbAvailableAttributes.FormattingEnabled = true;
       this.cbAvailableAttributes.Location = new System.Drawing.Point(86, 10);
       this.cbAvailableAttributes.Name = "cbAvailableAttributes";
-      this.cbAvailableAttributes.Size = new System.Drawing.Size(199, 21);
+      this.cbAvailableAttributes.Size = new System.Drawing.Size(218, 21);
       this.cbAvailableAttributes.TabIndex = 0;
       // 
       // btnGetData
       // 
       this.btnGetData.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.btnGetData.Location = new System.Drawing.Point(13, 266);
+      this.btnGetData.Location = new System.Drawing.Point(13, 312);
       this.btnGetData.Name = "btnGetData";
-      this.btnGetData.Size = new System.Drawing.Size(285, 77);
+      this.btnGetData.Size = new System.Drawing.Size(304, 77);
       this.btnGetData.TabIndex = 0;
       this.btnGetData.Text = "Get data";
       this.btnGetData.UseVisualStyleBackColor = true;
@@ -275,11 +335,12 @@
       // 
       // statusStrip1
       // 
+      this.statusStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
       this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsslStatus});
-      this.statusStrip1.Location = new System.Drawing.Point(0, 471);
+      this.statusStrip1.Location = new System.Drawing.Point(0, 496);
       this.statusStrip1.Name = "statusStrip1";
-      this.statusStrip1.Size = new System.Drawing.Size(897, 22);
+      this.statusStrip1.Size = new System.Drawing.Size(842, 22);
       this.statusStrip1.TabIndex = 12;
       this.statusStrip1.Text = "statusStrip1";
       // 
@@ -294,7 +355,7 @@
       this.cbFavourites.FormattingEnabled = true;
       this.cbFavourites.Location = new System.Drawing.Point(6, 21);
       this.cbFavourites.Name = "cbFavourites";
-      this.cbFavourites.Size = new System.Drawing.Size(279, 21);
+      this.cbFavourites.Size = new System.Drawing.Size(298, 21);
       this.cbFavourites.TabIndex = 0;
       this.cbFavourites.SelectedIndexChanged += new System.EventHandler(this.cbFavourites_SelectedIndexChanged);
       // 
@@ -302,7 +363,7 @@
       // 
       this.txtCountries.Location = new System.Drawing.Point(6, 69);
       this.txtCountries.Name = "txtCountries";
-      this.txtCountries.Size = new System.Drawing.Size(279, 20);
+      this.txtCountries.Size = new System.Drawing.Size(298, 20);
       this.txtCountries.TabIndex = 1;
       // 
       // label3
@@ -325,7 +386,7 @@
       // 
       // btnAddToFavourites
       // 
-      this.btnAddToFavourites.Location = new System.Drawing.Point(291, 64);
+      this.btnAddToFavourites.Location = new System.Drawing.Point(308, 63);
       this.btnAddToFavourites.Name = "btnAddToFavourites";
       this.btnAddToFavourites.Size = new System.Drawing.Size(28, 28);
       this.btnAddToFavourites.TabIndex = 3;
@@ -335,7 +396,7 @@
       // 
       // btnRemoveFromFavourites
       // 
-      this.btnRemoveFromFavourites.Location = new System.Drawing.Point(291, 16);
+      this.btnRemoveFromFavourites.Location = new System.Drawing.Point(308, 15);
       this.btnRemoveFromFavourites.Name = "btnRemoveFromFavourites";
       this.btnRemoveFromFavourites.Size = new System.Drawing.Size(28, 28);
       this.btnRemoveFromFavourites.TabIndex = 2;
@@ -353,14 +414,14 @@
       this.panel1.Controls.Add(this.cbFavourites);
       this.panel1.Location = new System.Drawing.Point(13, 12);
       this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(319, 102);
+      this.panel1.Size = new System.Drawing.Size(336, 102);
       this.panel1.TabIndex = 9;
       // 
       // chkUseLocalhost
       // 
       this.chkUseLocalhost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.chkUseLocalhost.AutoSize = true;
-      this.chkUseLocalhost.Location = new System.Drawing.Point(13, 451);
+      this.chkUseLocalhost.Location = new System.Drawing.Point(13, 476);
       this.chkUseLocalhost.Name = "chkUseLocalhost";
       this.chkUseLocalhost.Size = new System.Drawing.Size(90, 17);
       this.chkUseLocalhost.TabIndex = 4;
@@ -371,7 +432,7 @@
       // btnShowList
       // 
       this.btnShowList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.btnShowList.Location = new System.Drawing.Point(158, 423);
+      this.btnShowList.Location = new System.Drawing.Point(158, 448);
       this.btnShowList.Name = "btnShowList";
       this.btnShowList.Size = new System.Drawing.Size(140, 22);
       this.btnShowList.TabIndex = 3;
@@ -383,7 +444,7 @@
       // 
       this.btnSaveImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.btnSaveImage.Enabled = false;
-      this.btnSaveImage.Location = new System.Drawing.Point(13, 423);
+      this.btnSaveImage.Location = new System.Drawing.Point(13, 448);
       this.btnSaveImage.Name = "btnSaveImage";
       this.btnSaveImage.Size = new System.Drawing.Size(140, 22);
       this.btnSaveImage.TabIndex = 2;
@@ -400,22 +461,12 @@
       // btnGitHub
       // 
       this.btnGitHub.Image = global::CSWebClient.Properties.Resources.imgGitHub20x20;
-      this.btnGitHub.Location = new System.Drawing.Point(304, 315);
+      this.btnGitHub.Location = new System.Drawing.Point(321, 361);
       this.btnGitHub.Name = "btnGitHub";
       this.btnGitHub.Size = new System.Drawing.Size(28, 28);
       this.btnGitHub.TabIndex = 1;
       this.btnGitHub.UseVisualStyleBackColor = true;
       this.btnGitHub.Click += new System.EventHandler(this.btnGitHub_Click);
-      // 
-      // btnHelpAttributes
-      // 
-      this.btnHelpAttributes.Image = global::CSWebClient.Properties.Resources.imgHelp20x20;
-      this.btnHelpAttributes.Location = new System.Drawing.Point(291, 5);
-      this.btnHelpAttributes.Name = "btnHelpAttributes";
-      this.btnHelpAttributes.Size = new System.Drawing.Size(28, 28);
-      this.btnHelpAttributes.TabIndex = 1;
-      this.btnHelpAttributes.UseVisualStyleBackColor = true;
-      this.btnHelpAttributes.Click += new System.EventHandler(this.btnHelpAttributes_Click);
       // 
       // pbReply
       // 
@@ -423,9 +474,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.pbReply.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.pbReply.Location = new System.Drawing.Point(338, 12);
+      this.pbReply.Location = new System.Drawing.Point(355, 12);
       this.pbReply.Name = "pbReply";
-      this.pbReply.Size = new System.Drawing.Size(547, 457);
+      this.pbReply.Size = new System.Drawing.Size(475, 482);
       this.pbReply.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pbReply.TabIndex = 0;
       this.pbReply.TabStop = false;
@@ -434,7 +485,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(897, 493);
+      this.ClientSize = new System.Drawing.Size(842, 518);
       this.Controls.Add(this.btnGitHub);
       this.Controls.Add(this.btnSaveImage);
       this.Controls.Add(this.btnShowList);
@@ -445,13 +496,15 @@
       this.Controls.Add(this.panel1);
       this.Controls.Add(this.pbReply);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-      this.MinimumSize = new System.Drawing.Size(767, 387);
+      this.MinimumSize = new System.Drawing.Size(762, 507);
       this.Name = "fMain";
       this.Text = "Covid-19 Data Visualisation";
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.fMain_FormClosing);
       this.Load += new System.EventHandler(this.fMain_Load);
       this.panel2.ResumeLayout(false);
       this.panel2.PerformLayout();
+      this.panel6.ResumeLayout(false);
+      this.panel6.PerformLayout();
       this.panel5.ResumeLayout(false);
       this.panel5.PerformLayout();
       this.panel4.ResumeLayout(false);
@@ -504,6 +557,10 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
         private System.Windows.Forms.Button btnHelpAttributes;
         private System.Windows.Forms.Button btnGitHub;
-    }
+    private System.Windows.Forms.Panel panel6;
+    private System.Windows.Forms.RadioButton rbOWID;
+    private System.Windows.Forms.RadioButton rbWHO;
+    private System.Windows.Forms.Button btnHelpDataSources;
+  }
 }
 

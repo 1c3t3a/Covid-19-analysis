@@ -13,7 +13,7 @@ namespace CSWebClient
   {
 
     /// <summary>
-    /// A flag to define wether to use https or http
+    /// A flag to define whether to use https or http
     /// </summary>
     public bool _UseHTTPS { get; set; }
 
@@ -26,7 +26,29 @@ namespace CSWebClient
       private set;
     }
 
-    
+    /// <summary>
+    /// Possible data source
+    /// </summary>
+    public enum DataSources 
+    {
+      DS_WHO,
+      DS_OWID 
+    }
+
+    /// <summary>
+    /// The data source to be used to retrieve requests
+    /// </summary>
+    public DataSources DataSource { get; set; }
+
+    /// <summary>
+    /// A dictionary holding the data source and its request string
+    /// </summary>
+    private Dictionary<DataSources, string> _dataSourcesRequest = new Dictionary<DataSources, string>
+    {
+      { DataSources.DS_WHO, "WHO" },
+      { DataSources.DS_OWID, "OWID" }
+    };
+
     /// <summary>_
     /// The server to talk to
     /// </summary>
@@ -41,7 +63,7 @@ namespace CSWebClient
     private bool _ping = false;
 
     /// <summary>
-    /// Constructor takeing the server and the timeout
+    /// Constructor taking the server and the timeout
     /// </summary>
     /// <param name="strDomain"> The name of the server either as a IP or name</param>
     /// <param name="nTimeout"> Timeout for the connection in ms</param>
@@ -59,6 +81,8 @@ namespace CSWebClient
       // check if it is the localhost to add the port
       if (_server == "localhost")
         _server = _server + ":8000";
+      // the default data source
+      DataSource = DataSources.DS_WHO;
       // a list of data description and data names
       Attributes = new Dictionary<string, string>();
       // fill the list
@@ -73,7 +97,14 @@ namespace CSWebClient
       Attributes.Add("Doubling time [days]", "DoublingTime");
       Attributes.Add("Cumulative cases per million population", "CasesPerMillionPopulation");
       Attributes.Add("Cumulative deaths per million population", "DeathsPerMillionPopulation");
-      Attributes.Add("Reproduction rate R", "R7");
+      Attributes.Add("Reproduction rate R", "R");
+      Attributes.Add("Reproduction rate R, 7 day average", "R7");
+      Attributes.Add("People received first dose", "PeopleReceivedFirstDose");
+      Attributes.Add("Percent people received first dose", "PercentPeopleReceivedFirstDose");
+      Attributes.Add("People received all doses", "PeopleReceivedAllDoses");
+      Attributes.Add("Percent people received all doses", "PercentPeopleReceivedAllDoses");
+      Attributes.Add("Vaccine doses administered", "VaccineDosesAdministered");
+      Attributes.Add("Daily vaccination doses, 7 day average", "DailyVaccineDosesAdministered7DayAverage");
     }
 
     /// <summary>
@@ -100,9 +131,9 @@ namespace CSWebClient
     /// Get the chart of all data since December 31st.
     /// </summary>
     /// <param name="strCountries"> The country string as a comma separated list of GeoIDs</param>
-    /// <param name="strAttribut"> The attribut to get the data graph for</param>
+    /// <param name="strAttribut"> The attribute to get the data graph for</param>
     /// <param name="bLogarithmic"> A flag indicating linear or logarithmic y-axis</param>
-    /// <param name="bBargraph"> A flag indicating wether to draw a line plot or bargraph</param>
+    /// <param name="bBargraph"> A flag indicating whether to draw a line plot or bar graph</param>
     /// <param name="strURL"> The URL being used</param>
     /// <returns></returns>
     public System.Drawing.Bitmap GetDataChart(string strCountries, string strAttribut, bool bLogarithmic, bool bBargraph, out string strURL)
@@ -112,7 +143,7 @@ namespace CSWebClient
       if (_UseHTTPS)
         strURL = strURL + "s";
       strCountries = strCountries.Replace(" ", "");
-      strURL = strURL + "://" + _server + _urlPath + strCountries + "/" + strAttribut + "?";
+      strURL = strURL + "://" + _server + _urlPath + strCountries + "/" + strAttribut + "?dataSource=" + _dataSourcesRequest[DataSource];
       if (bLogarithmic)
         strURL = strURL + "&log=True";
       if (bBargraph)
@@ -125,9 +156,9 @@ namespace CSWebClient
     /// Get the chart since a number of cases has been exceeded
     /// </summary>
     /// <param name="strCountries"> The country string as a comma separated list of GeoIDs</param>
-    /// <param name="strAttribut"> The attribut to get the data graph for</param>
+    /// <param name="strAttribut"> The attribute to get the data graph for</param>
     /// <param name="bLogarithmic"> A flag indicating linear or logarithmic y-axis</param>
-    /// <param name="bBargraph"> A flag indicating wether to draw a line plot or bargraph</param>
+    /// <param name="bBargraph"> A flag indicating whether to draw a line plot or bar graph</param>
     /// <param name="nSince"> The number of cases</param>
     /// <param name="strURL"> The URL being used</param>
     /// <returns></returns>
@@ -138,7 +169,7 @@ namespace CSWebClient
       if (_UseHTTPS)
         strURL = strURL + "s";
       strCountries = strCountries.Replace(" ", "");
-      strURL = strURL + "://" + _server + _urlPath + strCountries + "/" + strAttribut + "?sinceN=" + nSince.ToString();
+      strURL = strURL + "://" + _server + _urlPath + strCountries + "/" + strAttribut + "?dataSource=" + _dataSourcesRequest[DataSource] + "&sinceN=" + nSince.ToString();
       if (bLogarithmic)
         strURL = strURL + "&log=True";
       if (bBargraph)
@@ -151,9 +182,9 @@ namespace CSWebClient
     /// Get the chart for the last number of days
     /// </summary>
     /// <param name="strCountries"> The country string as a comma separated list of GeoIDs</param>
-    /// <param name="strAttribut"> The attribut to get the data graph for</param>
+    /// <param name="strAttribut"> The attribute to get the data graph for</param>
     /// <param name="bLogarithmic"> A flag indicating linear or logarithmic y-axis</param>
-    /// <param name="bBargraph"> A flag indicating wether to draw a line plot or bargraph</param>
+    /// <param name="bBargraph"> A flag indicating whether to draw a line plot or bar graph</param>
     /// <param name="nLast"> Number of last days</param>
     /// <param name="strURL"> The URL being used</param>
     /// <returns></returns>
@@ -164,7 +195,7 @@ namespace CSWebClient
       if (_UseHTTPS)
         strURL = strURL + "s";
       strCountries = strCountries.Replace(" ", "");
-      strURL = strURL + "://" + _server + _urlPath + strCountries + "/" + strAttribut + "?lastN=" + nLast.ToString();
+      strURL = strURL + "://" + _server + _urlPath + strCountries + "/" + strAttribut + "?dataSource=" + _dataSourcesRequest[DataSource] + "&lastN=" + nLast.ToString();
       if (bLogarithmic)
         strURL = strURL + "&log=True";
       if (bBargraph)
