@@ -175,7 +175,7 @@ namespace CSWebClient
           pbReply.Image = _cwc.GetDataChartLast(txtCountries.Text, _cwc.Attributes[cbAvailableAttributes.Text], rbLog.Checked, rbBarGraph.Checked, (int)nudLast.Value, out strURL);
         else if (rbSince.Checked)
           pbReply.Image = _cwc.GetDataChartSince(txtCountries.Text, _cwc.Attributes[cbAvailableAttributes.Text], rbLog.Checked, rbBarGraph.Checked, (int)nudSince.Value, out strURL);
-        tsslStatus.Text = "Connected to: " + strURL;
+        tsslStatus.Text = "Connected to: " + strURL.Replace("&", "&&");
       }
       catch (Exception ex)
       {
@@ -216,6 +216,28 @@ namespace CSWebClient
       Process procBrowser = new Process();
       procBrowser.StartInfo.FileName = "https://github.com/1c3t3a/Covid-19-analysis";
       procBrowser.Start();
+    }
+
+    private void btnHelpDataSources_Click(object sender, EventArgs e)
+    {
+      // create and start a new process
+      Process procBrowser = new Process();
+      procBrowser.StartInfo.FileName = "http://mb.cmbt.de/covid-19-analysis/data-source-comparison/";
+      procBrowser.Start();
+    }
+
+    private void rbWHO_CheckedChanged(object sender, EventArgs e)
+    {
+      // select the data source
+      if (rbWHO.Checked == true)
+        _cwc.DataSource = CoronaWebClient.DataSources.DS_WHO;
+    }
+
+    private void rbOWID_CheckedChanged(object sender, EventArgs e)
+    {
+      // select the data source
+      if (rbOWID.Checked == true)
+        _cwc.DataSource = CoronaWebClient.DataSources.DS_OWID;
     }
   }
 }

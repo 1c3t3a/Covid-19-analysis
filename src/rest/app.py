@@ -10,6 +10,7 @@ from CovidCases import CovidCases
 from typing import Optional
 import re
 import pandas as pd
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib
 import io
@@ -149,8 +150,6 @@ class Rest_API:
         if wanted_attrib == Attributes.Incidence7DayPer100Kpopulation:
             df = self.covid_cases.add_incidence_7day_per_100Kpopulation(df)
 
-        # concat to one DataFrame and set date
-        df[['Date']] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
         # create pivot table with all needed values, if the x-axis shows a timedelta with days since the nth case the index
         # has to change
         pldf = df.pivot_table(values=wanted_attrib.name, index='Date', columns='GeoName') if since_n == -1 \
@@ -168,6 +167,15 @@ class Rest_API:
             builder.set_axis_labels(
                 xlabel="Days since case " + str(since_n))
             builder.set_xaxis_index()
+        # take care of the y-axis format
+        if wanted_attrib == Attributes.R or wanted_attrib == Attributes.R7:
+            builder.set_yaxis_formatter(mpl.ticker.StrMethodFormatter('{x:,.2f}'))
+        if wanted_attrib == Attributes.PercentPeopleReceivedAllDoses or wanted_attrib == Attributes.PercentPeopleReceivedFirstDose:
+            builder.set_yaxis_formatter(mpl.ticker.PercentFormatter())
+        if wanted_attrib == Attributes.PercentDeaths:
+            builder.set_yaxis_formatter(mpl.ticker.PercentFormatter())
+        if wanted_attrib == Attributes.Incidence7DayPer100Kpopulation:
+            builder.set_yaxis_formatter(mpl.ticker.StrMethodFormatter('{x:,.2f}'))
         # generate plot
         fig, ax = builder.build()
         if bar:
