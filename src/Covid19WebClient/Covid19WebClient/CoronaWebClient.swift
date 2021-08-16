@@ -28,6 +28,13 @@ class CoronaWebClient {
     case INVALID_RESPONSE
   }
   
+  public enum DataSources: String {
+    case WHO = "WHO"
+    case OWID = "OWID"
+  }
+  
+  public var DataSource: DataSources = DataSources.WHO
+  
   /// <summary>
   /// A flag to define wether to use https or http
   /// </summary>
@@ -66,6 +73,9 @@ class CoronaWebClient {
     if (_server == "localhost") {
       _server = _server + ":8000"
     }
+    // use WHO data as a default
+    DataSource = CoronaWebClient.DataSources.WHO
+    // build a dictonary of attributes
     Attributes = ["Daily cases": "DailyCases",
                   "Daily cases, 7 day average": "DailyCases7",
                   "7-day incidence": "Incidence7DayPer100Kpopulation",
@@ -77,7 +87,14 @@ class CoronaWebClient {
                   "Doubling time [days]": "DoublingTime",
                   "Cumulative cases per million population": "CasesPerMillionPopulation",
                   "Deaths per million population": "DeathsPerMillionPopulation",
-                  "Reproduction rate R": "R7"]
+                  "Reproduction rate R": "R",
+                  "Reproduction rate R, 7 day average": "R7",
+                  "People received first dose": "PeopleReceivedFirstDose",
+                  "Percent people received first dose": "PercentPeopleReceivedFirstDose",
+                  "People received all doses": "PeopleReceivedAllDoses",
+                  "Percent people received all doses": "PercentPeopleReceivedAllDoses",
+                  "Vaccine doses administered": "VaccineDosesAdministered",
+                  "Daily vaccination doses, 7 day average": "DailyVaccineDosesAdministered7DayAverage"]
   }
   
   /// <summary>
@@ -124,18 +141,18 @@ class CoronaWebClient {
     // remove spaces from the GeoID string list
     let strCountriesNoSpaces = strCountries.replacingOccurrences(of: " ", with: "")
     // add these GeoID list to the url
-    strURL = strURL + "://" + _server + _urlPath + strCountriesNoSpaces + "/" + strAttribut
+    strURL = strURL + "://" + _server + _urlPath + strCountriesNoSpaces + "/" + strAttribut + "?dataSource=" + DataSource.rawValue
     // add both flags
     if (bLogarithmic && bBargraph) {
-      strURL = strURL + "?bar=True&log=True"
+      strURL = strURL + "&bar=True&log=True"
     }
     // add the log flag
     else if (bLogarithmic) {
-      strURL = strURL + "?log=True"
+      strURL = strURL + "&log=True"
     }
     // add the bargraph flag
     else if (bBargraph) {
-      strURL = strURL + "?bar=True"
+      strURL = strURL + "&bar=True"
     }
     // finally get the image and the url that has been used from the server
     return (GetChartFromURL(strURL: strURL), strURL)
@@ -160,7 +177,7 @@ class CoronaWebClient {
     // remove spaces from the GeoID string list
     let strCountriesNoSpaces = strCountries.replacingOccurrences(of: " ", with: "")
     // add these GeoID list to the url
-    strURL = strURL + "://" + _server + _urlPath + strCountriesNoSpaces + "/" + strAttribut + "?sinceN=" + String(nSince)
+    strURL = strURL + "://" + _server + _urlPath + strCountriesNoSpaces + "/" + strAttribut + "?dataSource=" + DataSource.rawValue + "&sinceN=" + String(nSince)
     // add the log flag
     if (bLogarithmic) {
       strURL = strURL + "&log=True"
@@ -192,7 +209,7 @@ class CoronaWebClient {
     // remove spaces from the GeoID string list
     let strCountriesNoSpaces = strCountries.replacingOccurrences(of: " ", with: "")
     // add these GeoID list to the url
-    strURL = strURL + "://" + _server + _urlPath + strCountriesNoSpaces + "/" + strAttribut + "?lastN=" + String(nLast)
+    strURL = strURL + "://" + _server + _urlPath + strCountriesNoSpaces + "/" + strAttribut + "?dataSource=" + DataSource.rawValue + "&lastN=" + String(nLast)
     // add the log flag
     if (bLogarithmic) {
       strURL = strURL + "&log=True"
