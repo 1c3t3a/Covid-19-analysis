@@ -294,7 +294,14 @@ class ViewController: NSViewController {
   
   @IBAction func btnHelpClicked(_ sender: Any) {
     // open the help online
-    if let url = URL(string: "http://mb.cmbt.de/covid-19-analysis/the-rest-api/") {
+    if let url = URL(string: "http://mb.cmbt.de/python-class-documentation/the-rest-api52/") {
+      NSWorkspace.shared.open(url)
+    }
+  }
+  
+  @IBAction func btnComparison(_ sender: Any) {
+    // open the help online
+    if let url = URL(string: "http://mb.cmbt.de/covid-19-analysis/data-source-comparison/") {
       NSWorkspace.shared.open(url)
     }
   }
