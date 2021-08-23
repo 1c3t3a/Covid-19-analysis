@@ -114,6 +114,7 @@
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="219" y="688" width="430" height="212"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+                        <value key="minSize" type="size" width="1024" height="576"/>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="98r-iN-zZc"/>
                         </connections>
@@ -254,7 +255,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button toolTip="Draw a line plot" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kn6-4p-vnh">
-                                            <rect key="frame" x="19" y="50" width="244" height="18"/>
+                                            <rect key="frame" x="19" y="50" width="227" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="radio" title="Use WHO data" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="3rW-qe-Wf0">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -273,6 +274,17 @@
                                             </buttonCell>
                                             <connections>
                                                 <action selector="rbDataSource:" target="XfG-lQ-9wD" id="QMP-7z-6Cw"/>
+                                            </connections>
+                                        </button>
+                                        <button toolTip="Get information about the different attributes" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DBA-HG-CjT">
+                                            <rect key="frame" x="243" y="50" width="20" height="22"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="smallSquare" title="?" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="B6n-do-69a">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="btnComparison:" target="XfG-lQ-9wD" id="hJY-Ja-17c"/>
                                             </connections>
                                         </button>
                                     </subviews>
