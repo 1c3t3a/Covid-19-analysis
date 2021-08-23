@@ -72,6 +72,8 @@ class ViewController: NSViewController {
     
     // create webclient
     _wc = CoronaWebClient.init(strDomain: _strServer, nTimeout: 50)
+    
+    _wc.DataSource = CoronaWebClient.DataSources.WHO
     // remove all items from the combo box
     cbAttributes.removeAllItems()
     // fill the combo box with available attributes
@@ -151,6 +153,24 @@ class ViewController: NSViewController {
     cbFavourites.selectItem(at: cbFavourites.numberOfItems - 1)
     // enable the remove button
     btnRemoveFromFavourites.isEnabled = true
+  }
+  
+  @IBAction func rbDataSource(_ sender: Any) {
+    // get the sender
+    if let radioButton = sender as? NSButton {
+      // check which one has been clicked
+      switch radioButton.tag {
+        case 0:
+          // select the WHO as the data source
+          _wc.DataSource = CoronaWebClient.DataSources.WHO
+        case 1:
+          // select the OWID as the data source
+          _wc.DataSource = CoronaWebClient.DataSources.OWID
+        default:
+          // select the WHO as the data source
+          _wc.DataSource = CoronaWebClient.DataSources.WHO
+      }
+    }
   }
   
   var _dateOption: Int = 0

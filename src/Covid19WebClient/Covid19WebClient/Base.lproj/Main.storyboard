@@ -131,16 +131,16 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="Covid19WebClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="1008" height="512"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1008" height="577"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" id="jQJ-rC-r8t">
-                                <rect key="frame" x="327" y="40" width="661" height="455"/>
+                                <rect key="frame" x="327" y="40" width="661" height="520"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" imageFrameStyle="grayBezel" id="jXM-3D-2Vt"/>
                             </imageView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YCs-os-6ar">
-                                <rect key="frame" x="20" y="476" width="120" height="16"/>
+                                <rect key="frame" x="20" y="541" width="120" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Favourite countries" id="9lz-xH-cuN">
                                     <font key="font" metaFont="system"/>
@@ -149,7 +149,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="r7v-Xi-NXE">
-                                <rect key="frame" x="20" y="354" width="152" height="16"/>
+                                <rect key="frame" x="20" y="419" width="152" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Data plot to been shown" id="QFa-mC-7zS">
                                     <font key="font" metaFont="system"/>
@@ -158,7 +158,7 @@
                                 </textFieldCell>
                             </textField>
                             <comboBox toolTip="Select one of your favourites" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jOX-nB-Wjk">
-                                <rect key="frame" x="20" y="444" width="260" height="25"/>
+                                <rect key="frame" x="20" y="509" width="260" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="5" id="aNj-hm-Nao">
                                     <font key="font" metaFont="system"/>
@@ -175,7 +175,7 @@
                                 </connections>
                             </comboBox>
                             <comboBox toolTip="Select one of your favourites" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xI3-yh-V1K">
-                                <rect key="frame" x="20" y="322" width="260" height="25"/>
+                                <rect key="frame" x="20" y="387" width="260" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="15" id="Qcv-US-INE">
                                     <font key="font" metaFont="system"/>
@@ -184,7 +184,7 @@
                                 </comboBoxCell>
                             </comboBox>
                             <button toolTip="Remove from favourites" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NWV-xe-Zoh">
-                                <rect key="frame" x="285" y="446" width="20" height="22"/>
+                                <rect key="frame" x="285" y="511" width="20" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="smallSquare" title="-" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Wbs-RV-BIP">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -195,7 +195,7 @@
                                 </connections>
                             </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cfQ-Pj-7yw">
-                                <rect key="frame" x="20" y="416" width="118" height="16"/>
+                                <rect key="frame" x="20" y="481" width="118" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Selected countries" id="dg0-hL-JSp">
                                     <font key="font" metaFont="system"/>
@@ -204,7 +204,7 @@
                                 </textFieldCell>
                             </textField>
                             <button toolTip="Add to favourites" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ajh-jG-4f3">
-                                <rect key="frame" x="285" y="385" width="20" height="22"/>
+                                <rect key="frame" x="285" y="450" width="20" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="smallSquare" title="+" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Hzv-D1-Gp0">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -215,7 +215,7 @@
                                 </connections>
                             </button>
                             <textField toolTip="Selected countries as comma sepatated GeoIds" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CBl-yS-83C">
-                                <rect key="frame" x="20" y="386" width="257" height="21"/>
+                                <rect key="frame" x="20" y="451" width="257" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="od6-Wh-45o">
                                     <font key="font" metaFont="system"/>
@@ -235,8 +235,51 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button toolTip="Get information about the different attributes" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oLS-6O-rJD">
+                                <rect key="frame" x="285" y="389" width="20" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="smallSquare" title="?" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XKV-ce-RGz">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="btnHelpClicked:" target="XfG-lQ-9wD" id="pad-o2-z8w"/>
+                                </connections>
+                            </button>
+                            <box fixedFrame="YES" boxType="custom" cornerRadius="4" title="Data source" translatesAutoresizingMaskIntoConstraints="NO" id="3Mf-wJ-LuE">
+                                <rect key="frame" x="20" y="286" width="285" height="89"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <view key="contentView" id="tLb-lh-g1U">
+                                    <rect key="frame" x="1" y="1" width="283" height="87"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <button toolTip="Draw a line plot" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kn6-4p-vnh">
+                                            <rect key="frame" x="19" y="50" width="244" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="Use WHO data" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="3rW-qe-Wf0">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="rbDataSource:" target="XfG-lQ-9wD" id="imY-ix-emf"/>
+                                            </connections>
+                                        </button>
+                                        <button toolTip="Draw a bar graph" verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="Gzt-9v-yuM">
+                                            <rect key="frame" x="19" y="19" width="264" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="Use data from 'Our World in Data'" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="ZuB-qU-0x4">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="rbDataSource:" target="XfG-lQ-9wD" id="QMP-7z-6Cw"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                </view>
+                            </box>
                             <box fixedFrame="YES" boxType="custom" borderType="bezel" cornerRadius="4" title="Data options" translatesAutoresizingMaskIntoConstraints="NO" id="RWB-q6-PbG">
-                                <rect key="frame" x="20" y="214" width="285" height="96"/>
+                                <rect key="frame" x="20" y="178" width="285" height="96"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <view key="contentView" id="HmV-qU-5r6">
                                     <rect key="frame" x="1" y="1" width="283" height="94"/>
@@ -313,7 +356,7 @@
                                 </view>
                             </box>
                             <box fixedFrame="YES" boxType="custom" cornerRadius="4" title="Plot options" translatesAutoresizingMaskIntoConstraints="NO" id="xwe-ab-kWC">
-                                <rect key="frame" x="20" y="111" width="285" height="89"/>
+                                <rect key="frame" x="20" y="75" width="285" height="89"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <view key="contentView" id="5YB-U4-UY0">
                                     <rect key="frame" x="1" y="1" width="283" height="87"/>
@@ -352,19 +395,8 @@
                                     </subviews>
                                 </view>
                             </box>
-                            <button toolTip="Get information about the different attributes" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oLS-6O-rJD">
-                                <rect key="frame" x="285" y="324" width="20" height="22"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="smallSquare" title="?" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XKV-ce-RGz">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="btnHelpClicked:" target="XfG-lQ-9wD" id="pad-o2-z8w"/>
-                                </connections>
-                            </button>
                             <button toolTip="Get the plot of the selected countries" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bjP-kx-S8c">
-                                <rect key="frame" x="14" y="63" width="219" height="32"/>
+                                <rect key="frame" x="14" y="34" width="219" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Retrieve plot" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZQm-BK-eWX">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -375,7 +407,7 @@
                                 </connections>
                             </button>
                             <button toolTip="Get a list of available GeoIDs" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E81-bp-AAI">
-                                <rect key="frame" x="244" y="69" width="61" height="22"/>
+                                <rect key="frame" x="244" y="40" width="61" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="smallSquare" title=" Geo IDs " bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qKM-Fh-S15">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -406,7 +438,7 @@
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="n3X-RU-7IL"/>
             </objects>
-            <point key="canvasLocation" x="274" y="722"/>
+            <point key="canvasLocation" x="274" y="754.5"/>
         </scene>
     </scenes>
 </document>
