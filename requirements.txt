@@ -1,6 +1,6 @@
 ipywidgets==7.6.4
 json5==0.9.6
-matplotlib==3.4.2
+matplotlib==3.4.3
 numpy==1.21.2
 notebook==6.4.3
 regex==2021.8.28
