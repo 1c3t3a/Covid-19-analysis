@@ -132,6 +132,7 @@ covidCases_owid = CovidCasesOWID(pathToCSV_owid)
 covidCases_who = CovidCasesWHO(pathToCSV_who)
 
 # create tuples of instances and country codes
+#objList = [covidCases_owid]
 objList = [covidCases_owid, covidCases_who]
 
 # get the combined dataframe
