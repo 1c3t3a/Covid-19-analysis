@@ -184,7 +184,16 @@ class CovidCasesOWID(CovidCases):
                                             'excess_mortality',
                                             'new_people_vaccinated_smoothed',
                                             'new_people_vaccinated_smoothed_per_hundred'])
-        print(self.__df)
+        if self.__df.columns.size != 11:
+            # oops, there are some new columns in the csv
+            print('Detecting new cols in OWID CSV: ' + self.__df.columns)
+            # add the new cols to a list
+            cols = []
+            for col in range (11, self.__df.columns.size):
+                cols.append (self.__df.columns[col])
+                # ...and drop them
+            self.__df = self.__df.drop(columns=cols)
+            print('Accepting cols in OWID CSV: ' + self.__df.columns)
         # rename the columns to be more readable
         self.__df.columns = ['GeoID',
                              'Continent',
@@ -197,7 +206,7 @@ class CovidCasesOWID(CovidCases):
                              'PeopleReceivedAllDoses',
                              'DailyVaccineDosesAdministered7DayAverage',
                              'Population']
-        #print(self.__df)
+        #print(self.__df.columns)
         # change the type of the 'date' field to a pandas date
         self.__df['Date'] = pd.to_datetime(self.__df['Date'],
                                            format='%Y/%m/%d')
