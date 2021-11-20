@@ -188,10 +188,8 @@ class CovidCasesOWID(CovidCases):
             # oops, there are some new columns in the csv
             print('Detecting new cols in OWID CSV: ' + self.__df.columns)
             # add the new cols to a list
-            cols = []
-            for col in range (11, self.__df.columns.size):
-                cols.append (self.__df.columns[col])
-                # ...and drop them
+            cols = [self.__df.columns[col] for col in range (11, self.__df.columns.size)]
+            # ...and drop them
             self.__df = self.__df.drop(columns=cols)
             print('Accepting cols in OWID CSV: ' + self.__df.columns)
         # rename the columns to be more readable
