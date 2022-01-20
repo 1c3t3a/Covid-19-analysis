@@ -355,8 +355,6 @@ class CovidCasesOWID(CovidCases):
                 corrected.append('GB')
             elif geoID == 'EL':
                 corrected.append('GR')
-            elif geoID == 'NA':
-                corrected.append('NAM')
             else:
                 corrected.append(geoID)
         return corrected
@@ -502,10 +500,11 @@ class CovidCasesOWID(CovidCases):
         """
         # just the main african countries for a map, pygal doesn't contain e.g. 
         # Comoros (KM)
+        # 2022-01-20 added NA
         geoIdList = 'DZ, AO, BJ, BW, BF, BI, CM, CV, CF, TD, KM, CG, CI, CD, '  + \
                     'DJ, EG, GQ, ER, SZ, ET, GA, GM, GH, GN, GW, KE, LS, LR, '  + \
                     'LY, MG, MW, ML, MR, MU, MA, MZ, NE, NG, RW, ST, SN, SC, '  + \
-                    'SL, SO, ZA, SS, SD, TG, TN, UG, TZ, EH, ZM, ZW'
+                    'SL, SO, ZA, SS, SD, TG, TN, UG, TZ, EH, ZM, ZW, NA'
         return geoIdList
 
     @staticmethod
