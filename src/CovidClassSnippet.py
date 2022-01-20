@@ -123,7 +123,7 @@ numCasesince = 10000
 lastN = 90
 
 # the list of comma separated geoIDs
-countryList = 'DE, GB, FR, ES, IT, CH, AT, EL'
+countryList = 'DE, GB, FR, ES, IT, CH, AT, EL, NA'
 
 # create instances
 #covidCases_ecdc = CovidCasesECDC(pathToCSV_ecdc)

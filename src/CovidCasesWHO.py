@@ -62,7 +62,7 @@ class CovidCasesWHO(CovidCases):
         # some benchmarking
         start = time.time()
         # open the file
-        self.__df = pd.read_csv(filename)
+        self.__df = pd.read_csv(filename, keep_default_na=False)
         # drop some columns
         self.__df = self.__df.drop(columns=['WHO_region',
                                             'Cumulative_cases',
@@ -84,7 +84,7 @@ class CovidCasesWHO(CovidCases):
         #    print(i)
 
         # fix the 'namibia' problem by replacing nan with 'NAM', This will as well be considered in generating heat-maps
-        self.__df['GeoID'] = self.__df['GeoID'].replace(np.nan, 'NAM')
+        #self.__df['GeoID'] = self.__df['GeoID'].replace(np.nan, 'NAM')
         # our result data frame
         dfs = []
         for geoID in self.__df['GeoID'].unique():
@@ -296,8 +296,6 @@ class CovidCasesWHO(CovidCases):
                 corrected.append('GB')
             elif geoID == 'EL':
                 corrected.append('GR')
-            elif geoID == 'NA':
-                corrected.append('NAM')
             elif geoID == 'TW':
                 corrected.append('CN')
             else:
@@ -373,9 +371,10 @@ class CovidCasesWHO(CovidCases):
         """
         # just the main american countries for a map, pygal doesn't contain e.g. 
         # Bahamas (BS), Barbados (BB), Bermuda (BM), Falkland Island (FK)
+        # 2022-01-22 added BZ
         geoIdList = 'AR, BB, BM, BO, BR, BS, CA, CL, CO, ' + \
                     'CR, CU, DO, EC, SV, GT, GY, HN, HT, ' + \
-                    'JM, MX, NI, PA, PE, PR, PY, SR, US, UY, VE'
+                    'JM, MX, NI, PA, PE, PR, PY, SR, US, UY, VE, BZ'
         return geoIdList
 
     @staticmethod
@@ -445,10 +444,11 @@ class CovidCasesWHO(CovidCases):
         """
         # just the main african countries for a map, pygal doesn't contain e.g. 
         # Comoros (KM)
+        # 2022-01-22 added NA
         geoIdList = 'DZ, AO, BJ, BW, BF, BI, CM, CV, CF, TD, KM, CG, CI, CD, '  + \
                     'DJ, EG, GQ, ER, SZ, ET, GA, GM, GH, GN, GW, KE, LS, LR, '  + \
                     'LY, MG, MW, ML, MR, MU, MA, MZ, NE, NG, RW, ST, SN, SC, '  + \
-                    'SL, SO, ZA, SS, SD, TG, TN, UG, TZ, EH, ZM, ZW, NAM'
+                    'SL, SO, ZA, SS, SD, TG, TN, UG, TZ, EH, ZM, ZW, NA'
         return geoIdList
 
     @staticmethod

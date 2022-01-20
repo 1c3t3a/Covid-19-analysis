@@ -29,7 +29,7 @@ class GeoInformationWorld():
             targetFilename = os.path.join(absDirectory, '../data/GeoInformationWorld.csv')
         # check if it exist already
         if os.path.exists(targetFilename):
-            self.__dfGeoInformationWorld = pd.read_csv(targetFilename)
+            self.__dfGeoInformationWorld = pd.read_csv(targetFilename, keep_default_na=False)
         else:
             raise FileNotFoundError("Error loading " + targetFilename)
 
