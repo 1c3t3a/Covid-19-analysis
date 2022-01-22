@@ -57,7 +57,7 @@ def main():
             # build another map of the world
             map = mapObject.create_default_map(basemap, 'CasesPerMillionPopulation', 'Cases per million population')
             # save that as well
-            map.save(dir + '/' + mapObject.get_map_alias() + 'CasesPerMillionPopulation.html')    
+            map.save(dir + '/' + mapObject.get_map_alias() + 'CasesPerMillionPopulation.html')   
     return
 
 if __name__ == "__main__":
