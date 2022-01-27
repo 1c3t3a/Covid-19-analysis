@@ -7,6 +7,10 @@ import json
 import datetime
 from abc import ABC, abstractmethod
 from pathlib import Path
+import folium
+from typing import List
+from dataclasses import dataclass, field
+from datetime import date, timedelta
 
 """ This abstract class acts as a base class for other classes that implement different folium maps based on different data 
     sources. Here are some usefull links:
@@ -15,7 +19,6 @@ from pathlib import Path
         folium: https://python-visualization.github.io/folium/
         Different basemaps are available on https://leaflet-extras.github.io/leaflet-providers/preview/
 """
-
 
 def ensure_path_exists(thePath):
     """ The function checks of the given relative or absolute path exists and if not it will try to create it. If that fails
@@ -116,46 +119,117 @@ def this_or_last_weekday(the_date, the_weekday):
     if the_time - last_weekday_at_9 >= one_week:
         last_weekday_at_9 += one_week
     return last_weekday_at_9
-      
-class FoliumCovid19Map(ABC):
+       
+class CovidFoliumMap(ABC):
     """
     This abstract base class will expose an interface to deal with Choropleth maps to display Covid-19 data attributes. It does this  
-    by providing access to a pandas geoJSON dataframe and a data dataframe. It also also provides methods to generate a default map.
+    by providing access to a pandas geoJSON dataframe and a data dataframe. It also  provides methods to generate a default map.
     """
-    def __init__(self, dfGeo, dfData, dataDirectory):
+    def __init__(self, dataDirectory):
         """
         The constructor takes two dataframes. One containing geoJSON information and a second containing CoVid-19 data. 
 
         Args:
-            dfGeo (dataframe): The geoPandas dataframe containing geometry information of the countries and regions of the world.  
-            dfData (dataframe): The 'regular' Pandas dataframe containing Covid-19 data to be shown on the map
+            dataDirectory (str): The path to a directory to store temporary data
         """
-        # keep the data frames
-        self.__dfGeo = dfGeo
-        self.__dfData = dfData,
+        # keep the data directory
         self.__dataDirectory = dataDirectory
 
-    def get_geo_df(self):
-        """Returns the geoPandas data frame
-        
-        Args:
-            -
+    @dataclass
+    class mapOptions:
+        """ Somehow a struct holding information about the map such as location of the alias, date, center, etc.
+        """
+        mapAlias: str = field(default_factory=lambda : '')
+        """ An alias name of the map that can be used as a filename to save the map
+        """
+        #ingredients: List = field(default_factory=lambda: ['dow', 'tomatoes'])
+        tooltipAttributes: List = field(default_factory=lambda : [])
+        """ A list of data attributes of the data df that should appear in the tooltip when moving the mouse over the map
+        """
+        mapAttribute: str = field(default_factory=lambda : '')
+        """ The string that should appear in the leaflet of the map
+        """
+        mapLocation: List = field(default_factory=lambda : [])
+        """ The initial center of the map 
+        """
+        mapZoom: int = 4
+        """ The initial zoom level of the map
+        """
+        mapDate: date = date.today
+        """ The date of the data shown in the map
+        """
+        bins: List[float] = field(default_factory=lambda : [])
+        """ A list of values representing the colour bins (Folium supports up to 10 bins), or none to calculate default bins
 
         Returns:
-            DataFrame: The geoPandas data frame containing geoJSON geometries
+            mapOptions: The struct of options
         """
-        return self.__dfGeo
-    
-    def get_data_df(self):
-        """Returns the geoPandas data frame
-        
-        Args:
-            -
 
-        Returns:
-            DataFrame: The Pandas data frame containing Covid-19 data
+    def create_default_map(self, 
+                           basemap, 
+                           coloredAttribute = 'Incidence7DayPer100Kpopulation', 
+                           coloredAttributeAlias = '7-day incidence per 100.000 population'):
+        """ Returns a default folium map
+
+        Args:
+            basemap (str): The name of the basemap to be used. Can be one of the nice_basemaps or something different
+            coloredAttribute (str, optional): [description]. Defaults to 'Incidence7DayPer100Kpopulation'.
+            coloredAttributeAlias (str, optional): [description]. Defaults to '7-day incidence per 100.000 population'.
         """
-        return self.__dfData
+        # get the map options
+        dfGeo = self.get_geo_df()
+        dfData = self.get_data_df()
+        mapOptions = self.get_default_map_options()
+        # check if we have every<thing that we need
+        if (dfGeo is None) or (dfData is None):
+            return None
+        # merge geo and data dfs. ensure merging to the geoDF to keep the result a geoPandas df
+        combined = dfGeo.merge(dfData[[self.get_merge_UID()] + mapOptions.tooltipAttributes], 
+                               on=self.get_merge_UID(), 
+                               how='left')
+        # create the map
+        map = folium.Map(attr=mapOptions.mapAttribute, location=mapOptions.mapLocation, tiles=basemap, zoom_start=mapOptions.mapZoom)
+        # the alias incl. the date
+        coloredAttributeAlias = coloredAttributeAlias + ' as of ' + mapOptions.mapDate.strftime('%Y-%m-%d')
+        # the bins for the colored values
+        if (mapOptions.bins is None):
+            mapOptions.bins = list(combined[coloredAttribute].quantile([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0]))
+        else:     
+            # the maximum in the coloredAttribute column
+            max = dfData[coloredAttribute].max()
+            # ensure max value will fit in the bins
+            mapOptions.bins[mapOptions.bins.count(0)-1] = max
+        # build the choropleth
+        cp = folium.Choropleth (geo_data=combined,
+                                data=combined,
+                                #data=df,
+                                columns=[self.get_merge_UID(), coloredAttribute],
+                                key_on='feature.properties.' + self.get_merge_UID(),
+                                fill_color='YlOrRd',
+                                fill_opacity=0.4,
+                                line_opacity=0.4,
+                                nan_fill_color='#f5f5f3',
+                                legend_name=coloredAttributeAlias,
+                                bins=[float(x) for x in mapOptions.bins],
+                                highlight=True,
+                                smooth_factor = 0.1)
+        # give it a name
+        cp.layer_name = "Covid-19 data"  
+        # add it to the map
+        cp.add_to(map)
+        # create a tooltip for hovering
+        tt = folium.GeoJsonTooltip(fields= mapOptions.tooltipAttributes)
+        # add it to the json
+        tt.add_to(cp.geojson)
+        # numbers and dates in the system local
+        tt.localize = True
+        # add a layer control to the map
+        folium.LayerControl().add_to(map)
+        # a legend
+        #legend_html = '<div style="position: fixed; bottom: 75px; left: 50%; margin-left: -350px; width: 700px; height: 20px; z-index:9999; font-size:20px;">&nbsp; ' + 'Generated on ' + date.today().strftime('%Y-%m-%d') + '<br></div>'
+        #map.get_root().html.add_child(folium.Element(legend_html))
+        # return the map
+        return map
 
     def get_data_directory(self):
         """Returns the data directory as a string
@@ -167,19 +241,24 @@ class FoliumCovid19Map(ABC):
             DataDirectory: A string pointing to the absolute data directory path
         """
         return self.__dataDirectory
+    
+    @abstractmethod
+    def get_data_df(self):
+        """ Returns the pandas data df
+        """
+        pass
 
     @abstractmethod
-    def create_default_map(self, 
-                           basemap, coloredAttribute = 'Incidence7DayPer100Kpopulation', 
-                           coloredAttributeAlias = '7-day incidence per 100.000 population'):
-        """ Returns a default folium map
-
-        Args:
-            basemap (str): The name of the basemap to be used. Can be one of the nice_basemaps or something different
-            coloredAttribute (str, optional): [description]. Defaults to 'Incidence7DayPer100Kpopulation'.
-            coloredAttributeAlias (str, optional): [description]. Defaults to '7-day incidence per 100.000 population'.
+    def get_geo_df(self):
+        """ Returns the geoPandas df containing geometry information
         """
-        pass 
+        pass
+    
+    @abstractmethod
+    def get_default_map_options(self):
+        """ returns the options of the default map
+        """
+        pass
 
     @abstractmethod
     def get_merge_UID(self):
@@ -188,16 +267,6 @@ class FoliumCovid19Map(ABC):
 
         Returns:
             string: A string holding the name of the unique ID of the data dataframe 
-        """
-        pass 
-
-    @abstractmethod
-    def get_map_alias(self):
-        """
-        Returns the string holding the name of the map that can be used to save it 
-
-        Returns:
-            string: A string holding the name of the unique ID of the geo dataframe 
         """
         pass 
 

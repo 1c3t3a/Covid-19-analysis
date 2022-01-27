@@ -10,9 +10,9 @@ import datetime
 from datetime import date, timedelta
 from abc import ABC, abstractmethod
 from pathlib import Path
-from CovidFoliumMap import FoliumCovid19Map, ensure_path_exists, download_JSON_file
+from CovidFoliumMap import CovidFoliumMap, ensure_path_exists, download_JSON_file
 
-""" This class implements different folium maps based on the data of the RKI using access to the 
+""" This classes generate different folium maps based on the data of the RKI using access to the 
     RKI Covid-19 API.
     The class inherits from the CovidFoliumMap class. Here are some usefull links:
 
@@ -20,22 +20,22 @@ from CovidFoliumMap import FoliumCovid19Map, ensure_path_exists, download_JSON_f
       From the Bundesamt für Kartographie und Geodäsie:
         License plates (wfs_kfz250): https://gdz.bkg.bund.de/index.php/default/open-data/wfs-kfz-kennzeichen-1-250-000-wfs-kfz250.html
         Counties & population (wfs_vg250-ew): https://gdz.bkg.bund.de/index.php/default/open-data/wfs-verwaltungsgebiete-1-250-000-mit-einwohnerzahlen-stand-31-12-wfs-vg250-ew.html
-     From OpenDataLab
+      From OpenDataLab
         Good county, city, village maps with optional other meta information
         Portal: http://opendatalab.de/projects/geojson-utilities/
         a download from there creates 'landkreise_simplify0.geojson'. The 0 refers to highest resolution (1:250000)
-    GitHub: https://github.com/opendatalab-de/simple-geodata-selector
+        GitHub: https://github.com/opendatalab-de/simple-geodata-selector
 
-    - RKI API
+    - RKI Covid-19 API
         Great REST API to retrieve the Covid-19 data of the RKI
         https://api.corona-zahlen.org/docs/endpoints/districts.html#districts-history-recovered
         BUT:
-    The RKI divides Berlin in districts and that doesn't match regular geoJSON files. Therefore you should use the RKI geoJSON for 
-    German counties/cities: https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/917fc37a709542548cc3be077a786c17_0/explore to
-    download 'RKI_Corona_Landkreise.geojson'
+        The RKI divides Berlin in districts and that doesn't match regular geoJSON files. Therefore you should use the RKI geoJSON for 
+        German counties/cities: https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/917fc37a709542548cc3be077a786c17_0/explore to
+        download 'RKI_Corona_Landkreise.geojson'
 """
 
-class FoliumCovid19MapDEcounties(FoliumCovid19Map):
+class CovidFoliumMapDEcounties(CovidFoliumMap):
     """
     This class will expose an interface to deal with Choropleth maps to display Covid-19 data attributes for counties and cities in Germany. 
     """
@@ -49,7 +49,21 @@ class FoliumCovid19MapDEcounties(FoliumCovid19Map):
         self.__dataDirectory = dataDirectory + '/'
         self.__dfGeo = None
         self.__dfData = None
-        self.__alias = 'MapDEcounty'
+        self.__defaultMapOptions = CovidFoliumMap.mapOptions(mapDate=date.today(),
+                                                            mapAlias = 'MapDEcounty',
+                                                            mapLocation = [51.3, 10.5],
+                                                            mapZoom = 6,
+                                                            bins = [5, 25, 50, 100, 200, 400, 800, 1200, 1600, 2600],
+                                                            mapAttribute = 'Robert Koch-Institut (RKI), dl-de/by-2-0, CMBT 2022',
+                                                            tooltipAttributes = ['GeoName', 
+                                                                                'Cases', 
+                                                                                'Deaths', 
+                                                                                'WeeklyCases', 
+                                                                                'WeeklyDeaths', 
+                                                                                'DailyCases', 
+                                                                                'DailyDeaths', 
+                                                                                'DailyRecovered', 
+                                                                                'Incidence7DayPer100Kpopulation'])
         # ensure that the data directory exists, meaning to create it if it is not available
         self.__dataDirectory = ensure_path_exists(dataDirectory)
         # check if it really exists
@@ -59,8 +73,8 @@ class FoliumCovid19MapDEcounties(FoliumCovid19Map):
             # get the covid data for all counties/cities in the geo dataframe
             if not self.get_geo_df is None:
                 self.__dfData = self.__get_covid_data(self.__dfGeo)
-        # pass the everything to the base class
-        super().__init__(self.__dfGeo, self.__dfData, self.__dataDirectory)
+        # init base class
+        super().__init__(self.__dataDirectory)
 
     def __get_geo_data(self):
         """ Downloads the JSON file from the RKI server if necessary and opens it to return a geoPandas dataframe. The function throws an
@@ -140,79 +154,6 @@ class FoliumCovid19MapDEcounties(FoliumCovid19Map):
         # ...and return df
         return df
     
-    def create_default_map(self, 
-                           basemap, coloredAttribute = 'Incidence7DayPer100Kpopulation', 
-                           coloredAttributeAlias = '7-day incidence per 100.000 population'):
-        """ Returns a default folium map
-
-        Args:
-            basemap (str): The name of the basemap to be used. Can be one of the nice_basemaps or something different
-            coloredAttribute (str, optional): [description]. Defaults to 'Incidence7DayPer100Kpopulation'.
-            coloredAttributeAlias (str, optional): [description]. Defaults to '7-day incidence per 100.000 population'.
-        """
-        # check if we have every<thing that we need
-        if (self.__dfGeo is None) or (self.__dfData is None):
-            return None
-        # merge geo and data dfs. ensure merging to the geoDF to keep the result a geoPandas df
-        combined = self.__dfGeo.merge(self.__dfData[[self.get_merge_UID(), 
-                                                    'GeoID', 
-                                                    'Cases', 
-                                                    'Deaths', 
-                                                    'WeeklyCases', 
-                                                    'WeeklyDeaths', 
-                                                    'DailyCases', 
-                                                    'DailyDeaths', 
-                                                    'DailyRecovered', 
-                                                    'Incidence7DayPer100Kpopulation']], 
-                                                    on=self.get_merge_UID(), 
-                                                    how='left')
-        # create the map
-        map = folium.Map(attr='Robert Koch-Institut (RKI), dl-de/by-2-0, CMBT 2022', location=[51.3, 10.5], tiles=basemap, zoom_start=6)
-        # the alias incl. the date
-        coloredAttributeAlias = coloredAttributeAlias + ' as of ' + date.today().strftime('%Y-%m-%d')
-        # the bins for the colored values
-        #bins = list(combined[coloredAttribute].quantile([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0]))
-        # the maximum in the coloredAttribute column
-        max = self.__dfData[coloredAttribute].max()
-        # fixed bins
-        bins = [0, 150, 300, 450, 600, 750, 900, 1050, 1200, max]
-        # build the choropleth
-        cp = folium.Choropleth (geo_data=combined,
-                                data=combined,
-                                #data=df,
-                                columns=[self.get_merge_UID(), coloredAttribute],
-                                key_on='feature.properties.' + self.get_merge_UID(),
-                                fill_color='YlOrRd',
-                                fill_opacity=0.4,
-                                line_opacity=0.4,
-                                nan_fill_color='#f5f5f3',
-                                legend_name=coloredAttributeAlias,
-                                bins=[float(x) for x in bins],
-                                highlight=True,
-                                smooth_factor = 0.1)
-        # give it a name
-        cp.layer_name = "Covid-19 data"  
-        # add it to the map
-        cp.add_to(map)
-        # create a tooltip for hovering
-        tt = folium.GeoJsonTooltip(fields= ['GeoID', 
-                                            'Cases', 
-                                            'Deaths', 
-                                            'WeeklyCases', 
-                                            'WeeklyDeaths', 
-                                            'DailyCases', 
-                                            'DailyDeaths', 
-                                            'DailyRecovered', 
-                                            'Incidence7DayPer100Kpopulation'])
-        # add it to the json
-        tt.add_to(cp.geojson)
-        # numbers and dates in the system local
-        tt.localize = True
-        # add a layer control to the map
-        folium.LayerControl().add_to(map)
-        # return the map
-        return map
-
     def __get_county_data_from_web(self, county_ID):
         """ Downloads the covid-19 data for the given county-ID
 
@@ -258,6 +199,30 @@ class FoliumCovid19MapDEcounties(FoliumCovid19Map):
                     'DailyRecovered']
         return df
 
+    def get_data_df(self):
+        """ Returns the covid19 dataframe
+
+        Returns:
+            [Dataframe]: The pandas data frame with all data for the countries
+        """
+        return self.__dfData
+
+    def get_geo_df(self):
+        """ Returns the geoJSON dataframe
+
+        Returns:
+            [Dataframe]: The geoPandas data frame with all data for the countries
+        """
+        return self.__dfGeo
+
+    def get_default_map_options(self):
+        """ Returns the options for the default map
+
+        Returns:
+            [mapOptions]: The map options such as the default location and zoom
+        """
+        return self.__defaultMapOptions
+
     def get_merge_UID(self):
         """
         Returns the string holding the name of the unique ID of the data and the geo dataframe that can be used to merge the two
@@ -266,15 +231,6 @@ class FoliumCovid19MapDEcounties(FoliumCovid19Map):
             string: A string holding the name of the unique ID of the data dataframe 
         """
         return 'RS'
-
-    def get_map_alias(self):
-        """
-        Returns the string holding the name of the map that can be used to save it
-
-        Returns:
-            string: A string holding the name of the unique ID of the geo dataframe 
-        """
-        return self.__alias     
 
     def get_nice_basemaps(self):
         """
@@ -289,9 +245,9 @@ class FoliumCovid19MapDEcounties(FoliumCovid19Map):
                     'Stamen Terrain']
         return mapArray
 
-class FoliumCovid19MapDEstates(FoliumCovid19Map):
+class CovidFoliumMapDEstates(CovidFoliumMap):
     """
-    This class will expose an interface to deal with Choropleth maps to display Covid-19 data attributes for German states. 
+    This class will generate Choropleth maps to display Covid-19 data attributes for German states. 
     """
     def __init__(self, dataDirectory = '../data'):
         """ Constructor
@@ -303,7 +259,23 @@ class FoliumCovid19MapDEstates(FoliumCovid19Map):
         self.__dataDirectory = dataDirectory + '/'
         self.__dfGeo = None
         self.__dfData = None
-        self.__alias = 'MapDEstate'
+        self.__defaultMapOptions = CovidFoliumMap.mapOptions(mapDate=date.today(),
+                                                            mapAlias = 'MapDEstate',
+                                                            mapLocation = [51.3, 10.5],
+                                                            mapZoom = 6,
+                                                            bins = [5, 25, 50, 100, 200, 400, 800, 1200, 1600, 2600],
+                                                            mapAttribute = 'Robert Koch-Institut (RKI), dl-de/by-2-0, CMBT 2022',
+                                                            tooltipAttributes = ['GeoName', 
+                                                                                'Cases', 
+                                                                                'Deaths', 
+                                                                                'WeeklyCases', 
+                                                                                'WeeklyDeaths', 
+                                                                                'DailyCases', 
+                                                                                'DailyDeaths', 
+                                                                                'DailyRecovered', 
+                                                                                'Incidence7DayPer100Kpopulation',
+                                                                                'HospitalizationCases7'])
+        # a list of German states
         self.__statelist = [['Schleswig-Holstein', 'SH'],
                             ['Hamburg', 'HH'],
                             ['Niedersachsen', 'NI'],
@@ -329,8 +301,8 @@ class FoliumCovid19MapDEstates(FoliumCovid19Map):
             # get the covid data for all counties/cities in the geo dataframe
             if not self.get_geo_df is None:
                 self.__dfData = self.__get_covid_data()
-        # pass the everything to the base class
-        super().__init__(self.__dfGeo, self.__dfData, self.__dataDirectory)
+        # init the base class
+        super().__init__(self.__dataDirectory)
 
     def __get_geo_data(self):
         """ Downloads the JSON file from the RKI server if necessary and opens it to return a geoPandas dataframe. The function throws an
@@ -410,84 +382,6 @@ class FoliumCovid19MapDEstates(FoliumCovid19Map):
         # ...and return df
         return df
     
-    def create_default_map(self, 
-                           basemap, coloredAttribute = 'Incidence7DayPer100Kpopulation', 
-                           coloredAttributeAlias = '7-day incidence per 100.000 population'):
-        """ Returns a default folium map
-
-        Args:
-            basemap (str): The name of the basemap to be used. Can be one of the nice_basemaps or something different
-            coloredAttribute (str, optional): [description]. Defaults to 'Incidence7DayPer100Kpopulation'.
-            coloredAttributeAlias (str, optional): [description]. Defaults to '7-day incidence per 100.000 population'.
-        """
-        # check if we have every<thing that we need
-        if (self.__dfGeo is None) or (self.__dfData is None):
-            return None
-        # merge geo and data dfs. ensure merging to the geoDF to keep the result a geoPandas df
-        combined = self.__dfGeo.merge(self.__dfData[[self.get_merge_UID(), 
-                                                    'GeoName', 
-                                                    'Cases', 
-                                                    'Deaths', 
-                                                    'WeeklyCases', 
-                                                    'WeeklyDeaths', 
-                                                    'DailyCases', 
-                                                    'DailyDeaths', 
-                                                    'DailyRecovered', 
-                                                    'Incidence7DayPer100Kpopulation',
-                                                    'HospitalizationCases7']], 
-                                                    on=self.get_merge_UID(), 
-                                                    how='left')
-        # create the map
-        map = folium.Map(attr='Robert Koch-Institut (RKI), dl-de/by-2-0, CMBT 2022', location=[51.3, 10.5], tiles=basemap, zoom_start=6)
-        # the alias incl. the date
-        coloredAttributeAlias = coloredAttributeAlias + ' as of ' + date.today().strftime('%Y-%m-%d')
-        # the bins for the colored values
-        #bins = list(combined[coloredAttribute].quantile([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0]))
-        # the maximum in the coloredAttribute column
-        max = self.__dfData[coloredAttribute].max()
-        # fixed bins
-        bins = [0, 150, 300, 450, 600, 750, 900, 1050, 1200, max]
-        # build the choropleth
-        cp = folium.Choropleth (geo_data=combined,
-                                data=combined,
-                                #data=df,
-                                columns=[self.get_merge_UID(), coloredAttribute],
-                                key_on='feature.properties.' + self.get_merge_UID(),
-                                fill_color='YlOrRd',
-                                fill_opacity=0.4,
-                                line_opacity=0.4,
-                                nan_fill_color='#f5f5f3',
-                                legend_name=coloredAttributeAlias,
-                                bins=[float(x) for x in bins],
-                                highlight=True,
-                                smooth_factor = 0.1)
-        # give it a name
-        cp.layer_name = "Covid-19 data"  
-        # add it to the map
-        cp.add_to(map)
-        # create a tooltip for hovering
-        tt = folium.GeoJsonTooltip(fields= ['GeoName', 
-                                            'Cases', 
-                                            'Deaths', 
-                                            'WeeklyCases', 
-                                            'WeeklyDeaths', 
-                                            'DailyCases', 
-                                            'DailyDeaths', 
-                                            'DailyRecovered', 
-                                            'Incidence7DayPer100Kpopulation',
-                                            'HospitalizationCases7'])
-        # add it to the json
-        tt.add_to(cp.geojson)
-        # numbers and dates in the system local
-        tt.localize = True
-        # add a layer control to the map
-        folium.LayerControl().add_to(map)
-        # a legend
-        #legend_html = '<div style="position: fixed; bottom: 75px; left: 50%; margin-left: -350px; width: 700px; height: 20px; z-index:9999; font-size:20px;">&nbsp; ' + 'Generated on ' + date.today().strftime('%Y-%m-%d') + '<br></div>'
-        #map.get_root().html.add_child(folium.Element(legend_html))
-        # return the map
-        return map
-
     def __get_state_data_from_web(self, state_ID):
         """ Downloads the covid-19 data for the given county-ID
 
@@ -536,6 +430,30 @@ class FoliumCovid19MapDEstates(FoliumCovid19Map):
                     'HospitalizationUpdate']
         return df
 
+    def get_data_df(self):
+        """ Returns the covid19 dataframe
+
+        Returns:
+            [Dataframe]: The pandas data frame with all data for the countries
+        """
+        return self.__dfData
+
+    def get_geo_df(self):
+        """ Returns the geoJSON dataframe
+
+        Returns:
+            [Dataframe]: The geoPandas data frame with all data for the countries
+        """
+        return self.__dfGeo
+
+    def get_default_map_options(self):
+        """ Returns the options for the default map
+
+        Returns:
+            [mapOptions]: The map options such as the default location and zoom
+        """
+        return self.__defaultMapOptions
+
     def get_merge_UID(self):
         """
         Returns the string holding the name of the unique ID of the data and the geo dataframe that can be used to merge the two
@@ -544,15 +462,6 @@ class FoliumCovid19MapDEstates(FoliumCovid19Map):
             string: A string holding the name of the unique ID of the data dataframe 
         """
         return 'AGS_TXT'
-
-    def get_map_alias(self):
-        """
-        Returns the string holding the name of the map that can be used to save it
-
-        Returns:
-            string: A string holding the name of the unique ID of the geo dataframe 
-        """
-        return self.__alias     
 
     def get_nice_basemaps(self):
         """
