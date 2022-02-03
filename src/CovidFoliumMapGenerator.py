@@ -3,9 +3,10 @@ import numpy as np
 import math
 import os
 import datetime
-from datetime import date, timedelta
+from datetime import datetime, date, timedelta
 from CovidFoliumMapWHO import CovidFoliumMapWHO, Continents
 from CovidFoliumMapRKI import CovidFoliumMapDEstates, CovidFoliumMapDEcounties
+from CovidFoliumMapRKIageAndGender import CovidFoliumMapDEageAndGenderCounties, CovidFoliumMapDEageAndGenderStates
 
 def main():
     # the directory for temp. data as well as for the output
@@ -25,6 +26,11 @@ def main():
         # we are running not in jupyter
         outputDir = '../data'
         print('Running locally. Using ' + outputDir + ' as the data directory')
+
+    # print the start time
+    now = datetime.now()
+    currentTime = now.strftime("%H:%M:%S")
+    print("Starting at: ", currentTime)
 
     # an array of instances
     mapObjects = []
@@ -46,6 +52,10 @@ def main():
     mapObjects.append(CovidFoliumMapDEstates(outputDir))
     # de counties
     mapObjects.append(CovidFoliumMapDEcounties(outputDir))
+    # de states per age
+    mapObjects.append(CovidFoliumMapDEageAndGenderStates(outputDir))
+    # de counties per age
+    mapObjects.append(CovidFoliumMapDEageAndGenderCounties(outputDir))
     
     # process the maps
     for mapObject in mapObjects:
@@ -57,11 +67,18 @@ def main():
         # select a basemap
         basemap = mapObject.get_nice_basemaps()[0]
         # build the default map
-        map = mapObject.create_default_map(basemap)
+        if mapObject.get_default_map_options().mapAlias.find('age') > 0:
+            # the maps contaning age based information
+            map = mapObject.create_default_map(basemap, coloredAttribute = 'Percent cases by age: 0-14', 
+                                                    coloredAttributeAlias = 'Percent cases age 0-14')
+        else:
+            # standard incidence based maps 
+            map = mapObject.create_default_map(basemap)
         # the filename
         filename = mapObject.get_default_map_options().mapAlias
         # save the map
-        map.save(dir + '/' + filename + '.html')  
+        if map is not None:
+            map.save(dir + '/' + filename + '.html')  
         if mapObject.get_default_map_options().mapAlias.find('World') > 0:
             # the filename
             filename = mapObject.get_default_map_options().mapAlias
@@ -71,14 +88,20 @@ def main():
             # build another map of the world
             map = mapObject.create_default_map(basemap, 'PercentDeaths', 'Case Fatality Rate (CFR)')
             # save that as well
-            map.save(dir + '/' + filename + 'CFR.html')  
+            if map is not None:
+                map.save(dir + '/' + filename + 'CFR.html')  
 
             # reset the bins as we want to generate them again automatically
             mapObject.get_default_map_options().bins = None
-            # build another map of the world
+            # build another map of the world 
             map = mapObject.create_default_map(basemap, 'CasesPerMillionPopulation', 'Cases per million population')
             # save that as well
-            map.save(dir + '/' + filename + 'CasesPerMillionPopulation.html')   
+            if map is not None:
+                map.save(dir + '/' + filename + 'CasesPerMillionPopulation.html')   
+    # print finished time
+    now = datetime.now()
+    currentTime = now.strftime("%H:%M:%S")
+    print("Finished at: ", currentTime)
     return
 
 if __name__ == "__main__":

@@ -141,13 +141,19 @@ class CovidFoliumMapDEcounties(CovidFoliumMap):
                     # add it to the list
                     dfs.append(df)
                 except:
-                    msg = 'Error getting the data for ' + id + '!'
+                    msg = 'Error getting the data for ' + str(id) + '!'
                     print(msg) 
-            # finally concatenate all dfs together
-            df = pd.concat(dfs)  
-            # save it to file
-            df.to_csv(targetFilename)
-            print('Download finished.')
+            try:
+                # finally concatenate all dfs together
+                df = pd.concat(dfs)  
+                # save it to file
+                df.to_csv(targetFilename)
+                print('Download finished.')
+            except Exception as e:
+                if hasattr(e, 'message'):
+                    print(e.message)
+                else:
+                    print(e) 
         # ensure RS length is 5
         if not df is None:
             df['RS'] = df['RS'].astype(str).str.zfill(5)
@@ -368,13 +374,19 @@ class CovidFoliumMapDEstates(CovidFoliumMap):
                     # add it to the list
                     dfs.append(df)
                 except:
-                    msg = 'Error getting the data for ' + id + '!'
+                    msg = 'Error getting the data for ' + str(id) + '!'
                     print(msg) 
             # finally concatenate all dfs together
-            df = pd.concat(dfs)  
-            # save it to file
-            df.to_csv(targetFilename)
-            print('Download finished.')
+            try:
+                df = pd.concat(dfs)  
+                # save it to file
+                df.to_csv(targetFilename)
+                print('Download finished.')
+            except Exception as e:
+                if hasattr(e, 'message'):
+                    print(e.message)
+                else:
+                    print(e) 
             #print(df.head())
         # ensure AGS length is 2
         if not df is None:
@@ -407,7 +419,7 @@ class CovidFoliumMapDEstates(CovidFoliumMap):
             res.raise_for_status()
         # check if the data is not empty
         if not bool(res['data']):
-            raise ValueError("Empty response! County ID might be invalid.")
+            raise ValueError("Empty response! State ID might be invalid.")
         df = pd.json_normalize(res['data'])
         # adjust column names
         df.columns = ['AGS_TXT', 
