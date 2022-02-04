@@ -16,7 +16,7 @@ from pathlib import Path
 from CovidFoliumMap import CovidFoliumMap, ensure_path_exists, download_JSON_file
 
 """ This classes generate different folium maps based on the data of the RKI using access to the 
-    RKI Covid-19 API.
+    RKI Covid-19 master file.
     The class inherits from the CovidFoliumMap class. Here are some usefull links:
 
     - Geodata sources for Germany
@@ -82,7 +82,7 @@ class DownloadAndPreprocessRKIdata():
             print('using existing file: ' + targetFilename)
         else:
             # download the file
-            print('Downloading data, that might take some time...')
+            print('Downloading data (yy-mm-dd-RKI_COVID19-db.csv), that might take some time...')
             endpoint = 'https://www.arcgis.com/sharing/rest/content/items/f10774f1c63e40168479a1feb6c7ca74/data'
             # the manual download link is
             # https://www.arcgis.com/home/item.html?id=dd4580c810204019a7b8eb3e0b329dd6
@@ -361,7 +361,7 @@ class CovidFoliumMapDEageAndGenderCounties(CovidFoliumMap):
         # check if it exist already
         if not os.path.exists(targetFilename):
             # download the file
-            print('Downloading data, that might take some time...')
+            print('Downloading data (RKI_Corona_Landkreise.geojson), that might take some time...')
             endpoint = 'https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/rest/services/RKI_Landkreisdaten/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json'
             # the manual download link is
             # 'https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/917fc37a709542548cc3be077a786c17_0/explore?location=51.282342%2C10.714458%2C6.71'
@@ -534,7 +534,7 @@ class CovidFoliumMapDEageAndGenderStates(CovidFoliumMap):
         # check if it exist already
         if not os.path.exists(targetFilename):
             # download the file
-            print('Downloading data, that might take some time...')
+            print('Downloading data (RKI_Corona_Bundeslaender.geojson), that might take some time...')
             endpoint = 'https://opendata.arcgis.com/api/v3/datasets/ef4b445a53c1406892257fe63129a8ea_0/downloads/data?format=geojson&spatialRefId=4326'
             # the manual download link is
             # 'https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/ef4b445a53c1406892257fe63129a8ea_0/explore'
