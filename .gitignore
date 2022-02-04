@@ -179,6 +179,7 @@ UpgradeLog*.htm
 
 # ignore data files
 data/*-db.csv
+data/*.geojson
 
 # Xcode
 #

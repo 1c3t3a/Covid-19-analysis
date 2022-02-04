@@ -105,49 +105,51 @@ def plot_map(theClass):
         # generate the map
         result = map.create_map_for_date(gi, theDay)
 
-# get the latests database file as a CSV
-try:
-    pathToCSV_owid = CovidCasesOWID.download_CSV_file()
-    pathToCSV_ecdc = CovidCasesECDC.download_CSV_file()
-    pathToCSV_whov1 = CovidCasesWHOv1.download_CSV_file()
-    pathToCSV_who = CovidCasesWHO.download_CSV_file()
-except FileNotFoundError:
-    pathToCSV = "data/db.csv"
-    print('Unable to download the database. Try again later.')
-except IOError:
-    pathToCSV = "data/db.csv"
-    print('Error writing file.')
+def main():
+    # get the latests database files as a CSV
+    try:
+        pathToCSV_owid = CovidCasesOWID.download_CSV_file()
+        pathToCSV_who = CovidCasesWHO.download_CSV_file()
+    except FileNotFoundError:
+        # print an error message
+        print('Unable to download the database. Try again later.')
+        return
 
-# just in case we want to use some optionals
-numCasesince = 10000
-lastN = 90
+    # just in case we want to use some optionals
+    numCasesince = 10000
+    lastN = 90
 
-# the list of comma separated geoIDs
-countryList = 'DE, GB, FR, ES, IT, CH, AT, EL, NA'
+    # the list of comma separated geoIDs
+    countryList = 'DE, GB, FR, ES, IT, CH, AT, EL, NA'
 
-# create instances
-#covidCases_ecdc = CovidCasesECDC(pathToCSV_ecdc)
-covidCases_owid = CovidCasesOWID(pathToCSV_owid)
-#covidCases_whov1 = CovidCasesWHOv1(pathToCSV_whov1)
-covidCases_who = CovidCasesWHO(pathToCSV_who)
+    # create instances
+    covidCases_owid = CovidCasesOWID(pathToCSV_owid)
+    covidCases_who = CovidCasesWHO(pathToCSV_who)
 
-# create tuples of instances and country codes
-#objList = [covidCases_owid]
-objList = [covidCases_owid, covidCases_who]
+    # create tuples of instances and country codes
+    objList = [covidCases_owid, covidCases_who]
 
-# get the combined dataframe
-df = CovidCases.create_combined_dataframe_by_geoid_string_list(objList, countryList, lastNdays=lastN)
+    # get the combined dataframe
+    df = CovidCases.create_combined_dataframe_by_geoid_string_list(objList, countryList, lastNdays=lastN)
 
-width = 7
-for obj in objList:
-    # add lowpass filtered DailyCases
-    df = obj.add_lowpass_filter_for_attribute(df, 'DailyCases', width)
-    # add r0
-    df = obj.add_r0(df)
-    # add lowpass filtered R
-    df = obj.add_lowpass_filter_for_attribute(df, "R", 7)
+    # the width for a filter
+    width = 7
+    for obj in objList:
+        # add lowpass filtered DailyCases
+        df = obj.add_lowpass_filter_for_attribute(df, 'DailyCases', width)
+        # add r0
+        df = obj.add_r0(df)
+        # add lowpass filtered R
+        df = obj.add_lowpass_filter_for_attribute(df, "R", 7)
 
-# plot it
-plot_the_data (df)
-# show the plot
-plt.show()
+    # plot it
+    plot_the_data (df)
+    # show the plot
+    plt.show()
+    
+    #plot_map(covidCases_who)
+    return
+
+# execute main
+if __name__ == "__main__":
+    main()

@@ -46,7 +46,7 @@ def main():
     # asia
     mapObjects.append(CovidFoliumMapWHO(Continents.Asia, outputDir))
     # europe
-    mapObjects.append(CovidFoliumMapWHO(Continents.World, outputDir))
+    mapObjects.append(CovidFoliumMapWHO(Continents.Europe, outputDir))
     
     # de states
     mapObjects.append(CovidFoliumMapDEstates(outputDir))
@@ -69,8 +69,9 @@ def main():
         # build the default map
         if mapObject.get_default_map_options().mapAlias.find('age') > 0:
             # the maps contaning age based information
-            map = mapObject.create_default_map(basemap, coloredAttribute = 'Percent cases by age: 0-14', 
-                                                    coloredAttributeAlias = 'Percent cases age 0-14')
+            map = mapObject.create_default_map(basemap, 
+                                               coloredAttribute = 'Percent cases by age: 0-14', 
+                                               coloredAttributeAlias = 'Percent cases age 0-14')
         else:
             # standard incidence based maps 
             map = mapObject.create_default_map(basemap)
