@@ -70,6 +70,10 @@ You can also generate heatmaps using *pygal* such as this:
 
 <img src="doc/output_29_12.svg" width="60%">
 
+The latest version as of 2022.01.21 also added functions to generate Folium Choropleth maps with the help of geoPandas. The maps are generated as HTML files and offer some interactions like getting tooltips to show the data of a region. This is an example of such a map:
+
+<img src="doc/choropleth.png" width="60%">
+
 All of that graphics can be published using a REST API for which you will find the sources here as well. For your convenience in getting a quick look to the data we offer the REST API on a private server that you can access here: <a href="http://mb.cmbt.de/docs" target="blank">http://mb.cmbt.de/docs</a>  
 
 For the quick look we also offer a Windows Forms CSharp application and a MacOS Swift application. You will find the source code for them here as well and you can download the <a href="http://mb.cmbt.de/download-area" target="blank">installer here</a>. Here are some screenshots of the applications:  
