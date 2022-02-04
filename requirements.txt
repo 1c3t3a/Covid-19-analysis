@@ -12,6 +12,6 @@ pygal==3.0.0
 pygal_maps_world==1.0.2
 pytest==6.2.5
 Pillow>=8.1.1
-pycountry==20.7.3
+pycountry==22.1.10
 folium==0.12.1
 geopandas==0.10.2
