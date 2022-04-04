@@ -1,4 +1,4 @@
-ipywidgets==7.6.5
+ipywidgets==7.7.0
 json5==0.9.6
 matplotlib==3.5.1
 numpy==1.21.4
