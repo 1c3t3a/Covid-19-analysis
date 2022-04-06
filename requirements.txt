@@ -10,7 +10,7 @@ fastapi==0.75.0
 uvicorn==0.17.5
 pygal==3.0.0
 pygal_maps_world==1.0.2
-pytest==7.0.1
+pytest==7.1.1
 Pillow>=8.1.1
 pycountry==22.3.5
 folium==0.12.1.post1
