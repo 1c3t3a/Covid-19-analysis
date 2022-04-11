@@ -1,4 +1,4 @@
-FROM python:3.7.9
+FROM python:3.9
 COPY . /app
 RUN pip3 install -r /app/requirements.txt
 EXPOSE 5000
