@@ -194,11 +194,13 @@ class CovidFoliumMap(ABC):
         # the bins for the colored values
         if (mapOptions.bins is None):
             mapOptions.bins = list(combined[coloredAttribute].quantile([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0]))
-        else:     
-            # the maximum in the coloredAttribute column
-            max = dfData[coloredAttribute].max()
-            # ensure max value will fit in the bins
-            mapOptions.bins[mapOptions.bins.count(0)-1] = max
+        else:      
+            # the minimum/maximum in the coloredAttribute column
+            maximum = dfData[coloredAttribute].max()
+            minimum = dfData[coloredAttribute].min()
+            # ensure min/max value will fit in the bins
+            mapOptions.bins[mapOptions.bins.count(0)-1] = max(maximum, mapOptions.bins[mapOptions.bins.count(0)-1])
+            mapOptions.bins[0] = min(minimum, mapOptions.bins[0])
         # build the choropleth
         cp = folium.Choropleth (geo_data=combined,
                                 data=combined,
