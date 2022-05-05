@@ -315,7 +315,7 @@ class CovidCasesWHO(CovidCases):
             list: List of strings of GeoID's
         """
         # just the main countries for a map
-        geoIDs = re.split(r',\s*', CovidCases.get_pygal_european_geoid_string_list().upper())
+        geoIDs = re.split(r',\s*', CovidCasesWHO.get_pygal_european_geoid_string_list().upper())
         return geoIDs
 
     @staticmethod
@@ -353,7 +353,7 @@ class CovidCasesWHO(CovidCases):
             list: List of strings of GeoID's
         """
         # just the main countries for a map
-        geoIDs = re.split(r',\s*', CovidCases.get_pygal_american_geoid_string_list().upper())
+        geoIDs = re.split(r',\s*', CovidCasesWHO.get_pygal_american_geoid_string_list().upper())
         return geoIDs
         
     @staticmethod
@@ -390,7 +390,7 @@ class CovidCasesWHO(CovidCases):
             list: List of strings of GeoID's
         """
         # just the main countries for a map
-        geoIDs = re.split(r',\s*', CovidCases.get_pygal_asian_geoid_string_list().upper())
+        geoIDs = re.split(r',\s*', CovidCasesWHO.get_pygal_asian_geoid_string_list().upper())
         return geoIDs
         
     @staticmethod
@@ -426,7 +426,7 @@ class CovidCasesWHO(CovidCases):
             list: List of strings of GeoID's
         """
         # just the main countries for a map
-        geoIDs = re.split(r',\s*', CovidCases.get_pygal_african_geoid_string_list().upper())
+        geoIDs = re.split(r',\s*', CovidCasesWHO.get_pygal_african_geoid_string_list().upper())
         return geoIDs
         
     @staticmethod
@@ -464,7 +464,7 @@ class CovidCasesWHO(CovidCases):
             list: List of strings of GeoID's
         """
         # just the main countries for a map
-        geoIDs = re.split(r',\s*', CovidCases.get_pygal_oceania_geoid_string_list().upper())
+        geoIDs = re.split(r',\s*', CovidCasesWHO.get_pygal_oceania_geoid_string_list().upper())
         return geoIDs
 
     @staticmethod

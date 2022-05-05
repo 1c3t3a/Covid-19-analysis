@@ -1,3 +1,4 @@
+from collections import namedtuple
 import pandas as pd
 import numpy as np
 import math
@@ -35,27 +36,39 @@ def main():
     # an array of instances
     mapObjects = []
     
-    # world
-    mapObjects.append(CovidFoliumMapWHO(Continents.World, outputDir))
-    # africa
-    mapObjects.append(CovidFoliumMapWHO(Continents.Africa, outputDir))
-    # oceania
-    mapObjects.append(CovidFoliumMapWHO(Continents.Oceania, outputDir))
-    # america
-    mapObjects.append(CovidFoliumMapWHO(Continents.America, outputDir))
-    # asia
-    mapObjects.append(CovidFoliumMapWHO(Continents.Asia, outputDir))
-    # europe
-    mapObjects.append(CovidFoliumMapWHO(Continents.Europe, outputDir))
+    # a tuple to select maps to be generated
+    ToGenerate = namedtuple('ToGenerate', 'WHO RKIrest RKIage')
+    # you may change this to select the maps to be created
+    generate = ToGenerate(True, True, True)
     
-    # de states
-    mapObjects.append(CovidFoliumMapDEstates(outputDir))
-    # de counties
-    mapObjects.append(CovidFoliumMapDEcounties(outputDir))
-    # de states per age
-    mapObjects.append(CovidFoliumMapDEageAndGenderStates(outputDir))
-    # de counties per age
-    mapObjects.append(CovidFoliumMapDEageAndGenderCounties(outputDir))
+    # the WHO maps
+    if generate.WHO == True:
+        # world
+        mapObjects.append(CovidFoliumMapWHO(Continents.World, outputDir, 0))
+        # africa
+        mapObjects.append(CovidFoliumMapWHO(Continents.Africa, outputDir))
+        # oceania
+        mapObjects.append(CovidFoliumMapWHO(Continents.Oceania, outputDir))
+        # america
+        mapObjects.append(CovidFoliumMapWHO(Continents.America, outputDir))
+        # asia
+        mapObjects.append(CovidFoliumMapWHO(Continents.Asia, outputDir, 0))
+        # europe
+        mapObjects.append(CovidFoliumMapWHO(Continents.Europe, outputDir))
+    
+    # the RKI maps via the REST api
+    if generate.RKIrest == True:
+        # de states
+        mapObjects.append(CovidFoliumMapDEstates(outputDir))
+        # de counties
+        mapObjects.append(CovidFoliumMapDEcounties(outputDir))
+
+    # the RKI data via the huge csv
+    if generate.RKIage == True:
+        # de states per age
+        mapObjects.append(CovidFoliumMapDEageAndGenderStates(outputDir))
+        # de counties per age
+        mapObjects.append(CovidFoliumMapDEageAndGenderCounties(outputDir))
     
     # process the maps
     for mapObject in mapObjects:

@@ -90,7 +90,7 @@ class CovidFoliumMapDEcounties(CovidFoliumMap):
         # check if it exist already
         if not os.path.exists(targetFilename):
             # download the file
-            print('Downloading data, that might take some time...')
+            print('Downloading data (RKI_Corona_Landkreise.geojson), that might take some time...')
             endpoint = 'https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/rest/services/RKI_Landkreisdaten/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json'
             # the manual download link is
             # 'https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/917fc37a709542548cc3be077a786c17_0/explore?location=51.282342%2C10.714458%2C6.71'
@@ -131,7 +131,7 @@ class CovidFoliumMapDEcounties(CovidFoliumMap):
             # read the file
             df = pd.read_csv(targetFilename)
         else:
-            print('Downloading data, that might take some time...')
+            print('Downloading data (yy-mm-dd--RKIcounty-db.csv), that might take some time...')
             # build a result df
             dfs = []
             for id in geoDf['RS']:
@@ -324,7 +324,7 @@ class CovidFoliumMapDEstates(CovidFoliumMap):
         # check if it exist already
         if not os.path.exists(targetFilename):
             # download the file
-            print('Downloading data, that might take some time...')
+            print('Downloading data (RKI_Corona_Bundeslaender.geojson), that might take some time...')
             endpoint = 'https://opendata.arcgis.com/api/v3/datasets/ef4b445a53c1406892257fe63129a8ea_0/downloads/data?format=geojson&spatialRefId=4326'
             # the manual download link is
             # 'https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/ef4b445a53c1406892257fe63129a8ea_0/explore'
@@ -364,7 +364,7 @@ class CovidFoliumMapDEstates(CovidFoliumMap):
             # read the file
             df = pd.read_csv(targetFilename)
         else:
-            print('Downloading data, that might take some time...')
+            print('Downloading data (yy-mm-dd-RKIstates-db.csv), that might take some time...')
             # build a result df
             dfs = []
             for id in self.__statelist:
