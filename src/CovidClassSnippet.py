@@ -104,6 +104,8 @@ def plot_map(theClass):
     for gi in gis:
         # generate the map
         result = map.create_map_for_date(gi, theDay)
+        # ...and render it
+        result.map.render_in_browser()
 
 def main():
     # get the latests database files as a CSV
@@ -115,22 +117,23 @@ def main():
         print('Unable to download the database. Try again later.')
         return
 
-    # just in case we want to use some optionals
-    numCasesince = 10000
-    lastN = 90
-
-    # the list of comma separated geoIDs
-    countryList = 'DE, GB, FR, ES, IT, CH, AT, EL, NA'
-
+    # some benchmarking
+    start = time.time()
     # create instances
     covidCases_owid = CovidCasesOWID(pathToCSV_owid)
     covidCases_who = CovidCasesWHO(pathToCSV_who)
-
     # create tuples of instances and country codes
     objList = [covidCases_owid, covidCases_who]
 
+    # just in case we want to use some optionals
+    numCasesSince = 1000
+    lastN = 90
+    # the list of comma separated geoIDs
+    countryList = 'DE, GB, FR, ES, IT, CH, AT, EL, NA'
     # get the combined dataframe
-    df = CovidCases.create_combined_dataframe_by_geoid_string_list(objList, countryList, lastNdays=lastN)
+    #df = CovidCases.create_combined_dataframe_by_geoid_string_list(objList, countryList)
+    #df = CovidCases.create_combined_dataframe_by_geoid_string_list(objList, countryList, lastNdays=lastN)
+    df = CovidCases.create_combined_dataframe_by_geoid_string_list(objList, countryList, sinceNcases=numCasesSince)
 
     # the width for a filter
     width = 7
@@ -142,11 +145,14 @@ def main():
         # add lowpass filtered R
         df = obj.add_lowpass_filter_for_attribute(df, "R", 7)
 
+    # benchmarking
+    end = time.time()
+    print(str((end - start)) + 's')
     # plot it
     plot_the_data (df)
     # show the plot
     plt.show()
-    
+    # plot a map
     #plot_map(covidCases_who)
     return
 

@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import math
 import os
+import time
 import datetime
 from datetime import datetime, date, timedelta
 from CovidFoliumMapWHO import CovidFoliumMapWHO, Continents
@@ -31,6 +32,7 @@ def main():
     # print the start time
     now = datetime.now()
     currentTime = now.strftime("%H:%M:%S")
+    start = time.time()
     print("Starting at: ", currentTime)
 
     # an array of instances
@@ -43,8 +45,8 @@ def main():
     
     # the WHO maps
     if generate.WHO == True:
-        # world
-        mapObjects.append(CovidFoliumMapWHO(Continents.World, outputDir, 0))
+        # world (sometimes the data is delayed due to holidays, adjust numDaysBefore in that case to view previous complete data)
+        mapObjects.append(CovidFoliumMapWHO(Continents.World, outputDir, numDaysBefore = 0))
         # africa
         mapObjects.append(CovidFoliumMapWHO(Continents.Africa, outputDir))
         # oceania
@@ -52,7 +54,7 @@ def main():
         # america
         mapObjects.append(CovidFoliumMapWHO(Continents.America, outputDir))
         # asia
-        mapObjects.append(CovidFoliumMapWHO(Continents.Asia, outputDir, 0))
+        mapObjects.append(CovidFoliumMapWHO(Continents.Asia, outputDir))
         # europe
         mapObjects.append(CovidFoliumMapWHO(Continents.Europe, outputDir))
     
@@ -112,6 +114,8 @@ def main():
             # save that as well
             if map is not None:
                 map.save(dir + '/' + filename + 'CasesPerMillionPopulation.html')   
+    end = time.time()
+    print(str((end - start)) + 's')
     # print finished time
     now = datetime.now()
     currentTime = now.strftime("%H:%M:%S")

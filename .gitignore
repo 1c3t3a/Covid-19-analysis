@@ -179,7 +179,11 @@ UpgradeLog*.htm
 
 # ignore data files
 data/*-db.csv
-data/*.geojson
+data/*-db-cache.csv
+cache*.xlsx
+data/Map*.html
+#data/*.geojson
+src/cache*.py
 
 # Xcode
 #
