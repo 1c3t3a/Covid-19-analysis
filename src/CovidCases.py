@@ -73,7 +73,7 @@ class CovidCases(ABC):
         You can't create an instance of this class. Instead create an instance of a subclass
     """
 
-    def __init__(self, df):
+    def __init__(self, df, filenameCache = '', cacheLevel = 0):
         """The constructor takes a dataframe loaded by any sub-class containing the data published by the
         website that is handled in the sub-classes individually.  
         To retrieve the data for an individual country you can use the public methods
@@ -83,9 +83,10 @@ class CovidCases(ABC):
         Args:
             df (dataframe): The dataframe containing information about individual countries such as
                             GeoID, CountryName, Cases and Deaths. 
+            filenameCache (str, optional): the filename of the cache. Defaults to ""
+            cacheLevel (int, optional): the amount of data to be calculated for the cache. Defaults to 2.
+                refer to __build_cache for more information of the different cache levels
         """
-        # keep the data frame
-        self.__df = df
         # load the geo information for the world
         try:
             # check if it is running in jupyter
@@ -102,7 +103,13 @@ class CovidCases(ABC):
         # check if it exist already
         if os.path.exists(targetFilename):
             self.__dfGeoInformationWorld = pd.read_csv(targetFilename)
- 
+        # build a cache if wanted and keep it
+        if (filenameCache != '' and cacheLevel > 0):
+            self.__df = self.__build_cache(df, filenameCache, cacheLevel)  
+        else:
+            self.__df = df
+            
+
     @staticmethod
     def __compute_doubling_time(dfSingleCountry):
         """Computes the doubling time for everyday day with the formula:
@@ -162,6 +169,64 @@ class CovidCases(ABC):
         # ...and return it
         return df
 
+    def __build_cache(self, df, filenameCache, cacheLevel = 0):
+        """Builds a cache file for all countries (so far). A cache level defines how much data is generated
+        for the cache. The higher the value the more data is created and the longer it takes to build the cache 
+
+        Args:
+            df (DataFrame): a dat frame holding the data to be processed to build the cache, that's typically
+            the data frame of all countries
+            filenameCache (str): the filename of the cache
+            cacheLevel (int, optional): the amount of data to be calculated for the cache. Defaults to 2.
+                0: there is no cache generated at all
+                1: the cache includes a call to add_additional_attributes to include the following attributes:
+                    Cases, Deaths, PercentDeaths, CasesPerMillionPopulation, DeathsPerMillionPopulation, DoublingTime
+                2: includes the attributes of cache level 1 plus DailyCases7 + DailyDeaths7
+                3: includes the attributes of cache level 2 plus R0
+                4: includes the attributes of cache level 2 plus R7
+
+        Returns:
+            DataFrame: The data frame containing all additional attributes
+        """
+        print('building cache...')
+        # verify the cache level
+        cacheLevel = max(0, cacheLevel)
+        cacheLevel = min(4, cacheLevel)
+        # some benchmarking
+        start = time.time()
+        # build the cache
+        dfs = []
+        # get data for each country
+        for geoID in df['GeoID'].unique():
+            # get the data for a country and add the additional rows
+            dfSingle = df.loc[df['GeoID'] == geoID].copy()
+            # reverse the data frame to the newest date in the bottom
+            dfSingle = dfSingle.reindex(index=dfSingle.index[::-1])
+            # cacheLevel 1
+            dfSingle = self.__add_additional_attributes(dfSingle)
+            if cacheLevel > 1:
+                # add 7day incidence
+                dfSingle = self.add_incidence_7day_per_100Kpopulation(dfSingle)
+                # add lowpass filtered DailyCases
+                dfSingle = self.add_lowpass_filter_for_attribute(dfSingle, 'DailyCases', 7)
+                # add lowpass filtered DailyDeaths
+                dfSingle = self.add_lowpass_filter_for_attribute(dfSingle, 'DailyDeaths', 7)
+            if cacheLevel > 2:
+                # add r0
+                dfSingle = self.add_r0(dfSingle)
+            if cacheLevel > 3:
+                # add lowpass filtered R
+                dfSingle = self.add_lowpass_filter_for_attribute(dfSingle, "R", 7)
+            dfs.append(dfSingle)
+        # concatenate dataframe
+        dfCache = pd.concat(dfs)
+        # save it
+        dfCache.to_csv(filenameCache, index = False, na_rep = '0')        
+        # some benchmarking
+        end = time.time()
+        print('building cache...done: ' + str(end - start) + 's')
+        return dfCache
+
     def __add_additional_attributes(self, dfSingleCountry):
         """Adds additional attributes to a dataframe of a single country.  
 
@@ -173,18 +238,21 @@ class CovidCases(ABC):
         """
         if dfSingleCountry.empty == True:
             return
+        # check if the attributes have been generated already
+        for col in dfSingleCountry.columns:
+            if col == 'PercentDeaths':
+                return dfSingleCountry
         # reset the index on the dataframe (if the argument is just a slice)
         dfSingleCountry.reset_index(inplace=True, drop=True)
-
         # the cumulative cases
         dfSingleCountry['Cases'] = dfSingleCountry['DailyCases'].cumsum()
         # the cumulative cases
         dfSingleCountry['Deaths'] = dfSingleCountry['DailyDeaths'].cumsum()
         # the percentage of deaths of the cumulative cases
-        dfSingleCountry['PercentDeaths'] = pd.DataFrame({'PercentDeaths': dfSingleCountry['Deaths'] * 100 / dfSingleCountry['Cases']})
+        dfSingleCountry['PercentDeaths'] = pd.DataFrame({'PercentDeaths': dfSingleCountry['Deaths'] * 100.0 / dfSingleCountry['Cases']})
         # the percentage of cumulative cases of the 1 million population
         dfSingleCountry['CasesPerMillionPopulation'] = pd.DataFrame({'CasesPerMillionPopulation': dfSingleCountry['Cases'].div(dfSingleCountry['Population'].iloc[0] / 1000000)})
-        # the percantage of cumulative deaths of 1 million population
+        # the percentage of cumulative deaths of 1 million population
         dfSingleCountry['DeathsPerMillionPopulation'] = pd.DataFrame({'DeathsPerMillionPopulation': dfSingleCountry['Deaths'].div(dfSingleCountry['Population'].iloc[0] / 1000000)})
         
         if self.get_data_source_info()[1] == 'OWID':
@@ -283,7 +351,8 @@ class CovidCases(ABC):
         # iterate the cases
         for index, value in dfCases.iteritems():
             if index < 2 * blockSize - 1:
-                result.append(math.nan)
+                # fill it with 0, do not use math.nan because of the cache
+                result.append(0)
             else:
                 # the sum of block 0
                 start = index - (2 * blockSize - 1)
@@ -293,7 +362,8 @@ class CovidCases(ABC):
                 sum1 = sum(dfCases[start: start + blockSize])
                 # and R
                 if sum0 == 0:
-                    R = math.nan
+                    # fill it with 0
+                    R = 0
                 else:
                     R = sum1 / sum0
                 result.append(R)
@@ -426,7 +496,8 @@ class CovidCases(ABC):
             df = self.__df.loc[self.__df['GeoID'] == geoID].copy()
             # reverse the data frame to the newest date in the bottom
             df = df.reindex(index=df.index[::-1])
-            df.head()
+            #print(df.head())
+            # add potentially missing attributes
             df = self.__add_additional_attributes(df)
             # if lastNdays is specified just return these last n days
             if lastNdays > 0:

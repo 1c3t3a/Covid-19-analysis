@@ -47,20 +47,55 @@ class CovidCasesWHO(CovidCases):
         CovidCasesWHO: A class to provide access to some data based on the WHO file.
     """
 
-    def __init__(self, filename):
+    def __init__(self, filename, cacheLevel = 0):
         """The constructor takes a string containing the full filename of a CSV
         database you can download from the WHO website:
         https://covid19.who.int/WHO-COVID-19-global-data.csv
-        The database will be loaded and kept as a private member. To retrieve the
-        data for an individual country you can use the public methods
+        The database will be loaded and kept as a private member. If there is a cache
+        file containing pre-calculated attributes it will be loaded instead of the 
+        downloaded WHO file. If there is no cache file available it may force the base 
+        class to build such a cache at the given cache level. A cache file is detected 
+        by having and tailing '-cache.csv'.
+        To retrieve the data for an individual country you can use the public methods
         GetCountryDataByGeoID or GetCountryDataByCountryName. These functions take 
         ISO 3166 alpha_2 (2 characters long) GeoIDs.
 
         Args:
             filename (str): The full path and name of the csv file. 
+            cacheLevel (int, optional): the amount of data to be calculated for the cache. Defaults to 0.
+                refer to CovidCase.__build_cache for more information of the different cache levels
         """
         # some benchmarking
         start = time.time()
+        # use a cache if it exists
+        filenameCache = os.path.splitext(filename)[0] + '-cache.csv'
+        if os.path.exists(filenameCache):
+            print('using cache file: ' + filenameCache)
+             # open the file
+            self.__df = pd.read_csv(filenameCache, keep_default_na=False)
+            # change the type of the 'date' field to a pandas date
+            self.__df['Date'] = pd.to_datetime(self.__df['Date'],
+                                               format='%Y-%m-%d')
+            # now ensure the data layout
+            dfs = []
+            for geoID in self.__df['GeoID'].unique():
+                # get the data for a country
+                dfSingleCountry = self.__df.loc[self.__df['GeoID'] == geoID].copy()
+                # reset the index
+                dfSingleCountry.reset_index(inplace=True, drop=True)
+                dfSingleCountry.head()
+                # re-order it from newest to olders (top-bottom)
+                dfSingleCountry = dfSingleCountry.reindex(index=dfSingleCountry.index[::-1])
+                # append this dataframe to our result
+                dfs.append(dfSingleCountry)
+            # keep the concatenated dataframe
+            self.__df = pd.concat(dfs)
+            # some benchmarking
+            end = time.time()
+            print('Pandas loading the cached WHO CSV: ' + str(end - start) + 's')
+            # pass the dataframe to the base class
+            super().__init__(self.__df)
+            return
         # open the file
         self.__df = pd.read_csv(filename, keep_default_na=False)
         # drop some columns
@@ -78,13 +113,6 @@ class CovidCasesWHO(CovidCases):
         giw = GeoInformationWorld()
         # get all country info
         dfInfo = giw.get_geo_information_world()
-        
-        # 'nambia testing'
-        #for i in dfInfo['GeoID'].unique():
-        #    print(i)
-
-        # fix the 'namibia' problem by replacing nan with 'NAM', This will as well be considered in generating heat-maps
-        #self.__df['GeoID'] = self.__df['GeoID'].replace(np.nan, 'NAM')
         # our result data frame
         dfs = []
         for geoID in self.__df['GeoID'].unique():
@@ -206,7 +234,12 @@ class CovidCasesWHO(CovidCases):
         end = time.time()
         print('Pandas loading the WHO CSV: ' + str(end - start) + 's')
         # pass the dataframe to the base class
-        super().__init__(self.__df)
+        if ((filenameCache != '') and (cacheLevel > 0)):
+            # force the base class to build and save the cache
+            super().__init__(self.__df, filenameCache, cacheLevel)
+        else:
+            super().__init__(self.__df)
+        
 
     @staticmethod
     def download_CSV_file():

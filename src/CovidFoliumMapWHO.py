@@ -35,7 +35,7 @@ class CovidFoliumMapWHO(CovidFoliumMap):
     to map the Taiwan cases as well.
     The class inherits from the CovidFoliumMap class 
     """
-    def __init__(self, continent, dataDirectory = '../data', delay = 0):
+    def __init__(self, continent, dataDirectory = '../data', numDaysBefore = 0):
         """ Constructor
 
         Args:
@@ -55,13 +55,17 @@ class CovidFoliumMapWHO(CovidFoliumMap):
             self.__dfGeo = self.__get_geo_data()
             # get the covid data for all countries in the continent
             if not self.__dfGeo is None:
-                self.__dfData = self.__get_covid_data(continent, delay)
+                self.__dfData = self.__get_covid_data(continent, numDaysBefore)
         # init the base class
         super().__init__(self.__dataDirectory)
 
     def __get_geo_data(self):
         """ Downloads the geoJSON file from the server if necessary and opens it to return a geoPandas dataframe. 
-        The function throws an exception in case of an error
+        The function throws an exception in case of an error. 
+        Instead of using the highres geoJSON data downloaded from https://raw.githubusercontent.com/datasets/geo-countries 
+        you can use medium or low resolution files you can create on this website: https://geojson-maps.ash.ms. Just save 
+        the downloaded file in the data directory using 'WorldCountriesLowRes.geojson' or 'WorldCountriesMedRes.geojson'
+        as the filename.
 
         Returns:
             geo dataframe: the geo dataframe of the German states or None if it can't load the file
@@ -74,9 +78,12 @@ class CovidFoliumMapWHO(CovidFoliumMap):
         if not os.path.exists(targetFilename):
             # download the file
             print('Downloading data (WorldCountries.geojson), that might take some time...')
-            endpoint = 'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson'
+            # this is the regular endpoint to download the high resolution geoJSON 
+            # endpoint = 'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson'
             # the manual download link is
             # 'https://github.com/datasets/geo-countries/blob/master/data/countries.geojson'
+            # but we will download the medium resolution file from our GitHb account
+            endpoint = 'https://raw.githubusercontent.com/1c3t3a/Covid-19-analysis/master/data/WorldCountries.geojson'
             try:
                 # try to download the file 
                 download_JSON_file(endpoint, targetFilename)
@@ -91,11 +98,16 @@ class CovidFoliumMapWHO(CovidFoliumMap):
             # load the file
             geoDf = gpd.read_file(targetFilename)
         # adjust column names
-        geoDf.columns = ['Name', 'ISO-3166-alpha_3', 'GeoID', 'geometry']
+        if 'iso_a3' in geoDf.columns:
+            # the low and medium geoJSON contain many not required attributes
+            geoDf.rename(columns = {'admin':'Name', 'iso_a3':'ISO-3166-alpha_3', 'iso_a2':'GeoID'}, inplace = True)
+        else:   
+            # the highres file contains only 4 attributes which nor to be renamed 
+            geoDf.columns = ['Name', 'ISO-3166-alpha_3', 'GeoID', 'geometry']
         # finally return the geo df
         return geoDf
 
-    def __get_covid_data(self, continent, delay = 0):
+    def __get_covid_data(self, continent, numDaysBefore = 0):
         """ Downloads the covid-19 data from the RKI servers if necessary, caches them and opens a final csv to return a Pandas dataframe. 
         
         Args:
@@ -162,7 +174,7 @@ class CovidFoliumMapWHO(CovidFoliumMap):
             # append it
             df = pd.concat([df, dfTW])  
         # get the data for last friday, on days reporting will not be good
-        today = date.today() - datetime.timedelta(days=delay)
+        today = date.today() - datetime.timedelta(days=numDaysBefore)
         # take care of weekends as the data is often not available on weekends
         if (today.weekday() == 0) or (today.weekday() == 6):
             last_friday = this_or_last_weekday(date.today(), 4)
@@ -215,8 +227,8 @@ class CovidFoliumMapWHO(CovidFoliumMap):
         Returns:
             string: A array of strings referring to nice basemaps 
         """
-        mapArray = ['https://server.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-                    'cartodbpositron',
+        mapArray = ['cartodbpositron',
+                    'https://server.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
                     'Stamen Terrain']
         return mapArray
 

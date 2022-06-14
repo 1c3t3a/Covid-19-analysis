@@ -1,3 +1,4 @@
+from typing import Any
 import pandas as pd
 import numpy as np
 import pygal
@@ -38,6 +39,8 @@ class mapInfo:
 class mapResult:
     """somehow a struct holding the information of the results of the map generation
     """
+    # the map object
+    map: Any
     # the SVG
     svg: SVG
     # the minimum (blue) value of a country in the map
@@ -172,7 +175,7 @@ class CovidMap:
         filename = outputDirectory + '/' + the_day.strftime("%Y-%m-%d") + '-' + info.attribute + '.svg'
         myMap.render_to_file(filename)
         svg = myMap.render()
-        result = mapResult(svg, hmResult.minimum, hmResult.maximum)
+        result = mapResult(myMap, svg, hmResult.minimum, hmResult.maximum)
         return result
 
     def create_map_for_date_range(self, info, start_date, end_date):
