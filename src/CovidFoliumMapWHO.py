@@ -73,17 +73,17 @@ class CovidFoliumMapWHO(CovidFoliumMap):
         # init return
         geoDf = None
         # the filename of the geoJSON that is used
-        targetFilename = self.__dataDirectory + '/' + 'WorldCountries.geojson'
+        targetFilename = self.__dataDirectory + '/' + 'WorldCountriesMedRes.geojson'
         # check if it exist already
         if not os.path.exists(targetFilename):
             # download the file
-            print('Downloading data (WorldCountries.geojson), that might take some time...')
+            print('Downloading data (WorldCountriesMedRes.geojson), that might take some time...')
             # this is the regular endpoint to download the high resolution geoJSON 
             # endpoint = 'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson'
             # the manual download link is
             # 'https://github.com/datasets/geo-countries/blob/master/data/countries.geojson'
             # but we will download the medium resolution file from our GitHb account
-            endpoint = 'https://raw.githubusercontent.com/1c3t3a/Covid-19-analysis/master/data/WorldCountries.geojson'
+            endpoint = 'https://raw.githubusercontent.com/1c3t3a/Covid-19-analysis/master/data/WorldCountriesMedRes.geojson'
             try:
                 # try to download the file 
                 download_JSON_file(endpoint, targetFilename)

@@ -21,7 +21,11 @@ Beside some Jupyter Notebooks, a REST API and Windows and MacOS applications to 
 > According to the <a href="https://github.com/owid/covid-19-data/tree/master/public/data" target="blank">OWID website</a> the Covid-19 data provided is coming from the *COVID-19 Data Repository by the Center for Systems Science  
 and Engineering (CSSE) at Johns Hopkins University* (<a href="https://github.com/CSSEGISandData/COVID-19" target="blank">JHU</a>).  
 
-Based on that raw data we provide functions to calculate the following attributes:  
+4. Robert Koch Institute (RKI)
+This is the official source for <a href="https://experience.arcgis.com/experience/478220a4c454480e823b17327b2bf1d4/page/Landkreise/" target="blank">Covid-19 data in Germany</a>. The data gives an overview of the infections in Germany, from a state view down to a city/county level. The data includes much more attributes as the data of the WHO, ECDC or OWID, and therefore require a different level of visualization. For instance the information about the distribution of Covid-19 infections for different age or gender groups are available via the RKI server. So instead of plotting a graph we are visualizing the German data as interactive maps using HTML to show it in a browser. By moving the mouse it will show the data for a specific city or county. The HTML file holds the data as well as the geo information. Refer to the screenshot below to get an impression of such a visualization.  
+<br>
+
+For the data of the countries of the world we provide functions to calculate the following attributes on that raw data:  
 <br>
 
 | Column | Description |
@@ -60,7 +64,6 @@ Other functions will allow you to calculate the following additional attributes:
 | **Incidence7DayPer100Kpopulation** | The accumulated 7-day incidence. That is the sum of the daily cases of the last 7 days divided by the population in 100000 people.  
 | **DailyCases7** | After calling ```add_lowpass_filter_for_attribute``` with the attribute name **DailyCases** and a filter size of **7** you will get this new attribute that represents the average number of **DailyCases** of the last 7 days. Of course you can filter **all of the attributes** given in the lists above with whatever filter size.  
 
-
 Once having the data calculated we generate plots using the *matplot* library such as these:  
 
 <img src="doc/plot.png" width="55%">
@@ -74,9 +77,15 @@ The latest version as of 2022.01.21 also added functions to generate Folium Chor
 
 <img src="doc/choropleth.png" width="60%">
 
-All of that graphics can be published using a REST API for which you will find the sources here as well. For your convenience in getting a quick look to the data we offer the REST API on a private server that you can access here: <a href="http://mb.cmbt.de/docs" target="blank">http://mb.cmbt.de/docs</a>  
+If you use the data from the **Robert Koch Institute** you can even generate maps showing the number of cases per age group and gender down to a city/county level of Germany as shown here:  
 
-For the quick look we also offer a Windows Forms CSharp application and a MacOS Swift application. You will find the source code for them here as well and you can download the <a href="http://mb.cmbt.de/download-area" target="blank">installer here</a>. Here are some screenshots of the applications:  
+<img src="doc/choroplethRKI.png" width="60%">
+
+All of the maps are also available on our <a href="http://mb.cmbt.de/interactive-data-maps/" target="blank">website</a> and they are updated almost every day.  
+
+All of the plots can be published using a REST API for which you will find the sources here as well. For your convenience in getting a quick look to the data we offer the REST API on our private server that you can access here: <a href="http://mb.cmbt.de/docs" target="blank">http://mb.cmbt.de/docs</a>  
+
+For the quick look we also offer a Windows Forms CSharp application and a MacOS Swift application that are accessing our private server as well. You will find the source code for them here as well and you can download the <a href="http://mb.cmbt.de/download-area" target="blank">installer for them here</a>. Here are some screenshots of the applications:  
 
 <img src="doc/version41.png" width="60%">
 
