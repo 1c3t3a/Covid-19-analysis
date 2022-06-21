@@ -121,7 +121,7 @@ class CovidFoliumMapWHO(CovidFoliumMap):
         df = None
         try:
             # get the latests database file as a CSV
-            dataFile = CovidCasesWHO.download_CSV_file()
+            dataFile = CovidCasesWHO.download_CSV_file(self.__dataDirectory)
             # get the data for the countryList
             whoData = CovidCasesWHO(dataFile)
         except Exception as e:
@@ -148,9 +148,12 @@ class CovidFoliumMapWHO(CovidFoliumMap):
         elif continent == Continents.America:
             countryList = whoData.get_pygal_american_geoid_list()
         # since Omicron the WHO data for China seem to be incomplete
-        if 'CN' in countryList:
-            # remove china from the WHO list
-            countryList.remove('CN')
+        # update June 2022: it changed again, now the OWID numbers seem to be too low
+        useOWIDdataForChina = False
+        if useOWIDdataForChina:
+            if 'CN' in countryList:
+                # remove china from the WHO list
+                countryList.remove('CN')
         # get the data for the country list
         df = whoData.get_data_by_geoid_list(countryList)
         # add the incidence
@@ -158,7 +161,7 @@ class CovidFoliumMapWHO(CovidFoliumMap):
         if continent == Continents.Asia or continent == Continents.World:
             try:
                 # get the OWID database as well
-                dataFile = CovidCasesOWID.download_CSV_file()
+                dataFile = CovidCasesOWID.download_CSV_file(self.__dataDirectory)
                 # get the OWID data
                 owidData = CovidCasesOWID(dataFile)
             except Exception as e:
@@ -167,8 +170,12 @@ class CovidFoliumMapWHO(CovidFoliumMap):
                 else:
                     print(e)  
                 return df
+            if useOWIDdataForChina:
+                geoIDlist = 'TW, HK, CN'
+            else:
+                geoIDlist = 'TW, HK'
             # the taiwan, hongkong and china data
-            dfTW = owidData.get_data_by_geoid_string_list('TW, HK, CN')
+            dfTW = owidData.get_data_by_geoid_string_list(geoIDlist)
             # add the incidence
             dfTW = owidData.add_incidence_7day_per_100Kpopulation(dfTW)  
             # append it

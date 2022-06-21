@@ -268,10 +268,13 @@ class CovidCasesOWID(CovidCases):
         super().__init__(self.__df)
 
     @staticmethod
-    def download_CSV_file():
+    def download_CSV_file(dataDirectory = '../data/'):
         """automatically downloads the database file if it doesn't exists. Need
         to be called in a try-catch block as it may throw FileNotFoundError or
         IOError errors
+
+        Args:
+            dataDirectory (str, optional): The data directory to be used to store the data. Defaults to '../data'.
 
         Raises:
             FileNotFoundError: In case it couldn't download the file
@@ -294,7 +297,7 @@ class CovidCasesOWID(CovidCases):
             # the absolute directory of this python file
             absDirectory = os.path.dirname(os.path.abspath(__file__))
             # the target filename
-            targetFilename = os.path.join(absDirectory, '../data/' + preFix + '-db.csv')
+            targetFilename = os.path.join(absDirectory, dataDirectory + preFix + '-db.csv')
         # check if it exist already
         if os.path.exists(targetFilename):
             print('using existing file: ' + targetFilename)
