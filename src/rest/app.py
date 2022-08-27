@@ -8,6 +8,7 @@ from PlotterBuilder import PlotterBuilder
 from CovidCasesWHO import CovidCasesWHO
 from CovidCases import CovidCases
 from typing import Optional
+from collections import namedtuple
 import re
 import pandas as pd
 import matplotlib as mpl
@@ -15,7 +16,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 import io
 import requests
-from datetime import date
+from datetime import date, timedelta
 from starlette.responses import StreamingResponse
 from starlette.responses import FileResponse
 from fastapi import FastAPI, HTTPException
@@ -111,6 +112,52 @@ class Rest_API:
                 COVID_DATA: "your_directory"
     """
 
+    def __init__(self):
+        print ('constructor called')
+        # get the date
+        today = date.today() - timedelta(days=1)
+        # the prefix of the CSV file is Y-m-d
+        self.__ymd = today.strftime('%Y-%m-%d')
+        # an array holding the data for the data sources
+        self.__data = []
+        # 0 is WHO
+        self.__data.append(None)
+        # 1 is OWID
+        self.__data.append(None)
+        # initialise date tracking
+        self.__get_latest_data()
+
+    def __get_latest_data(self):  
+        # the data directory
+        try:
+            prefix = os.environ['COVID_DATA'] + '/'
+        except:
+            print('missing environment variable, switching to default directory')
+            prefix = '../data'
+
+        # the calls to download_CSV_file will report if the files already exist
+        
+        # get the latest WHO file name and download it, if necessary
+        csv_file = CovidCasesWHO.download_CSV_file(prefix)
+        # check if it is the file of the last call
+        if csv_file.find(self.__ymd) == -1:
+            # it's from a different data
+            self.__data[0] = CovidCasesWHO(csv_file)
+            print('Updated WHO data')
+
+        # get the latest OWID file name and download it, if necessary
+        csv_file = CovidCasesOWID.download_CSV_file(prefix)
+        # check if it is the file of the last call
+        if csv_file.find(self.__ymd) == -1:
+            # it's from a different data
+            self.__data[1] = CovidCasesOWID(csv_file)
+            print('Updated OWID data')
+
+        # get the date and keep it
+        today = date.today()
+        # the prefix of the CSV file is Y-m-d
+        self.__ymd = today.strftime('%Y-%m-%d')
+
     def generate_plot(self, geo_ids, wanted_attrib, data_source, log=False, last_n=-1, since_n=-1, bar=False):
         """ Generates a plot for given GeoIds and returns it in form of a byteIO stream
 
@@ -123,6 +170,9 @@ class Rest_API:
             last_n (int, optional): plot the last n days, if not further specified all available data is plotted
             since_n (int, optional): plot since the nth case, if not further specified all available data is plotted
         """
+        # check if a newer database is available (hopefully no one is calling that during European nights 
+        # as they are updated in the morning)
+        self.__get_latest_data()
         # vaccination data is only available with OWID
         if data_source != DataSource.OWID: 
             if (wanted_attrib == Attributes.VaccineDosesAdministered) or (wanted_attrib == Attributes.DailyVaccineDosesAdministered7DayAverage):
@@ -138,57 +188,43 @@ class Rest_API:
                 data_source = DataSource.OWID
             case (_, _): pass
         """
-        # load the data source
-        try:
-            prefix = os.environ['COVID_DATA']
-            if data_source == DataSource.OWID:
-                csv_file = CovidCasesOWID.download_CSV_file(prefix)
-                self.covid_cases = CovidCasesOWID(csv_file)
-            if data_source == DataSource.WHO:
-                csv_file = CovidCasesWHO.download_CSV_file(prefix)
-                self.covid_cases = CovidCasesWHO(csv_file)  
-        except:
-            print ('missing COVID_DATA environment variable')
-            if data_source == DataSource.OWID:
-                csv_file = CovidCasesOWID.download_CSV_file()
-                self.covid_cases = CovidCasesOWID(csv_file)
-            if data_source == DataSource.WHO:
-                csv_file = CovidCasesWHO.download_CSV_file()
-                self.covid_cases = CovidCasesWHO(csv_file)  
+        # use the actual data source
+        if data_source == DataSource.WHO:
+            requestedData = self.__data[0]
+        else:
+            requestedData = self.__data[1] 
         """ 
         Alternatively in latest Python version
         match data_source:
             case DataSource.OWID:
-                csv_file = CovidCasesOWID.download_CSV_file()
-                self.covid_cases = CovidCasesOWID(csv_file)
+                data = self.__data[1]
             case DataSource.WHO:
-                csv_file = CovidCasesWHO.download_CSV_file()
-                self.covid_cases = CovidCasesWHO(csv_file)
+                data = self.__data[0]
         """
         # try to collect the data for given geoIds, if a wrong geoId is passed, the operation will abort with a 400
         # bad request error
         try:
-            df = self.covid_cases.get_data_by_geoid_list(geo_ids, lastNdays=last_n, sinceNcases=since_n)
+            df = requestedData.get_data_by_geoid_list(geo_ids, lastNdays=last_n, sinceNcases=since_n)
         except IndexError:
             raise HTTPException(
                 status_code=400, detail="Couldn't load data")
 
         # if the wanted attribute is one that need to be calculated, calculate it
         if wanted_attrib == Attributes.R or Attributes.R7:
-            df = self.covid_cases.add_r0(df)
+            df = requestedData.add_r0(df)
         if wanted_attrib == Attributes.R7:
-            df = self.covid_cases.add_lowpass_filter_for_attribute(df, 'R', 7)
+            df = requestedData.add_lowpass_filter_for_attribute(df, 'R', 7)
         if wanted_attrib == Attributes.DailyCases7:
-            df = self.covid_cases.add_lowpass_filter_for_attribute(
+            df = requestedData.add_lowpass_filter_for_attribute(
                 df, 'DailyCases', 7)
         if wanted_attrib == Attributes.DailyDeaths7:
-            df = self.covid_cases.add_lowpass_filter_for_attribute(
+            df = requestedData.add_lowpass_filter_for_attribute(
                 df, 'DailyDeaths', 7)
         if wanted_attrib == Attributes.DoublingTime7:
-            df = self.covid_cases.add_lowpass_filter_for_attribute(
+            df = requestedData.add_lowpass_filter_for_attribute(
                 df, 'DoublingTime', 7)
         if wanted_attrib == Attributes.Incidence7DayPer100Kpopulation:
-            df = self.covid_cases.add_incidence_7day_per_100Kpopulation(df)
+            df = requestedData.add_incidence_7day_per_100Kpopulation(df)
 
         # create pivot table with all needed values, if the x-axis shows a timedelta with days since the nth case the index
         # has to change
@@ -277,7 +313,7 @@ class Rest_API:
                 print ('missing COVID_DATA environment variable')
                 return 'Data directory not found'
             # return the HTML file
-            return FileResponse(prefix + wanted_map.name + '.html')
+            return FileResponse(prefix + '/' + wanted_map.name + '.html')
 
         @app.get('/api/csv/')
         def get_csv():

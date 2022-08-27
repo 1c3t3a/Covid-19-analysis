@@ -88,7 +88,7 @@ def main():
         basemap = mapObject.get_nice_basemaps()[0]
         # build the default map
         if mapObject.get_default_map_options().mapAlias.find('age') > 0:
-            # the maps contaning age based information
+            # the maps containing age based information
             map = mapObject.create_default_map(basemap, 
                                                coloredAttribute = 'Percent cases by age: 0-14', 
                                                coloredAttributeAlias = 'Percent cases age 0-14')
