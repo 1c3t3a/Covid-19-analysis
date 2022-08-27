@@ -230,8 +230,8 @@ class CovidCases(ABC):
         return dfCache
 
     def get_cache_filename(self):
-        """ returns the name of the cache file after it has been build. the constructor had to been invoked so 
-        that cached was generated 
+        """ returns the name of the cache file after it has been build. The constructor had to been invoked so 
+        that the cache gets generated.
 
         Returns:
             str: the name of the cache file after it has been build. When it has not been build it returns
