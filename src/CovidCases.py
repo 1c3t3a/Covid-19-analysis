@@ -125,11 +125,8 @@ class CovidCases(ABC):
         quotient = []
         for index, value in dfSingleCountry['Cases'].iteritems():
             #  calculating the quotient conf[n] / conf[n-1]
-            if index > 0 and index - 1 != 0:
-                if dfSingleCountry['Cases'][index - 1] != 0:
-                    quotient.append(value / dfSingleCountry['Cases'][index - 1])
-                else:
-                    quotient.append(math.nan)
+            if index > 1 and dfSingleCountry['Cases'][index - 1] != 0:
+                quotient.append(value / dfSingleCountry['Cases'][index - 1])
             else:
                 quotient.append(math.nan)
             # calculates the doubling time (can't be calculated when there's 

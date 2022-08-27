@@ -149,8 +149,8 @@ class CovidFoliumMapWHO(CovidFoliumMap):
             countryList = whoData.get_pygal_american_geoid_list()
         # since Omicron the WHO data for China seem to be incomplete
         # update June 2022: it changed again, now the OWID numbers seem to be too low
-        useOWIDdataForChina = False
-        if useOWIDdataForChina:
+        useOWIDDataForChina = False
+        if useOWIDDataForChina:
             if 'CN' in countryList:
                 # remove china from the WHO list
                 countryList.remove('CN')
@@ -170,7 +170,7 @@ class CovidFoliumMapWHO(CovidFoliumMap):
                 else:
                     print(e)  
                 return df
-            if useOWIDdataForChina:
+            if useOWIDDataForChina:
                 geoIDlist = 'TW, HK, CN'
             else:
                 geoIDlist = 'TW, HK'
