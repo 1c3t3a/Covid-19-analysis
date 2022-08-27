@@ -106,8 +106,10 @@ class CovidCases(ABC):
         # build a cache if wanted and keep it
         if (filenameCache != '' and cacheLevel > 0):
             self.__df = self.__build_cache(df, filenameCache, cacheLevel)  
+            self.__cacheFilename = filenameCache
         else:
             self.__df = df
+            self.__cacheFilename = ''
             
 
     @staticmethod
@@ -226,6 +228,16 @@ class CovidCases(ABC):
         end = time.time()
         print('building cache...done: ' + str(end - start) + 's')
         return dfCache
+
+    def get_cache_filename(self):
+        """ returns the name of the cache file after it has been build. The constructor had to been invoked so 
+        that the cache gets generated.
+
+        Returns:
+            str: the name of the cache file after it has been build. When it has not been build it returns
+                 an empty string
+        """
+        return self.__cacheFilename
 
     def __add_additional_attributes(self, dfSingleCountry):
         """Adds additional attributes to a dataframe of a single country.  

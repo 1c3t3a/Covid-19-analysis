@@ -17,9 +17,23 @@ import io
 import requests
 from datetime import date
 from starlette.responses import StreamingResponse
+from starlette.responses import FileResponse
 from fastapi import FastAPI, HTTPException
 from enum import Enum
 
+class Maps(Enum):
+    """ Enumeration of available maps
+    """
+    MapAfrica = 'MapAfrica'
+    MapAmerica = 'MapAmerica'
+    MapAsia = 'MapAsia'
+    MapEurope = 'MapEurope'
+    MapOceania = 'MapOceania'
+    MapWorld = 'MapWorld'
+    MapDEageAndGenderCounty = 'MapDEageAndGenderCounty'
+    MapDEageAndGenderState = 'MapDEageAndGenderState'
+    MapDEcounty = 'MapDEcounty'
+    MapDEState = 'MapDEstate'
 
 class Attributes(Enum):
     """
@@ -79,18 +93,35 @@ class DataSource(Enum):
     OWID = 'OWID'  # Our World in data
 
 class Rest_API:
+    """ A class for the REST-API using FastAPI
+        ATTENTION
+        The REST-API uses a directory defined by the COVID_DATA environment variable as a directory to store data. 
+        If you run the REST-API locally using "uvicorn app:app" you should ensure defining the variable on your 
+        local machine: 
+            MacOS 
+            via .bash\_profile or using .zshrc (if you are using zsh), both files exist in your home folder to add
+            a line such as this: "export COVID_DATA=$HOME/<your_directory>
+            Linux 
+            via "sudo touch /etc/profile.d/covid-data.sh" and "sudo nano /etc/profile.d/covid-data.sh" to add a line
+            such as this: "export COVID_DATA=$HOME/<your_directory>
+        If you use the REST-API in a Docker container then you have to declare the environment variable in your
+        "docker-compose.yml" file:
+            ...
+            environment:
+                COVID_DATA: "your_directory"
+    """
 
     def generate_plot(self, geo_ids, wanted_attrib, data_source, log=False, last_n=-1, since_n=-1, bar=False):
-        """
-        Generates a plot for given GeoIds and returns it in form of a byteIO stream
-        Parameters:
-            geo_ids: [String] -> countries that should be plotted
-            wanted_attrib: String -> the field you want to plot, e.g. Cases
-            data_source: DataSource -> Source of the data defined by the enum. Note! If vaccination data is selected and another
+        """ Generates a plot for given GeoIds and returns it in form of a byteIO stream
+
+        Args:
+            geo_ids (String): countries that should be plotted
+            wanted_attrib (String): the field you want to plot, e.g. Cases
+            data_source (DataSource): Source of the data defined by the enum. Note! If vaccination data is selected and another
                                        source than OWID is selected this will implicitly switch!
-            log: bool -> should the plot be logarithmic
-            last_n: int -> plot the last n days, if not further specified all available data is plotted
-            since_n: int -> plot since the nth case, if not further specified all available data is plotted
+            log (bool, optional): should the plot be logarithmic
+            last_n (int, optional): plot the last n days, if not further specified all available data is plotted
+            since_n (int, optional): plot since the nth case, if not further specified all available data is plotted
         """
         # vaccination data is only available with OWID
         if data_source != DataSource.OWID: 
@@ -107,13 +138,23 @@ class Rest_API:
                 data_source = DataSource.OWID
             case (_, _): pass
         """
-        # load the cases
-        if data_source == DataSource.OWID:
-            csv_file = CovidCasesOWID.download_CSV_file()
-            self.covid_cases = CovidCasesOWID(csv_file)
-        if data_source == DataSource.WHO:
-            csv_file = CovidCasesWHO.download_CSV_file()
-            self.covid_cases = CovidCasesWHO(csv_file)  
+        # load the data source
+        try:
+            prefix = os.environ['COVID_DATA']
+            if data_source == DataSource.OWID:
+                csv_file = CovidCasesOWID.download_CSV_file(prefix)
+                self.covid_cases = CovidCasesOWID(csv_file)
+            if data_source == DataSource.WHO:
+                csv_file = CovidCasesWHO.download_CSV_file(prefix)
+                self.covid_cases = CovidCasesWHO(csv_file)  
+        except:
+            print ('missing COVID_DATA environment variable')
+            if data_source == DataSource.OWID:
+                csv_file = CovidCasesOWID.download_CSV_file()
+                self.covid_cases = CovidCasesOWID(csv_file)
+            if data_source == DataSource.WHO:
+                csv_file = CovidCasesWHO.download_CSV_file()
+                self.covid_cases = CovidCasesWHO(csv_file)  
         """ 
         Alternatively in latest Python version
         match data_source:
@@ -127,8 +168,7 @@ class Rest_API:
         # try to collect the data for given geoIds, if a wrong geoId is passed, the operation will abort with a 400
         # bad request error
         try:
-            df = self.covid_cases.get_data_by_geoid_list(
-                geo_ids, lastNdays=last_n, sinceNcases=since_n)
+            df = self.covid_cases.get_data_by_geoid_list(geo_ids, lastNdays=last_n, sinceNcases=since_n)
         except IndexError:
             raise HTTPException(
                 status_code=400, detail="Couldn't load data")
@@ -187,24 +227,26 @@ class Rest_API:
         byte_io = io.BytesIO()
         plt.savefig(byte_io, dpi=fig.dpi)
         byte_io.seek(0)
-
         return byte_io
 
     def setup_routes(self, app: FastAPI):
-        """
-        Setup of the route. The url has to be in the form:
-        /api/data/<country codes comma separated>/<attribute to be plotted>
+        """ Setup of the route. The url has to be in the form:
+            /api/data/<country codes comma separated>/<attribute to be plotted>
             ?log=(True or False)[&lastN=X if you want to plot lastNdays][&sinceN=X if you want to plot since the Nth case]
+
+        Args:
+            app (FastAPI): the API
         """
 
         # setting up routes and implement methods
         @app.get('/api/data/{countries}/{wanted_attrib}')
         def get_data(countries: str, wanted_attrib: Attributes, dataSource: Optional[DataSource] = DataSource.WHO, sinceN: Optional[int] = None, lastN: Optional[int] = None, log: Optional[bool] = None, bar: Optional[bool] = None):
-            """
-            Returns a png image of the plotted Attribute (see Attributes) for a list of Countries(comma seperated). The URL needs to be in the following form:
+            """ Returns a png image of the plotted Attribute (see Attributes) for a list of Countries(comma seperated). 
+            The URL needs to be in the following form:
             **/api/data/<country codes comma separated>/<attribute to be plotted>
             ?log=(True or False)[&lastN=X if you want to plot lastNdays][&sinceN=X if you want to plot since the Nth case]**
-            SinceN and lastN plots the data starting from the given case or just the lastN days. Log is a boolean value that converts the y-scale to the logarithmic unit.
+            SinceN and lastN plots the data starting from the given case or just the lastN days. Log is a boolean value that 
+            converts the y-scale to the logarithmic unit.
             """
             # read the geoIds and plot the file
             countries = countries.upper()
@@ -218,8 +260,54 @@ class Rest_API:
             # return the created stream as png image
             return StreamingResponse(file, media_type="image/png")
 
+        @app.get('/api/maps/{wanted_map}')
+        def get_map(wanted_map: Maps):
+            """ Returns a map in form of a interactive HTML document that can be shown in a browser
+
+            Args:
+                wanted_map (Maps): Any of the support maps as a string
+
+            Returns:
+                _type_: a HTML file
+            """
+            # the prefix of the fileserver
+            try:
+                prefix = os.environ['COVID_DATA']
+            except:
+                print ('missing COVID_DATA environment variable')
+                return 'Data directory not found'
+            # return the HTML file
+            return FileResponse(prefix + wanted_map.name + '.html')
+
+        @app.get('/api/csv/')
+        def get_csv():
+            """ Returns the cached CSV data until today
+
+            Returns:
+                _type_: a CSV file
+            """
+            # the prefix of the fileserver
+            try:
+                prefix = os.environ['COVID_DATA']
+            except:
+                print ('missing COVID_DATA environment variable')
+                return 'Data directory not found'
+            # todays date
+            today = date.today()
+            # the prefix of the CSV file is Y-m-d
+            targetFilename = prefix + '/WHO-data-processed.csv'
+            if os.path.exists(targetFilename):
+                # return the file
+                return FileResponse(targetFilename)
+            else:
+                # return a hint
+                msg = 'Sorry, can not find ' + 'WHO-data-processed.csv' + '. Please try again later'
+                print (msg)
+                return msg
 
 # change matplotlib backend to agg (agg is not interactive and it can't be interactive)
 matplotlib.use('agg')
+# create the REST API
 app = FastAPI()
+# define the routes (functions)
 Rest_API().setup_routes(app)

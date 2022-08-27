@@ -25,8 +25,13 @@ def main():
             outputDir = os.path.join(absDirectory, './data/')
             print('Running on local jupyter server. Using ' + outputDir + ' as the data directory')
     except:
-        # we are running not in jupyter
-        outputDir = '../data'
+        # we are running not in jupyter 
+        try:
+            # try to read the environment variable
+            outputDir = os.environ['COVID_DATA']
+        except:
+            # fallback to the default
+            outputDir = '../data'
         print('Running locally. Using ' + outputDir + ' as the data directory')
 
     # print the start time
